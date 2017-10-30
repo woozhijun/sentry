@@ -103,7 +103,7 @@ class StoreTasksTest(PluginTestCase):
         )
 
         mock_save_event.delay.assert_called_once_with(
-            cache_key='e:1', data=None, start_time=1, event_id=None
+            cache_key='e:1', data=None, start_time=1, event_id=None, key=None,
         )
 
     @mock.patch('sentry.tasks.store.save_event')
@@ -128,7 +128,7 @@ class StoreTasksTest(PluginTestCase):
         mock_default_cache.set.call_count == 0
 
         mock_save_event.delay.assert_called_once_with(
-            cache_key='e:1', data=None, start_time=1, event_id=None
+            cache_key='e:1', data=None, start_time=1, event_id=None, key=None,
         )
 
     @mock.patch('sentry.tasks.store.save_event')
@@ -162,5 +162,5 @@ class StoreTasksTest(PluginTestCase):
         )
 
         mock_save_event.delay.assert_called_once_with(
-            cache_key='e:1', data=None, start_time=1, event_id=None
+            cache_key='e:1', data=None, start_time=1, event_id=None, key=None,
         )
