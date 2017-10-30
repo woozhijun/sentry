@@ -21,6 +21,7 @@ const inputStyles = props => css`
         background: ${props.error ? '#fff' : props.theme.offWhite};
       `;
     }
+    return '';
   }} ${p => {
       if (props.error) {
         return css`
@@ -30,6 +31,7 @@ const inputStyles = props => css`
     }
     `;
       }
+      return '';
     }} &::placeholder {
     color: ${props.theme.gray2};
   }
