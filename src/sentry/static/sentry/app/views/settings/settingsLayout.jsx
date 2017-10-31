@@ -8,12 +8,12 @@ import SettingsBreadcrumb from './components/settingsBreadcrumb';
 import SettingsHeader from './components/settingsHeader';
 
 const Content = styled(Box)`
-flex: 1;
+  flex: 1;
 `;
 
 class SettingsLayout extends React.Component {
   static propTypes = {
-    renderNavigation: PropTypes.func
+    renderNavigation: PropTypes.func,
   };
 
   render() {
@@ -39,9 +39,7 @@ class SettingsLayout extends React.Component {
             </StickySidebar>
           </Box>
 
-          <Content>
-            {children}
-          </Content>
+          <Content>{children}</Content>
         </Flex>
       </div>
     );

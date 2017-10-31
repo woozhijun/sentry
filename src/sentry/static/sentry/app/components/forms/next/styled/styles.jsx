@@ -7,7 +7,7 @@ const inputStyles = props => css`
   border: 0;
   border-radius: 2px;
   padding: 10px;
-  transition: border .2s ease;
+  transition: border 0.2s ease;
 
   &:focus {
     outline: none;
@@ -16,25 +16,21 @@ const inputStyles = props => css`
   }
 
   ${p => {
-  if (props.hover) {
-    return css`
-      background: ${props.error ? '#fff' : props.theme.offWhite};
+    if (props.hover) {
+      return css`
+        background: ${props.error ? '#fff' : props.theme.offWhite};
       `;
-  }
-}}
-
- ${p => {
-  if (props.error) {
-    return css`
+    }
+  }} ${p => {
+      if (props.error) {
+        return css`
     background: #f7f7f9;
     &:hover, &:focus {
       background: #f7f7f9};
     }
     `;
-  }
-}}
-
-  &::placeholder {
+      }
+    }} &::placeholder {
     color: ${props.theme.gray2};
   }
 `;

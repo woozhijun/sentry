@@ -19,16 +19,14 @@ class PanelHeader extends React.Component {
   render() {
     return (
       <StyledPanelHeader disablePadding={this.props.disablePadding}>
-        <StyledPanelHeaderHeading>
-          {this.props.children}
-        </StyledPanelHeaderHeading>
+        <StyledPanelHeaderHeading>{this.props.children}</StyledPanelHeaderHeading>
       </StyledPanelHeader>
     );
   }
 }
 
 PanelHeader.propTypes = {
-  disablePadding: React.PropTypes.bool
+  disablePadding: React.PropTypes.bool,
 };
 
 export default PanelHeader;
