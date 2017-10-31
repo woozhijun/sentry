@@ -1,7 +1,7 @@
+import {Flex, Box} from 'grid-emotion';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'react-emotion';
-import {Flex, Box} from 'grid-emotion';
 
 import {t, tct} from '../../../../locale';
 import Avatar from '../../../../components/avatar';
@@ -10,6 +10,7 @@ import Confirm from '../../../../components/confirm';
 import Link from '../../../../components/link';
 import LoadingIndicator from '../../../../components/loadingIndicator';
 import SentryTypes from '../../../../proptypes';
+import recreateRoute from '../../../../utils/recreateRoute';
 
 const UserName = styled(Link)`
   font-size: 16px;
@@ -30,19 +31,19 @@ const Row = styled(Flex)`
 
 export default class OrganizationMemberRow extends React.PureComponent {
   static propTypes = {
+    routes: PropTypes.array,
     // XXX: Spreading this does not work :(
     member: SentryTypes.Member,
     onRemove: PropTypes.func.isRequired,
     onLeave: PropTypes.func.isRequired,
     onSendInvite: PropTypes.func.isRequired,
-    orgId: PropTypes.string.isRequired,
     orgName: PropTypes.string.isRequired,
     memberCanLeave: PropTypes.bool,
     requireLink: PropTypes.bool,
     canRemoveMembers: PropTypes.bool,
     canAddMembers: PropTypes.bool,
     currentUser: SentryTypes.User,
-    status: PropTypes.oneOf(['', 'loading', 'success', 'error'])
+    status: PropTypes.oneOf(['', 'loading', 'success', 'error']),
   };
 
   constructor(...args) {
@@ -78,15 +79,16 @@ export default class OrganizationMemberRow extends React.PureComponent {
 
   render() {
     let {
+      params,
+      routes,
       member,
-      orgId,
       orgName,
       status,
       requireLink,
       memberCanLeave,
       currentUser,
       canRemoveMembers,
-      canAddMembers
+      canAddMembers,
     } = this.props;
 
     let {id, flags, email, name, roleName, pending, user} = member;
@@ -100,131 +102,142 @@ export default class OrganizationMemberRow extends React.PureComponent {
     // member has a `user` property if they are registered with sentry
     // i.e. has accepted an invite to join org
     let has2fa = user && user.has2fa;
-    let detailsUrl = `/organizations/${orgId}/members/${id}/`;
+    let detailsUrl = recreateRoute(id, {routes, params});
     let isInviteSuccessful = status === 'success';
     let isInviting = status === 'loading';
 
     return (
       <Row align="center" py={1} key={id}>
         <Box pl={2}>
-          <Avatar
-            style={{width: 32, height: 32}}
-            user={
-              user
-                ? user
-                : {
-                    email
-                  }
-            }
-          />
+          <Avatar style={{width: 32, height: 32}} user={user ? user : {email}} />
         </Box>
+
         <Box pl={1} pr={2} flex="1">
           <h5 style={{margin: '0 0 3px'}}>
-            <UserName to={detailsUrl}>
-              {name}
-            </UserName>
+            <UserName to={detailsUrl}>{name}</UserName>
           </h5>
           <Email>{email}</Email>
         </Box>
-        <Box px={2} w={80} style={{textAlign: 'center'}}>
-          {needsSso || pending
-            ? <div>
-                <div>
-                  {pending
-                    ? <strong>{t('Invited')}</strong>
-                    : <strong>{t('Missing SSO Link')}</strong>}
-                </div>
 
-                {isInviting &&
-                  <div style={{padding: '4px 0 3px'}}><LoadingIndicator mini /></div>}
-                {isInviteSuccessful && <span>Sent!</span>}
-                {!isInviting &&
-                  !isInviteSuccessful &&
-                  canAddMembers &&
-                  (pending || needsSso) &&
+        <Box px={2} w={80} style={{textAlign: 'center'}}>
+          {needsSso || pending ? (
+            <div>
+              <div>
+                {pending ? (
+                  <strong>{t('Invited')}</strong>
+                ) : (
+                  <strong>{t('Missing SSO Link')}</strong>
+                )}
+              </div>
+
+              {isInviting && (
+                <div style={{padding: '4px 0 3px'}}>
+                  <LoadingIndicator mini />
+                </div>
+              )}
+              {isInviteSuccessful && <span>Sent!</span>}
+              {!isInviting &&
+                !isInviteSuccessful &&
+                canAddMembers &&
+                (pending || needsSso) && (
                   <Button
                     priority="primary"
                     size="xsmall"
                     onClick={this.handleSendInvite}
                     style={{
                       padding: '0 4px',
-                      marginTop: 2
-                    }}>
+                      marginTop: 2,
+                    }}
+                  >
                     {t('Resend invite')}
-                  </Button>}
-              </div>
-            : !has2fa
-                ? <span
-                    style={{color: '#B64236'}}
-                    className="icon-exclamation tip"
-                    title={t('Two-factor auth not enabled')}
-                  />
-                : <span style={{color: 'green'}} className="icon-check" />}
+                  </Button>
+                )}
+            </div>
+          ) : !has2fa ? (
+            <span
+              style={{color: '#B64236'}}
+              className="icon-exclamation tip"
+              title={t('Two-factor auth not enabled')}
+            />
+          ) : (
+            <span style={{color: 'green'}} className="icon-check" />
+          )}
         </Box>
-        <Box px={2} w={100}>{roleName}</Box>
 
-        {showRemoveButton || showLeaveButton
-          ? <Box px={2} w={120}>
-              {showRemoveButton &&
-                canRemoveMember &&
+        <Box px={2} w={100}>
+          {roleName}
+        </Box>
+
+        {showRemoveButton || showLeaveButton ? (
+          <Box px={2} w={120}>
+            {showRemoveButton &&
+              canRemoveMember && (
                 <Confirm
                   message={tct('Are you sure you want to remove [name] from [orgName]?', {
                     name,
-                    orgName
+                    orgName,
                   })}
                   onConfirm={this.handleRemove}
                   onSuccess={tct('Removed [name] from [orgName]', {
                     name,
-                    orgName
+                    orgName,
                   })}
                   onError={tct('Error removing [name] from [orgName]', {
                     name,
-                    orgName
-                  })}>
+                    orgName,
+                  })}
+                >
                   <Button priority="danger" size="small" busy={this.state.busy}>
                     <span className="icon icon-trash" /> {t('Remove')}
                   </Button>
-                </Confirm>}
+                </Confirm>
+              )}
 
-              {showRemoveButton &&
-                !canRemoveMember &&
+            {showRemoveButton &&
+              !canRemoveMember && (
                 <Button
                   disabled
                   size="small"
-                  title={t('You do not have access to remove member')}>
+                  title={t('You do not have access to remove member')}
+                >
                   <span className="icon icon-trash" /> {t('Remove')}
-                </Button>}
+                </Button>
+              )}
 
-              {showLeaveButton &&
-                memberCanLeave &&
+            {showLeaveButton &&
+              memberCanLeave && (
                 <Confirm
                   message={tct('Are you sure you want to leave [orgName]?', {
-                    orgName
+                    orgName,
                   })}
                   onConfirm={this.handleLeave}
                   onSuccess={tct('Left [orgName]', {
-                    orgName
+                    orgName,
                   })}
                   onError={tct('Error leaving [orgName]', {
-                    orgName
-                  })}>
+                    orgName,
+                  })}
+                >
                   <Button priority="danger" size="small" busy={this.state.busy}>
                     <span className="icon icon-exit" /> {t('Leave')}
                   </Button>
-                </Confirm>}
+                </Confirm>
+              )}
 
-              {showLeaveButton &&
-                !memberCanLeave &&
+            {showLeaveButton &&
+              !memberCanLeave && (
                 <Button
                   size="small"
                   disabled
                   title={t(
                     'You cannot leave the organization as you are the only owner.'
-                  )}>
+                  )}
+                >
                   <span className="icon icon-exit" /> {t('Leave')}
-                </Button>}
-            </Box>
-          : null}
+                </Button>
+              )}
+          </Box>
+        ) : null}
       </Row>
     );
   }

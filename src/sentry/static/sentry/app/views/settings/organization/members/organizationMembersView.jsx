@@ -1,23 +1,29 @@
-import {browserHistory} from 'react-router';
-import React from 'react';
 import {Flex, Box} from 'grid-emotion';
+import {browserHistory} from 'react-router';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 import {t, tct} from '../../../../locale';
 import ConfigStore from '../../../../stores/configStore';
 import IndicatorStore from '../../../../stores/indicatorStore';
 import Link from '../../../../components/link';
+import OrganizationAccessRequests from './organizationAccessRequests';
+import OrganizationMemberRow from './organizationMemberRow';
+import OrganizationSettingsView from '../../../organizationSettingsView';
 import Panel from '../../../../components/forms/next/styled/panel';
 import PanelBody from '../../../../components/forms/next/styled/panelBody';
 import PanelHeader from '../../../../components/forms/next/styled/panelHeader';
 import SentryTypes from '../../../../proptypes';
 import SettingsPageHeader from '../../components/settingsPageHeader';
-import OrganizationSettingsView from '../../../organizationSettingsView';
-import OrganizationMemberRow from './organizationMemberRow';
-import OrganizationAccessRequests from './organizationAccessRequests';
+import recreateRoute from '../../../../utils/recreateRoute';
 
 class OrganizationMembersView extends OrganizationSettingsView {
+  static propTypes = {
+    routes: PropTypes.array,
+  };
+
   static contextTypes = {
-    organization: SentryTypes.Organization
+    organization: SentryTypes.Organization,
   };
 
   // XXX(billy): setState causes re-render of the entire view...
@@ -28,7 +34,7 @@ class OrganizationMembersView extends OrganizationSettingsView {
       ...state,
       members: [],
       invited: new Map(),
-      accessRequestBusy: new Map()
+      accessRequestBusy: new Map(),
     };
   }
 
@@ -36,7 +42,7 @@ class OrganizationMembersView extends OrganizationSettingsView {
     return [
       ['members', `/organizations/${this.props.params.orgId}/members/`],
       ['authProvider', `/organizations/${this.props.params.orgId}/auth-provider/`],
-      ['requestList', `/organizations/${this.props.params.orgId}/access-requests/`]
+      ['requestList', `/organizations/${this.props.params.orgId}/access-requests/`],
     ];
   }
 
@@ -55,11 +61,11 @@ class OrganizationMembersView extends OrganizationSettingsView {
         data: {},
         success: data => {
           this.setState(state => ({
-            members: state.members.filter(({id: existingId}) => existingId !== id)
+            members: state.members.filter(({id: existingId}) => existingId !== id),
           }));
           resolve(data);
         },
-        error: err => reject(err)
+        error: err => reject(err),
       });
     });
   };
@@ -69,7 +75,7 @@ class OrganizationMembersView extends OrganizationSettingsView {
     let {orgId} = params || {};
 
     this.setState(state => ({
-      accessRequestBusy: state.accessRequestBusy.set(id, true)
+      accessRequestBusy: state.accessRequestBusy.set(id, true),
     }));
 
     return new Promise((resolve, reject) => {
@@ -78,15 +84,17 @@ class OrganizationMembersView extends OrganizationSettingsView {
         data: {isApproved},
         success: data => {
           this.setState(state => ({
-            requestList: state.requestList.filter(({id: existingId}) => existingId !== id)
+            requestList: state.requestList.filter(
+              ({id: existingId}) => existingId !== id
+            ),
           }));
           resolve(data);
         },
         error: err => reject(err),
         complete: () =>
           this.setState(state => ({
-            accessRequestBusy: state.accessRequestBusy.set(id, false)
-          }))
+            accessRequestBusy: state.accessRequestBusy.set(id, false),
+          })),
       });
     });
   };
@@ -104,7 +112,7 @@ class OrganizationMembersView extends OrganizationSettingsView {
         IndicatorStore.add(
           tct('Removed [name] from [orgName]', {
             name,
-            orgName
+            orgName,
           }),
           'success'
         ),
@@ -112,7 +120,7 @@ class OrganizationMembersView extends OrganizationSettingsView {
         IndicatorStore.add(
           tct('Error removing [name] from [orgName]', {
             name,
-            orgName
+            orgName,
           }),
           'error'
         )
@@ -127,14 +135,14 @@ class OrganizationMembersView extends OrganizationSettingsView {
       () =>
         IndicatorStore.add(
           tct('You left [orgName]', {
-            orgName
+            orgName,
           }),
           'success'
         ),
       () =>
         IndicatorStore.add(
           tct('Error leaving [orgName]', {
-            orgName
+            orgName,
           }),
           'error'
         )
@@ -143,7 +151,7 @@ class OrganizationMembersView extends OrganizationSettingsView {
 
   handleSendInvite = ({id}) => {
     this.setState(state => ({
-      invited: state.invited.set(id, 'loading')
+      invited: state.invited.set(id, 'loading'),
     }));
 
     this.api.request(`/organizations/${this.props.params.orgId}/members/${id}/`, {
@@ -151,20 +159,20 @@ class OrganizationMembersView extends OrganizationSettingsView {
       data: {reinvite: 1},
       success: data =>
         this.setState(state => ({
-          invited: state.invited.set(id, 'success')
+          invited: state.invited.set(id, 'success'),
         })),
       error: () => {
         this.setState(state => ({
-          invited: state.invited.set(id, null)
+          invited: state.invited.set(id, null),
         }));
         IndicatorStore.add(t('Error sending invite'), 'error');
-      }
+      },
     });
   };
 
   handleAddMember = () => {
     this.setState({
-      busy: true
+      busy: true,
     });
     this.api.request(`/organizations/${this.props.params.orgId}/members/`, {
       method: 'POST',
@@ -177,12 +185,12 @@ class OrganizationMembersView extends OrganizationSettingsView {
       },
       error: () => {
         this.setState({busy: false});
-      }
+      },
     });
   };
 
   renderBody() {
-    let {params} = this.props;
+    let {params, routes} = this.props;
     let {members, requestList} = this.state;
     let {organization} = this.context;
     let {orgId} = params || {};
@@ -199,7 +207,6 @@ class OrganizationMembersView extends OrganizationSettingsView {
 
     let action = (
       <Link
-        priority="primary"
         size="small"
         className="pull-right"
         disabled={!canAddMembers}
@@ -208,7 +215,8 @@ class OrganizationMembersView extends OrganizationSettingsView {
             ? t('You do not have enough permission to add new members')
             : undefined
         }
-        to={`/organization/${orgId}/members/invite/`}>
+        to={recreateRoute('new', {routes, params})}
+      >
         <span className="icon-plus" /> {t('Invite Member')}
       </Link>
     );
@@ -230,15 +238,24 @@ class OrganizationMembersView extends OrganizationSettingsView {
               <Box px={2} flex="1">
                 {t('Member')}
               </Box>
-              <Box px={2} w={80}>{t('Status')}</Box>
-              <Box px={2} w={100}>{t('Role')} </Box>
-              <Box px={2} w={120}>{t('Actions')}</Box>
+              <Box px={2} w={80}>
+                {t('Status')}
+              </Box>
+              <Box px={2} w={100}>
+                {t('Role')}
+              </Box>
+              <Box px={2} w={120}>
+                {t('Actions')}
+              </Box>
             </Flex>
           </PanelHeader>
+
           <PanelBody>
             {members.map(member => {
               return (
                 <OrganizationMemberRow
+                  routes={routes}
+                  params={params}
                   key={member.id}
                   member={member}
                   status={this.state.invited.get(member.id)}
