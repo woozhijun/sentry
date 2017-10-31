@@ -1,12 +1,17 @@
 import {Box, Flex} from 'grid-emotion';
 import {Link} from 'react-router';
+import {withTheme} from 'emotion-theming';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'react-emotion';
 
+import {searchIndex} from '../../data/forms/organizationGeneralSettings';
 import SettingsActivity from './components/settingsActivity';
 import SettingsBreadcrumb from './components/settingsBreadcrumb';
 import SettingsHeader from './components/settingsHeader';
+import replaceRouterParams from '../../utils/replaceRouterParams';
+
+const MIN_SEARCH_LENGTH = 2;
 
 let StyledWarning = styled.div`
   margin-bottom: 30px;
@@ -39,9 +44,37 @@ const Content = styled(Box)`
   flex: 1;
 `;
 
+const DropdownBox = withTheme(styled.div`
+  position: absolute;
+  width: 400px;
+  box-shadow: ${p => p.theme.dropShadowLight};
+`);
+
 class SettingsLayout extends React.Component {
   static propTypes = {
     renderNavigation: PropTypes.func,
+  };
+
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      searchResults: [],
+    };
+  }
+
+  handleSearch = e => {
+    let searchText = e.target.value;
+    // min search length
+    let isValidSearch = searchText.length > MIN_SEARCH_LENGTH;
+    let searchResults = !isValidSearch
+      ? []
+      : Object.keys(searchIndex)
+          .filter(index => index.indexOf(searchText) > -1)
+          .map(index => searchIndex[index]);
+
+    this.setState({
+      searchResults,
+    });
   };
 
   render() {
@@ -57,7 +90,35 @@ class SettingsLayout extends React.Component {
           <Box flex="1">
             <SettingsBreadcrumb params={params} routes={childRoutes} route={childRoute} />
           </Box>
-          <SettingsActivity />
+          <div>
+            <SettingsActivity />
+            <div style={{position: 'relative'}}>
+              <input type="text" onChange={this.handleSearch} />
+              {this.state.searchResults.length > 0 ? (
+                <DropdownBox>
+                  {this.state.searchResults.map(({route, groupTitle, field}) => (
+                    <Link
+                      key={field.name}
+                      to={`${replaceRouterParams(route, params)}#${encodeURIComponent(
+                        field.name
+                      )}`}
+                      onClick={() => this.setState({searchResults: []})}
+                    >
+                      <div style={{backgroundColor: 'white', padding: '18px'}}>
+                        <div style={{color: '#2f2837'}}>
+                          <span style={{color: '#2f2837'}}>{field.label}</span>
+                        </div>
+
+                        <div style={{fontSize: '0.8em', color: '#655674'}}>
+                          {field.help}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </DropdownBox>
+              ) : null}
+            </div>
+          </div>
         </SettingsHeader>
 
         <Flex>

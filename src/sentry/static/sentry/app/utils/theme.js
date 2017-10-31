@@ -74,4 +74,6 @@ const theme = {
   },
 };
 
+theme.textColor = theme.gray5;
+
 export default theme;

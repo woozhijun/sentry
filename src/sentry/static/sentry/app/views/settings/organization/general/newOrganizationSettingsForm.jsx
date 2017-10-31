@@ -11,12 +11,14 @@ import {t} from '../../../../locale';
 import ApiMixin from '../../../../mixins/apiMixin';
 import BooleanField from '../../../../components/forms/next/booleanField';
 import Form from '../../../../components/forms/next/form';
+import JsonForm from '../../../../components/forms/next/jsonForm';
 import Panel from '../../../../components/forms/next/styled/panel';
 import PanelBody from '../../../../components/forms/next/styled/panelBody';
 import PanelHeader from '../../../../components/forms/next/styled/panelHeader';
 import Select2Field from '../../../../components/forms/next/select2Field';
 import TextField from '../../../../components/forms/next/textField';
 import TextareaField from '../../../../components/forms/next/textareaField';
+import organizationSettingsFields from '../../../../data/forms/organizationGeneralSettings';
 
 const NewOrganizationSettingsForm = React.createClass({
   propTypes: {
@@ -66,6 +68,8 @@ const NewOrganizationSettingsForm = React.createClass({
         onSubmitError={() => addErrorMessage('Unable to save change', 3000)}
       >
         <Box>
+          <JsonForm forms={organizationSettingsFields} />
+
           <Panel>
             <PanelHeader>{t('General')}</PanelHeader>
 

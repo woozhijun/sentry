@@ -150,6 +150,7 @@ class FormField extends React.Component {
   };
 
   static contextTypes = {
+    location: PropTypes.object,
     form: PropTypes.object,
   };
 
@@ -177,12 +178,26 @@ class FormField extends React.Component {
   }
 
   getId() {
-    return `id-${this.props.name}`;
+    return this.props.name;
   }
 
   getModel() {
     return this.context.form;
   }
+
+  // Only works for styled inputs
+  handleInputMount = ref => {
+    if (ref && !this.input) {
+      let hash = this.context.location.hash;
+
+      if (!hash) return;
+      if (hash !== `#${this.props.name}`) return;
+
+      ref.focus();
+    }
+
+    this.input = ref;
+  };
 
   /**
    * Set field's hover state and propagate callbacks
@@ -257,6 +272,7 @@ class FormField extends React.Component {
 
               return (
                 <this.props.children
+                  innerRef={this.handleInputMount}
                   {...{
                     ...this.props,
                     id,
