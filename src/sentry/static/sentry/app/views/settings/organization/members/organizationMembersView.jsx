@@ -1,12 +1,16 @@
 import {browserHistory} from 'react-router';
 import React from 'react';
+import {Flex, Box} from 'grid-emotion';
 
 import {t, tct} from '../../../../locale';
-import Button from '../../../../components/buttons/button';
 import ConfigStore from '../../../../stores/configStore';
 import IndicatorStore from '../../../../stores/indicatorStore';
+import Link from '../../../../components/link';
+import Panel from '../../../../components/forms/next/styled/panel';
+import PanelBody from '../../../../components/forms/next/styled/panelBody';
+import PanelHeader from '../../../../components/forms/next/styled/panelHeader';
 import SentryTypes from '../../../../proptypes';
-import SpreadLayout from '../../../../components/spreadLayout';
+import SettingsPageHeader from '../../components/settingsPageHeader';
 import OrganizationSettingsView from '../../../organizationSettingsView';
 import OrganizationMemberRow from './organizationMemberRow';
 import OrganizationAccessRequests from './organizationAccessRequests';
@@ -193,25 +197,25 @@ class OrganizationMembersView extends OrganizationSettingsView {
     // Only admins/owners can remove members
     let requireLink = !!this.state.authProvider && this.state.authProvider.require_link;
 
+    let action = (
+      <Link
+        priority="primary"
+        size="small"
+        className="pull-right"
+        disabled={!canAddMembers}
+        title={
+          !canAddMembers
+            ? t('You do not have enough permission to add new members')
+            : undefined
+        }
+        to={`/organization/${orgId}/members/invite/`}>
+        <span className="icon-plus" /> {t('Invite Member')}
+      </Link>
+    );
+
     return (
       <div>
-
-        <SpreadLayout className="page-header">
-          <h3>Members</h3>
-          <Button
-            priority="primary"
-            size="small"
-            className="pull-right"
-            disabled={!canAddMembers}
-            title={
-              !canAddMembers
-                ? t('You do not have enough permission to add new members')
-                : undefined
-            }
-            to={`/organization/${orgId}/members/invite/`}>
-            <span className="icon-plus" /> {t('Invite Member')}
-          </Button>
-        </SpreadLayout>
+        <SettingsPageHeader label="Members" action={action} />
 
         <OrganizationAccessRequests
           onApprove={this.handleApprove}
@@ -220,48 +224,39 @@ class OrganizationMembersView extends OrganizationSettingsView {
           requestList={requestList}
         />
 
-        <div className="panel panel-default horizontal-scroll">
-          <table className="table member-list">
-            <colgroup>
-              <col width="45%" />
-              <col width="15%" />
-              <col width="15%" />
-              <col width="25%" />
-            </colgroup>
-
-            <thead>
-              <tr>
-                <th>{t('Member')}</th>
-                <th>&nbsp;</th>
-                <th className="squash">{t('Role')}</th>
-                <th className="squash">&nbsp;</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {members.map(member => {
-                return (
-                  <OrganizationMemberRow
-                    key={member.id}
-                    member={member}
-                    status={this.state.invited.get(member.id)}
-                    orgId={orgId}
-                    orgName={orgName}
-                    memberCanLeave={!isOnlyOwner}
-                    currentUser={currentUser}
-                    canRemoveMembers={canRemove}
-                    canAddMembers={canAddMembers}
-                    requireLink={requireLink}
-                    onSendInvite={this.handleSendInvite}
-                    onRemove={this.handleRemove}
-                    onLeave={this.handleLeave}
-                  />
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
+        <Panel>
+          <PanelHeader disablePadding={true}>
+            <Flex align="center">
+              <Box px={2} flex="1">
+                {t('Member')}
+              </Box>
+              <Box px={2} w={80}>{t('Status')}</Box>
+              <Box px={2} w={100}>{t('Role')} </Box>
+              <Box px={2} w={120}>{t('Actions')}</Box>
+            </Flex>
+          </PanelHeader>
+          <PanelBody>
+            {members.map(member => {
+              return (
+                <OrganizationMemberRow
+                  key={member.id}
+                  member={member}
+                  status={this.state.invited.get(member.id)}
+                  orgId={orgId}
+                  orgName={orgName}
+                  memberCanLeave={!isOnlyOwner}
+                  currentUser={currentUser}
+                  canRemoveMembers={canRemove}
+                  canAddMembers={canAddMembers}
+                  requireLink={requireLink}
+                  onSendInvite={this.handleSendInvite}
+                  onRemove={this.handleRemove}
+                  onLeave={this.handleLeave}
+                />
+              );
+            })}
+          </PanelBody>
+        </Panel>
       </div>
     );
   }
