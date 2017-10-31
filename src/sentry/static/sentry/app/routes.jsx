@@ -158,12 +158,10 @@ const orgSettingsRoutes = [
     component={errorHandler(OrganizationIntegrations)}
   />,
 
-  <Route
-    key="members"
-    path="members/"
-    name="Members"
-    component={errorHandler(OrganizationMembersView)}
-  />,
+  <Route key="members" path="members/" name="Members">
+    <IndexRoute component={errorHandler(OrganizationMembersView)} />
+    <Route path="new/" component={errorHandler(InviteMember)} />,
+  </Route>,
 
   <Route
     key="rate-limits"
@@ -171,8 +169,6 @@ const orgSettingsRoutes = [
     name="Rate Limits"
     component={errorHandler(OrganizationRateLimits)}
   />,
-
-  <Route key="members/new/" path="members/new/" component={errorHandler(InviteMember)} />,
 
   <Route
     key="repos"
