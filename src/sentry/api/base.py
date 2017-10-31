@@ -18,7 +18,7 @@ from rest_framework.views import APIView
 
 from sentry import tsdb
 from sentry.app import raven
-from sentry.models import ApiKey, AuditLogEntry
+from sentry.models import ApiKey, AuditLogEntry, Environment
 from sentry.utils.cursors import Cursor
 from sentry.utils.dates import to_datetime
 from sentry.utils.http import absolute_uri, is_valid_origin
@@ -247,7 +247,7 @@ class Endpoint(APIView):
 
 
 class StatsMixin(object):
-    def _parse_args(self, request):
+    def _parse_args(self, request, project=None):
         resolution = request.GET.get('resolution')
         if resolution:
             resolution = self._parse_resolution(resolution)
@@ -266,11 +266,22 @@ class StatsMixin(object):
         else:
             start = end - timedelta(days=1, seconds=-1)
 
-        return {
+        result = {
             'start': start,
             'end': end,
             'rollup': resolution,
         }
+
+        environment = request.GET.get('environment')
+        if environment is not None:
+            assert project is not None
+            # TODO(tkaemming): this query is bad
+            result['environment_id'] = Environment.objects.filter(
+                projects=project,
+                name=environment,
+            ).values_list('id', flat=True)[0]
+
+        return result
 
     def _parse_resolution(self, value):
         if value.endswith('h'):

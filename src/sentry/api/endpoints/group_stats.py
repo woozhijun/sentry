@@ -10,7 +10,10 @@ from sentry.api.bases.group import GroupEndpoint
 class GroupStatsEndpoint(GroupEndpoint, StatsMixin):
     def get(self, request, group):
         data = tsdb.get_range(
-            model=tsdb.models.group, keys=[group.id], **self._parse_args(request)
+            model=tsdb.models.group, keys=[group.id], **self._parse_args(
+                request,
+                project=group.project,
+            )
         )[group.id]
 
         return Response(data)
