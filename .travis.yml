@@ -1,6 +1,6 @@
 filter_secrets: false
 sudo: false
-dist: precise
+dist: trusty
 language: python
 rvm:
   - 2.2
@@ -19,6 +19,7 @@ addons:
     packages:
       - g++-4.8
       - libxmlsec1-dev
+  chrome: stable
 env:
   global:
     - NODE_ENV=production
@@ -31,6 +32,7 @@ env:
 before_install:
   - bin/update-zeus-job in_progress unknown || echo "failed to report build to Zeus; continuing"
 install:
+  - 'export PATH=$PATH:~/.bin'
   - nvm install $TRAVIS_NODE_VERSION
   - npm install -g yarn@0.27.5
   - make travis-install-$TEST_SUITE
