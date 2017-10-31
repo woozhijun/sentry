@@ -1,23 +1,27 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'react-emotion';
 
 class SettingsPageHeading extends React.Component {
+  static propTypes = {
+    label: PropTypes.string,
+    action: PropTypes.node,
+  };
+
   render() {
     // Todo(ckj) support tabs
     return (
       <Wrapper>
-        {this.props.label &&
-          <div style={{flex: '1'}}><Label>{this.props.label}</Label></div>}
+        {this.props.label && (
+          <div style={{flex: '1'}}>
+            <Label>{this.props.label}</Label>
+          </div>
+        )}
         {this.props.action && <div>{this.props.action}</div>}
       </Wrapper>
     );
   }
 }
-
-SettingsPageHeading.propTypes = {
-  label: React.PropTypes.string,
-  action: React.PropTypes.Component
-};
 
 const Wrapper = styled.div`
   display: flex;
