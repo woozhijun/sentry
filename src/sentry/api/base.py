@@ -275,11 +275,10 @@ class StatsMixin(object):
         environment = request.GET.get('environment')
         if environment is not None:
             assert project is not None
-            # TODO(tkaemming): this query is bad
-            result['environment_id'] = Environment.objects.filter(
-                projects=project,
+            result['environment_id'] = Environment.get(
+                project=project,
                 name=environment,
-            ).values_list('id', flat=True)[0]
+            ).id
 
         return result
 
