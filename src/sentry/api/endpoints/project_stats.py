@@ -69,7 +69,10 @@ class ProjectStatsEndpoint(ProjectEndpoint, StatsMixin):
                 raise ValueError('Invalid stat: %s' % stat)
 
         data = tsdb.get_range(
-            model=stat_model, keys=[project.id], **self._parse_args(request)
+            model=stat_model, keys=[project.id], **self._parse_args(
+                request,
+                organization_id=project.organization_id,
+            )
         )[project.id]
 
         return Response(data)
