@@ -499,6 +499,7 @@ class StoreView(APIView):
             helper.ensure_does_not_have_ip(data)
 
         # mutates data (strips a lot of context if not queued)
+        data['key_id'] = key.id
         helper.insert_data_to_database(data, start_time=start_time)
 
         cache.set(cache_key, '', 60 * 5)

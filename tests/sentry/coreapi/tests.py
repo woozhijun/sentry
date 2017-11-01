@@ -574,6 +574,12 @@ class ValidateDataTest(BaseAPITest):
             'message': 'foo is bar'
         }
 
+    def test_does_not_strip_key_id(self):
+        data = self.helper.validate_data(self.project, {
+            'key_id': 12345,
+        })
+        assert data['key_id'] == 12345
+
 
 class SafelyLoadJSONStringTest(BaseAPITest):
     def test_valid_payload(self):
