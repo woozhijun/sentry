@@ -36,4 +36,7 @@ class OrganizationAuthProviderDetailsEndpoint(OrganizationEndpoint):
             # configured, make sure we respond with a 20x
             return Response(status=status.HTTP_204_NO_CONTENT)
 
+        # cache organization so that we don't need to query for org when serializing
+        auth_provider._organization_cache = organization
+
         return Response(serialize(auth_provider, request.user))

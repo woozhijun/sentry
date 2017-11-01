@@ -103,8 +103,7 @@ class OrganizationAdminPermission(OrganizationPermission):
 
 class OrganizationAuthProviderPermission(OrganizationPermission):
     scope_map = {
-        # Required for members view
-        'GET': ['member:read', 'org:read'],
+        'GET': ['org:read'],
         'POST': ['org:admin'],
         'PUT': ['org:admin'],
         'DELETE': ['org:admin'],
