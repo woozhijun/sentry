@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
+import DropdownMenu from './dropdownMenu';
+
 class DropdownReact extends React.Component {
   static propTypes = {
     title: PropTypes.node,
@@ -55,10 +57,6 @@ class DropdownReact extends React.Component {
     };
   }
 
-  componentWillUnmount() {
-    document.removeEventListener('click', this.checkClickOutside, true);
-  }
-
   // Gets open state from props or local state when appropriate
   isOpen = () => {
     let {isOpen} = this.props;
@@ -66,21 +64,15 @@ class DropdownReact extends React.Component {
     return (isControlled && isOpen) || this.state.isOpen;
   };
 
-  // Checks if click happens inside of dropdown menu (or its button)
-  // Closes dropdownmenu if it is "outside"
-  checkClickOutside = e => {
+  // Callback function from <DropdownMenu> to see if we should close menu
+  shouldIgnoreClickOutside = e => {
     let {shouldIgnoreClickOutside} = this.props;
+    if (this.dropdownActor.contains(e.target)) return true;
+    if (typeof shouldIgnoreClickOutside === 'function') {
+      return shouldIgnoreClickOutside(e);
+    }
 
-    if (!this.dropdownMenu) return;
-    // Dropdown menu itself
-    if (this.dropdownMenu.contains(e.target)) return;
-    // Button that controls visibility of dropdown menu
-    if (this.dropdownActor.contains(e.target)) return;
-
-    if (typeof shouldIgnoreClickOutside === 'function' && shouldIgnoreClickOutside(e))
-      return;
-
-    this.handleClose(e);
+    return false;
   };
 
   // Opens dropdown menu
@@ -114,30 +106,12 @@ class DropdownReact extends React.Component {
   // When dropdown menu is displayed and mounted to DOM,
   // bind a click handler to `document` to listen for clicks outside of
   // this component and close menu if so
-  handleMenuMount = ref => {
-    this.dropdownMenu = ref;
-
-    if (this.dropdownMenu) {
-      // 3rd arg = useCapture = so event capturing vs event bubbling
-      document.addEventListener('click', this.checkClickOutside, true);
-    } else {
-      document.removeEventListener('click', this.checkClickOutside, true);
-    }
-  };
-
   handleToggle = e => {
     if (this.isOpen()) {
       this.handleClose(e);
     } else {
       this.handleOpen(e);
     }
-  };
-
-  // Control whether we should hide dropdown menu when it is clicked
-  handleDropdownMenuClick = e => {
-    if (this.props.keepMenuOpen) return;
-
-    this.handleClose(e);
   };
 
   render() {
@@ -150,6 +124,7 @@ class DropdownReact extends React.Component {
       menuClasses,
       className,
       alwaysRenderMenu,
+      keepMenuOpen,
       topLevelClasses,
     } = this.props;
 
@@ -183,15 +158,18 @@ class DropdownReact extends React.Component {
             {caret && <i className="icon-arrow-down" />}
           </div>
         </a>
-        {(shouldShowDropdown || alwaysRenderMenu) && (
-          <ul
-            ref={this.handleMenuMount}
-            onClick={this.handleDropdownMenuClick}
-            className={classNames(menuClasses, 'dropdown-menu')}
-          >
-            {children}
-          </ul>
-        )}
+        <DropdownMenu
+          visible={shouldShowDropdown}
+          keepMenuOpen={keepMenuOpen}
+          alwaysRenderMenu={alwaysRenderMenu}
+          shouldIgnoreClickOutside={this.shouldIgnoreClickOutside}
+          onClose={this.handleClose}
+          renderComponent={() => (
+            <ul className={classNames(menuClasses, 'dropdown-menu')} />
+          )}
+        >
+          {children}
+        </DropdownMenu>
       </span>
     );
   }

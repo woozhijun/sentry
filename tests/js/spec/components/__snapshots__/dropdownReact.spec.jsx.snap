@@ -19,6 +19,20 @@ exports[`DropdownReact renders and anchors to left by default 1`] = `
       />
     </div>
   </a>
+  <DropdownReact
+    keepMenuOpen={false}
+    onClose={[Function]}
+    renderComponent={[Function]}
+    shouldIgnoreClickOutside={[Function]}
+    visible={false}
+  >
+    <div>
+      1
+    </div>
+    <div>
+      2
+    </div>
+  </DropdownReact>
 </span>
 `;
 
@@ -41,5 +55,19 @@ exports[`DropdownReact renders and anchors to right 1`] = `
       />
     </div>
   </a>
+  <DropdownReact
+    keepMenuOpen={false}
+    onClose={[Function]}
+    renderComponent={[Function]}
+    shouldIgnoreClickOutside={[Function]}
+    visible={false}
+  >
+    <div>
+      1
+    </div>
+    <div>
+      2
+    </div>
+  </DropdownReact>
 </span>
 `;
