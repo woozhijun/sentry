@@ -15,6 +15,7 @@ from sentry.api.serializers import serialize
 from sentry.api.serializers.models.plugin import PluginSerializer
 from sentry.models import (
     Activity,
+    Environment,
     Group,
     GroupHash,
     GroupSeen,
@@ -187,6 +188,14 @@ class GroupDetailsEndpoint(GroupEndpoint):
 
         action_list = self._get_actions(request, group)
 
+        environment = request.GET.get('environment')
+        range_kwargs = {}
+        if environment is not None:
+            range_kwargs['environment'] = Environment.get_for_organization_id(
+                group.project.organization_id,
+                environment,
+            )
+
         now = timezone.now()
         hourly_stats = tsdb.rollup(
             tsdb.get_range(
@@ -194,6 +203,7 @@ class GroupDetailsEndpoint(GroupEndpoint):
                 keys=[group.id],
                 end=now,
                 start=now - timedelta(days=1),
+                **range_kwargs
             ), 3600
         )[group.id]
         daily_stats = tsdb.rollup(
@@ -202,6 +212,7 @@ class GroupDetailsEndpoint(GroupEndpoint):
                 keys=[group.id],
                 end=now,
                 start=now - timedelta(days=30),
+                **range_kwargs
             ), 3600 * 24
         )[group.id]
 
