@@ -12,7 +12,7 @@ class GroupStatsEndpoint(GroupEndpoint, StatsMixin):
         data = tsdb.get_range(
             model=tsdb.models.group, keys=[group.id], **self._parse_args(
                 request,
-                project=group.project,
+                organization_id=group.project.organization_id,
             )
         )[group.id]
 

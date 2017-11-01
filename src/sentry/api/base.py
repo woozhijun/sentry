@@ -247,7 +247,7 @@ class Endpoint(APIView):
 
 
 class StatsMixin(object):
-    def _parse_args(self, request, project=None):
+    def _parse_args(self, request, organization_id=None):
         resolution = request.GET.get('resolution')
         if resolution:
             resolution = self._parse_resolution(resolution)
@@ -274,10 +274,10 @@ class StatsMixin(object):
 
         environment = request.GET.get('environment')
         if environment is not None:
-            assert project is not None
-            result['environment_id'] = Environment.get(
-                project=project,
+            assert organization_id is not None
+            result['environment_id'] = Environment.get_for_organization_id(
                 name=environment,
+                organization_id=organization_id,
             ).id
 
         return result

@@ -48,17 +48,16 @@ class Environment(Model):
         return 'env:2:%s:%s' % (organization_id, md5_text(name).hexdigest())
 
     @classmethod
-    def get(cls, project, name):
+    def get_for_organization_id(cls, organization_id, name):
         name = name or ''
 
-        cache_key = cls.get_cache_key(project.organization_id, name)
+        cache_key = cls.get_cache_key(organization_id, name)
 
         env = cache.get(cache_key)
         if env is None:
             env = cls.objects.get(
                 name=name,
-                organization_id=project.organization_id,
-                projects=project,
+                organization_id=organization_id,
             )
             cache.set(cache_key, env, 3600)
 
