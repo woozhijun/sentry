@@ -35,668 +35,991 @@ exports[`OrganizationMembersView No Require Link does not have 2fa warning if us
     }
   }
   requireLink={false}
+  routes={Array []}
   status=""
 >
   <DocumentTitle
     title="Organization Name Members"
   >
     <div>
-      <SpreadLayout
-        center={true}
-        className="page-header"
-        responsive={false}
-      >
-        <div
-          className="spread-layout page-header center"
-        >
-          <h3>
-            Members
-          </h3>
-          <Button
+      <SettingsPageHeading
+        action={
+          <Link
             className="pull-right"
             disabled={false}
-            priority="primary"
             size="small"
-            to="/organization/org-id/members/invite/"
+            title={undefined}
+            to="new"
           >
-            <Link
-              className="pull-right button button-primary button-sm"
-              disabled={false}
-              onClick={[Function]}
-              onlyActiveOnIndex={false}
-              role="button"
-              style={Object {}}
-              to="/organization/org-id/members/invite/"
+            <span
+              className="icon-plus"
+            />
+             
+            Invite Member
+          </Link>
+        }
+        label="Members"
+      >
+        <Styled(div)>
+          <div
+            className="css-1ehz5tx"
+          >
+            <div
+              style={
+                Object {
+                  "flex": "1",
+                }
+              }
             >
-              <a
-                className="pull-right button button-primary button-sm"
-                disabled={false}
-                onClick={[Function]}
-                role="button"
-                style={Object {}}
-              >
-                <FlowLayout
-                  truncate={false}
+              <Styled(div)>
+                <div
+                  className="css-1nf035k"
                 >
-                  <div
-                    className="flow-layout"
-                  >
-                    <span
-                      className="button-label"
-                    >
-                      <span
-                        className="icon-plus"
-                      />
-                       
-                      Invite Member
-                    </span>
-                  </div>
-                </FlowLayout>
-              </a>
-            </Link>
-          </Button>
-        </div>
-      </SpreadLayout>
+                  Members
+                </div>
+              </Styled(div)>
+            </div>
+            <div>
+              <Link
+                className="pull-right"
+                disabled={false}
+                size="small"
+                to="new"
+              >
+                <a
+                  className="pull-right"
+                  disabled={false}
+                  href="new"
+                  size="small"
+                >
+                  <span
+                    className="icon-plus"
+                  />
+                   
+                  Invite Member
+                </a>
+              </Link>
+            </div>
+          </div>
+        </Styled(div)>
+      </SettingsPageHeading>
       <OrganizationAccessRequests
         accessRequestBusy={Array []}
         onApprove={[Function]}
         onDeny={[Function]}
         requestList={Array []}
       />
-      <div
-        className="panel panel-default horizontal-scroll"
-      >
-        <table
-          className="table member-list"
+      <Styled(div)>
+        <div
+          className="css-1ux7ps4"
         >
-          <colgroup>
-            <col
-              width="45%"
-            />
-            <col
-              width="15%"
-            />
-            <col
-              width="15%"
-            />
-            <col
-              width="25%"
-            />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>
-                Member
-              </th>
-              <th>
-                 
-              </th>
-              <th
-                className="squash"
+          <PanelHeader
+            disablePadding={true}
+          >
+            <Styled(div)
+              disablePadding={true}
+            >
+              <div
+                className="css-onhvcy"
               >
-                Role
-              </th>
-              <th
-                className="squash"
-              >
-                 
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <OrganizationMemberRow
-              canAddMembers={true}
-              canRemoveMembers={false}
-              currentUser={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
+                <Styled(div)>
+                  <div
+                    className="css-1203bpz"
+                  >
+                    <Flex
+                      align="center"
+                    >
+                      <Base
+                        align="center"
+                        className="css-5ipae5"
+                      >
+                        <div
+                          className="css-5ipae5"
+                          is={null}
+                        >
+                          <Box
+                            flex="1"
+                            px={2}
+                          >
+                            <Base
+                              className="css-pcjga5"
+                              flex="1"
+                              px={2}
+                            >
+                              <div
+                                className="css-pcjga5"
+                                is={null}
+                              >
+                                Member
+                              </div>
+                            </Base>
+                          </Box>
+                          <Box
+                            px={2}
+                            w={80}
+                          >
+                            <Base
+                              className="css-148weta"
+                              px={2}
+                              w={80}
+                            >
+                              <div
+                                className="css-148weta"
+                                is={null}
+                              >
+                                Status
+                              </div>
+                            </Base>
+                          </Box>
+                          <Box
+                            px={2}
+                            w={100}
+                          >
+                            <Base
+                              className="css-j9rhnd"
+                              px={2}
+                              w={100}
+                            >
+                              <div
+                                className="css-j9rhnd"
+                                is={null}
+                              >
+                                Role
+                              </div>
+                            </Base>
+                          </Box>
+                          <Box
+                            px={2}
+                            w={120}
+                          >
+                            <Base
+                              className="css-146bky9"
+                              px={2}
+                              w={120}
+                            >
+                              <div
+                                className="css-146bky9"
+                                is={null}
+                              >
+                                Actions
+                              </div>
+                            </Base>
+                          </Box>
+                        </div>
+                      </Base>
+                    </Flex>
+                  </div>
+                </Styled(div)>
+              </div>
+            </Styled(div)>
+          </PanelHeader>
+          <Styled(div)>
+            <div
+              className="css-0"
+            >
+              <OrganizationMemberRow
+                canAddMembers={true}
+                canRemoveMembers={false}
+                currentUser={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
                     "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
                 }
-              }
-              member={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "1",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry1@test.com",
-                    "has2fa": false,
+                member={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
                     "id": "1",
-                    "name": "Sentry 1 Name",
-                    "username": "Sentry 1 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry1@test.com",
+                      "has2fa": false,
+                      "id": "1",
+                      "name": "Sentry 1 Name",
+                      "username": "Sentry 1 Username",
+                    },
+                  }
                 }
-              }
-              memberCanLeave={false}
-              onLeave={[Function]}
-              onRemove={[Function]}
-              onSendInvite={[Function]}
-              orgId="org-id"
-              orgName="Organization Name"
-              requireLink={false}
-            >
-              <tr>
-                <td
-                  className="table-user-info"
+                memberCanLeave={false}
+                onLeave={[Function]}
+                onRemove={[Function]}
+                onSendInvite={[Function]}
+                orgId="org-id"
+                orgName="Organization Name"
+                params={
+                  Object {
+                    "orgId": "org-id",
+                  }
+                }
+                requireLink={false}
+                routes={Array []}
+              >
+                <Styled(Base)
+                  align="center"
+                  py={1}
                 >
-                  <Avatar
-                    className="avatar"
-                    gravatar={true}
-                    size={64}
-                    user={
-                      Object {
-                        "email": "sentry1@test.com",
-                        "has2fa": false,
-                        "id": "1",
-                        "name": "Sentry 1 Name",
-                        "username": "Sentry 1 Username",
-                      }
-                    }
+                  <Base
+                    align="center"
+                    className="css-1c22h1f"
+                    py={1}
                   >
-                    <span
-                      className="avatar"
+                    <div
+                      className="css-1c22h1f"
+                      is={null}
                     >
-                      <img
-                        onError={[Function]}
-                        onLoad={[Function]}
-                        src="undefined/avatar/c68ca8af553301ae11c5607b8bb672b4?s=64&d=blank"
-                      />
-                    </span>
-                  </Avatar>
-                  <h5>
-                    <Link
-                      to="/organizations/org-id/members/1/"
-                    >
-                      <a
-                        href="/organizations/org-id/members/1/"
-                      />
-                    </Link>
-                  </h5>
-                  <br />
-                </td>
-                <td
-                  className="status"
-                >
-                  <span
-                    className="icon-exclamation tip"
-                    style={
-                      Object {
-                        "color": "#B64236",
-                      }
-                    }
-                    title="Two-factor auth not enabled"
-                  />
-                </td>
-                <td
-                  className="squash"
-                />
-                <td
-                  className="align-right squash"
-                >
-                  <Button
-                    disabled={false}
-                    size="small"
-                    style={
-                      Object {
-                        "marginRight": 4,
-                      }
-                    }
-                    to="/organizations/org-id/members/1/"
-                  >
-                    <Link
-                      className="button button-default button-sm"
-                      disabled={false}
-                      onClick={[Function]}
-                      onlyActiveOnIndex={false}
-                      role="button"
-                      style={
-                        Object {
-                          "marginRight": 4,
-                        }
-                      }
-                      to="/organizations/org-id/members/1/"
-                    >
-                      <a
-                        className="button button-default button-sm"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginRight": 4,
-                          }
-                        }
+                      <Box
+                        pl={2}
                       >
-                        <FlowLayout
-                          truncate={false}
+                        <Base
+                          className="css-wwmrss"
+                          pl={2}
                         >
                           <div
-                            className="flow-layout"
+                            className="css-wwmrss"
+                            is={null}
                           >
-                            <span
-                              className="button-label"
+                            <Avatar
+                              className="avatar"
+                              gravatar={true}
+                              size={64}
+                              style={
+                                Object {
+                                  "height": 32,
+                                  "width": 32,
+                                }
+                              }
+                              user={
+                                Object {
+                                  "email": "sentry1@test.com",
+                                  "has2fa": false,
+                                  "id": "1",
+                                  "name": "Sentry 1 Name",
+                                  "username": "Sentry 1 Username",
+                                }
+                              }
                             >
-                              Details
-                            </span>
+                              <span
+                                className="avatar"
+                                style={
+                                  Object {
+                                    "height": 32,
+                                    "width": 32,
+                                  }
+                                }
+                              >
+                                <img
+                                  onError={[Function]}
+                                  onLoad={[Function]}
+                                  src="undefined/avatar/c68ca8af553301ae11c5607b8bb672b4?s=64&d=blank"
+                                />
+                              </span>
+                            </Avatar>
                           </div>
-                        </FlowLayout>
-                      </a>
-                    </Link>
-                  </Button>
-                  <Button
-                    disabled={true}
-                    size="small"
-                    title="You cannot leave the organization as you are the only owner."
-                  >
-                    <button
-                      className="button tip button-default button-sm button-disabled"
-                      disabled={true}
-                      onClick={[Function]}
-                      role="button"
-                    >
-                      <FlowLayout
-                        truncate={false}
+                        </Base>
+                      </Box>
+                      <Box
+                        flex="1"
+                        pl={1}
+                        pr={2}
                       >
-                        <div
-                          className="flow-layout"
-                        >
-                          <span
-                            className="button-label"
-                          >
-                            <span
-                              className="icon icon-exit"
-                            />
-                             
-                            Leave
-                          </span>
-                        </div>
-                      </FlowLayout>
-                    </button>
-                  </Button>
-                </td>
-              </tr>
-            </OrganizationMemberRow>
-            <OrganizationMemberRow
-              canAddMembers={true}
-              canRemoveMembers={false}
-              currentUser={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
-                    "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
-                }
-              }
-              member={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
-                    "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
-                }
-              }
-              memberCanLeave={false}
-              onLeave={[Function]}
-              onRemove={[Function]}
-              onSendInvite={[Function]}
-              orgId="org-id"
-              orgName="Organization Name"
-              requireLink={false}
-            >
-              <tr>
-                <td
-                  className="table-user-info"
-                >
-                  <Avatar
-                    className="avatar"
-                    gravatar={true}
-                    size={64}
-                    user={
-                      Object {
-                        "email": "sentry2@test.com",
-                        "has2fa": true,
-                        "id": "2",
-                        "name": "Sentry 2 Name",
-                        "username": "Sentry 2 Username",
-                      }
-                    }
-                  >
-                    <span
-                      className="avatar"
-                    >
-                      <img
-                        onError={[Function]}
-                        onLoad={[Function]}
-                        src="undefined/avatar/4eca4e68b0a900e542fdf17e57d04dcd?s=64&d=blank"
-                      />
-                    </span>
-                  </Avatar>
-                  <h5>
-                    <Link
-                      to="/organizations/org-id/members/2/"
-                    >
-                      <a
-                        href="/organizations/org-id/members/2/"
-                      />
-                    </Link>
-                  </h5>
-                  <br />
-                </td>
-                <td
-                  className="status"
-                />
-                <td
-                  className="squash"
-                />
-                <td
-                  className="align-right squash"
-                >
-                  <Button
-                    disabled={false}
-                    size="small"
-                    style={
-                      Object {
-                        "marginRight": 4,
-                      }
-                    }
-                    to="/organizations/org-id/members/2/"
-                  >
-                    <Link
-                      className="button button-default button-sm"
-                      disabled={false}
-                      onClick={[Function]}
-                      onlyActiveOnIndex={false}
-                      role="button"
-                      style={
-                        Object {
-                          "marginRight": 4,
-                        }
-                      }
-                      to="/organizations/org-id/members/2/"
-                    >
-                      <a
-                        className="button button-default button-sm"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginRight": 4,
-                          }
-                        }
-                      >
-                        <FlowLayout
-                          truncate={false}
+                        <Base
+                          className="css-1gj33kt"
+                          flex="1"
+                          pl={1}
+                          pr={2}
                         >
                           <div
-                            className="flow-layout"
+                            className="css-1gj33kt"
+                            is={null}
                           >
-                            <span
-                              className="button-label"
+                            <h5
+                              style={
+                                Object {
+                                  "margin": "0 0 3px",
+                                }
+                              }
                             >
-                              Details
-                            </span>
+                              <Styled(Link)
+                                to="1"
+                              >
+                                <Link
+                                  className="css-6xix1i"
+                                  to="1"
+                                >
+                                  <a
+                                    className="css-6xix1i"
+                                    href="1"
+                                  />
+                                </Link>
+                              </Styled(Link)>
+                            </h5>
+                            <Styled(div)>
+                              <div
+                                className="css-13cuz3w"
+                              />
+                            </Styled(div)>
                           </div>
-                        </FlowLayout>
-                      </a>
-                    </Link>
-                  </Button>
-                  <Button
-                    disabled={true}
-                    size="small"
-                    title="You cannot leave the organization as you are the only owner."
-                  >
-                    <button
-                      className="button tip button-default button-sm button-disabled"
-                      disabled={true}
-                      onClick={[Function]}
-                      role="button"
-                    >
-                      <FlowLayout
-                        truncate={false}
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        style={
+                          Object {
+                            "textAlign": "center",
+                          }
+                        }
+                        w={80}
                       >
-                        <div
-                          className="flow-layout"
+                        <Base
+                          className="css-148weta"
+                          px={2}
+                          style={
+                            Object {
+                              "textAlign": "center",
+                            }
+                          }
+                          w={80}
                         >
-                          <span
-                            className="button-label"
+                          <div
+                            className="css-148weta"
+                            is={null}
+                            style={
+                              Object {
+                                "textAlign": "center",
+                              }
+                            }
                           >
                             <span
-                              className="icon icon-exit"
+                              className="icon-exclamation tip"
+                              style={
+                                Object {
+                                  "color": "#B64236",
+                                }
+                              }
+                              title="Two-factor auth not enabled"
                             />
-                             
-                            Leave
-                          </span>
-                        </div>
-                      </FlowLayout>
-                    </button>
-                  </Button>
-                </td>
-              </tr>
-            </OrganizationMemberRow>
-            <OrganizationMemberRow
-              canAddMembers={true}
-              canRemoveMembers={false}
-              currentUser={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={100}
+                      >
+                        <Base
+                          className="css-j9rhnd"
+                          px={2}
+                          w={100}
+                        >
+                          <div
+                            className="css-j9rhnd"
+                            is={null}
+                          />
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={120}
+                      >
+                        <Base
+                          className="css-146bky9"
+                          px={2}
+                          w={120}
+                        >
+                          <div
+                            className="css-146bky9"
+                            is={null}
+                          >
+                            <Button
+                              disabled={true}
+                              size="small"
+                              title="You cannot leave the organization as you are the only owner."
+                            >
+                              <button
+                                className="button tip button-default button-sm button-disabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                role="button"
+                              >
+                                <FlowLayout
+                                  truncate={false}
+                                >
+                                  <div
+                                    className="flow-layout"
+                                  >
+                                    <span
+                                      className="button-label"
+                                    >
+                                      <span
+                                        className="icon icon-exit"
+                                      />
+                                       
+                                      Leave
+                                    </span>
+                                  </div>
+                                </FlowLayout>
+                              </button>
+                            </Button>
+                          </div>
+                        </Base>
+                      </Box>
+                    </div>
+                  </Base>
+                </Styled(Base)>
+              </OrganizationMemberRow>
+              <OrganizationMemberRow
+                canAddMembers={true}
+                canRemoveMembers={false}
+                currentUser={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
                     "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
                 }
-              }
-              member={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": true,
-                  },
-                  "id": "3",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry3@test.com",
-                    "has2fa": true,
+                member={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
+                    "id": "2",
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
+                }
+                memberCanLeave={false}
+                onLeave={[Function]}
+                onRemove={[Function]}
+                onSendInvite={[Function]}
+                orgId="org-id"
+                orgName="Organization Name"
+                params={
+                  Object {
+                    "orgId": "org-id",
+                  }
+                }
+                requireLink={false}
+                routes={Array []}
+              >
+                <Styled(Base)
+                  align="center"
+                  py={1}
+                >
+                  <Base
+                    align="center"
+                    className="css-1c22h1f"
+                    py={1}
+                  >
+                    <div
+                      className="css-1c22h1f"
+                      is={null}
+                    >
+                      <Box
+                        pl={2}
+                      >
+                        <Base
+                          className="css-wwmrss"
+                          pl={2}
+                        >
+                          <div
+                            className="css-wwmrss"
+                            is={null}
+                          >
+                            <Avatar
+                              className="avatar"
+                              gravatar={true}
+                              size={64}
+                              style={
+                                Object {
+                                  "height": 32,
+                                  "width": 32,
+                                }
+                              }
+                              user={
+                                Object {
+                                  "email": "sentry2@test.com",
+                                  "has2fa": true,
+                                  "id": "2",
+                                  "name": "Sentry 2 Name",
+                                  "username": "Sentry 2 Username",
+                                }
+                              }
+                            >
+                              <span
+                                className="avatar"
+                                style={
+                                  Object {
+                                    "height": 32,
+                                    "width": 32,
+                                  }
+                                }
+                              >
+                                <img
+                                  onError={[Function]}
+                                  onLoad={[Function]}
+                                  src="undefined/avatar/4eca4e68b0a900e542fdf17e57d04dcd?s=64&d=blank"
+                                />
+                              </span>
+                            </Avatar>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        flex="1"
+                        pl={1}
+                        pr={2}
+                      >
+                        <Base
+                          className="css-1gj33kt"
+                          flex="1"
+                          pl={1}
+                          pr={2}
+                        >
+                          <div
+                            className="css-1gj33kt"
+                            is={null}
+                          >
+                            <h5
+                              style={
+                                Object {
+                                  "margin": "0 0 3px",
+                                }
+                              }
+                            >
+                              <Styled(Link)
+                                to="2"
+                              >
+                                <Link
+                                  className="css-6xix1i"
+                                  to="2"
+                                >
+                                  <a
+                                    className="css-6xix1i"
+                                    href="2"
+                                  />
+                                </Link>
+                              </Styled(Link)>
+                            </h5>
+                            <Styled(div)>
+                              <div
+                                className="css-13cuz3w"
+                              />
+                            </Styled(div)>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        style={
+                          Object {
+                            "textAlign": "center",
+                          }
+                        }
+                        w={80}
+                      >
+                        <Base
+                          className="css-148weta"
+                          px={2}
+                          style={
+                            Object {
+                              "textAlign": "center",
+                            }
+                          }
+                          w={80}
+                        >
+                          <div
+                            className="css-148weta"
+                            is={null}
+                            style={
+                              Object {
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            <span
+                              className="icon-check"
+                              style={
+                                Object {
+                                  "color": "green",
+                                }
+                              }
+                            />
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={100}
+                      >
+                        <Base
+                          className="css-j9rhnd"
+                          px={2}
+                          w={100}
+                        >
+                          <div
+                            className="css-j9rhnd"
+                            is={null}
+                          />
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={120}
+                      >
+                        <Base
+                          className="css-146bky9"
+                          px={2}
+                          w={120}
+                        >
+                          <div
+                            className="css-146bky9"
+                            is={null}
+                          >
+                            <Button
+                              disabled={true}
+                              size="small"
+                              title="You cannot leave the organization as you are the only owner."
+                            >
+                              <button
+                                className="button tip button-default button-sm button-disabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                role="button"
+                              >
+                                <FlowLayout
+                                  truncate={false}
+                                >
+                                  <div
+                                    className="flow-layout"
+                                  >
+                                    <span
+                                      className="button-label"
+                                    >
+                                      <span
+                                        className="icon icon-exit"
+                                      />
+                                       
+                                      Leave
+                                    </span>
+                                  </div>
+                                </FlowLayout>
+                              </button>
+                            </Button>
+                          </div>
+                        </Base>
+                      </Box>
+                    </div>
+                  </Base>
+                </Styled(Base)>
+              </OrganizationMemberRow>
+              <OrganizationMemberRow
+                canAddMembers={true}
+                canRemoveMembers={false}
+                currentUser={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
+                    "id": "2",
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
+                }
+                member={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": true,
+                    },
                     "id": "3",
-                    "name": "Sentry 3 Name",
-                    "username": "Sentry 3 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry3@test.com",
+                      "has2fa": true,
+                      "id": "3",
+                      "name": "Sentry 3 Name",
+                      "username": "Sentry 3 Username",
+                    },
+                  }
                 }
-              }
-              memberCanLeave={false}
-              onLeave={[Function]}
-              onRemove={[Function]}
-              onSendInvite={[Function]}
-              orgId="org-id"
-              orgName="Organization Name"
-              requireLink={false}
-            >
-              <tr>
-                <td
-                  className="table-user-info"
+                memberCanLeave={false}
+                onLeave={[Function]}
+                onRemove={[Function]}
+                onSendInvite={[Function]}
+                orgId="org-id"
+                orgName="Organization Name"
+                params={
+                  Object {
+                    "orgId": "org-id",
+                  }
+                }
+                requireLink={false}
+                routes={Array []}
+              >
+                <Styled(Base)
+                  align="center"
+                  py={1}
                 >
-                  <Avatar
-                    className="avatar"
-                    gravatar={true}
-                    size={64}
-                    user={
-                      Object {
-                        "email": "sentry3@test.com",
-                        "has2fa": true,
-                        "id": "3",
-                        "name": "Sentry 3 Name",
-                        "username": "Sentry 3 Username",
-                      }
-                    }
+                  <Base
+                    align="center"
+                    className="css-1c22h1f"
+                    py={1}
                   >
-                    <span
-                      className="avatar"
+                    <div
+                      className="css-1c22h1f"
+                      is={null}
                     >
-                      <img
-                        onError={[Function]}
-                        onLoad={[Function]}
-                        src="undefined/avatar/40d78e2a4587a53a171944ffe71ee3d4?s=64&d=blank"
-                      />
-                    </span>
-                  </Avatar>
-                  <h5>
-                    <Link
-                      to="/organizations/org-id/members/3/"
-                    >
-                      <a
-                        href="/organizations/org-id/members/3/"
-                      />
-                    </Link>
-                  </h5>
-                  <br />
-                </td>
-                <td
-                  className="status"
-                />
-                <td
-                  className="squash"
-                />
-                <td
-                  className="align-right squash"
-                >
-                  <Button
-                    disabled={false}
-                    size="small"
-                    style={
-                      Object {
-                        "marginRight": 4,
-                      }
-                    }
-                    to="/organizations/org-id/members/3/"
-                  >
-                    <Link
-                      className="button button-default button-sm"
-                      disabled={false}
-                      onClick={[Function]}
-                      onlyActiveOnIndex={false}
-                      role="button"
-                      style={
-                        Object {
-                          "marginRight": 4,
-                        }
-                      }
-                      to="/organizations/org-id/members/3/"
-                    >
-                      <a
-                        className="button button-default button-sm"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginRight": 4,
-                          }
-                        }
+                      <Box
+                        pl={2}
                       >
-                        <FlowLayout
-                          truncate={false}
+                        <Base
+                          className="css-wwmrss"
+                          pl={2}
                         >
                           <div
-                            className="flow-layout"
+                            className="css-wwmrss"
+                            is={null}
                           >
-                            <span
-                              className="button-label"
+                            <Avatar
+                              className="avatar"
+                              gravatar={true}
+                              size={64}
+                              style={
+                                Object {
+                                  "height": 32,
+                                  "width": 32,
+                                }
+                              }
+                              user={
+                                Object {
+                                  "email": "sentry3@test.com",
+                                  "has2fa": true,
+                                  "id": "3",
+                                  "name": "Sentry 3 Name",
+                                  "username": "Sentry 3 Username",
+                                }
+                              }
                             >
-                              Details
-                            </span>
+                              <span
+                                className="avatar"
+                                style={
+                                  Object {
+                                    "height": 32,
+                                    "width": 32,
+                                  }
+                                }
+                              >
+                                <img
+                                  onError={[Function]}
+                                  onLoad={[Function]}
+                                  src="undefined/avatar/40d78e2a4587a53a171944ffe71ee3d4?s=64&d=blank"
+                                />
+                              </span>
+                            </Avatar>
                           </div>
-                        </FlowLayout>
-                      </a>
-                    </Link>
-                  </Button>
-                  <Button
-                    disabled={true}
-                    size="small"
-                    title="You cannot leave the organization as you are the only owner."
-                  >
-                    <button
-                      className="button tip button-default button-sm button-disabled"
-                      disabled={true}
-                      onClick={[Function]}
-                      role="button"
-                    >
-                      <FlowLayout
-                        truncate={false}
+                        </Base>
+                      </Box>
+                      <Box
+                        flex="1"
+                        pl={1}
+                        pr={2}
                       >
-                        <div
-                          className="flow-layout"
+                        <Base
+                          className="css-1gj33kt"
+                          flex="1"
+                          pl={1}
+                          pr={2}
                         >
-                          <span
-                            className="button-label"
+                          <div
+                            className="css-1gj33kt"
+                            is={null}
+                          >
+                            <h5
+                              style={
+                                Object {
+                                  "margin": "0 0 3px",
+                                }
+                              }
+                            >
+                              <Styled(Link)
+                                to="3"
+                              >
+                                <Link
+                                  className="css-6xix1i"
+                                  to="3"
+                                >
+                                  <a
+                                    className="css-6xix1i"
+                                    href="3"
+                                  />
+                                </Link>
+                              </Styled(Link)>
+                            </h5>
+                            <Styled(div)>
+                              <div
+                                className="css-13cuz3w"
+                              />
+                            </Styled(div)>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        style={
+                          Object {
+                            "textAlign": "center",
+                          }
+                        }
+                        w={80}
+                      >
+                        <Base
+                          className="css-148weta"
+                          px={2}
+                          style={
+                            Object {
+                              "textAlign": "center",
+                            }
+                          }
+                          w={80}
+                        >
+                          <div
+                            className="css-148weta"
+                            is={null}
+                            style={
+                              Object {
+                                "textAlign": "center",
+                              }
+                            }
                           >
                             <span
-                              className="icon icon-exit"
+                              className="icon-check"
+                              style={
+                                Object {
+                                  "color": "green",
+                                }
+                              }
                             />
-                             
-                            Leave
-                          </span>
-                        </div>
-                      </FlowLayout>
-                    </button>
-                  </Button>
-                </td>
-              </tr>
-            </OrganizationMemberRow>
-          </tbody>
-        </table>
-      </div>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={100}
+                      >
+                        <Base
+                          className="css-j9rhnd"
+                          px={2}
+                          w={100}
+                        >
+                          <div
+                            className="css-j9rhnd"
+                            is={null}
+                          />
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={120}
+                      >
+                        <Base
+                          className="css-146bky9"
+                          px={2}
+                          w={120}
+                        >
+                          <div
+                            className="css-146bky9"
+                            is={null}
+                          >
+                            <Button
+                              disabled={true}
+                              size="small"
+                              title="You cannot leave the organization as you are the only owner."
+                            >
+                              <button
+                                className="button tip button-default button-sm button-disabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                role="button"
+                              >
+                                <FlowLayout
+                                  truncate={false}
+                                >
+                                  <div
+                                    className="flow-layout"
+                                  >
+                                    <span
+                                      className="button-label"
+                                    >
+                                      <span
+                                        className="icon icon-exit"
+                                      />
+                                       
+                                      Leave
+                                    </span>
+                                  </div>
+                                </FlowLayout>
+                              </button>
+                            </Button>
+                          </div>
+                        </Base>
+                      </Box>
+                    </div>
+                  </Base>
+                </Styled(Base)>
+              </OrganizationMemberRow>
+            </div>
+          </Styled(div)>
+        </div>
+      </Styled(div)>
     </div>
   </DocumentTitle>
 </OrganizationMembersView>
@@ -737,752 +1060,1066 @@ exports[`OrganizationMembersView Require Link does not have 2fa warning if user 
     }
   }
   requireLink={false}
+  routes={Array []}
   status=""
 >
   <DocumentTitle
     title="Organization Name Members"
   >
     <div>
-      <SpreadLayout
-        center={true}
-        className="page-header"
-        responsive={false}
-      >
-        <div
-          className="spread-layout page-header center"
-        >
-          <h3>
-            Members
-          </h3>
-          <Button
+      <SettingsPageHeading
+        action={
+          <Link
             className="pull-right"
             disabled={false}
-            priority="primary"
             size="small"
-            to="/organization/org-id/members/invite/"
+            title={undefined}
+            to="new"
           >
-            <Link
-              className="pull-right button button-primary button-sm"
-              disabled={false}
-              onClick={[Function]}
-              onlyActiveOnIndex={false}
-              role="button"
-              style={Object {}}
-              to="/organization/org-id/members/invite/"
+            <span
+              className="icon-plus"
+            />
+             
+            Invite Member
+          </Link>
+        }
+        label="Members"
+      >
+        <Styled(div)>
+          <div
+            className="css-1ehz5tx"
+          >
+            <div
+              style={
+                Object {
+                  "flex": "1",
+                }
+              }
             >
-              <a
-                className="pull-right button button-primary button-sm"
-                disabled={false}
-                onClick={[Function]}
-                role="button"
-                style={Object {}}
-              >
-                <FlowLayout
-                  truncate={false}
+              <Styled(div)>
+                <div
+                  className="css-1nf035k"
                 >
-                  <div
-                    className="flow-layout"
-                  >
-                    <span
-                      className="button-label"
-                    >
-                      <span
-                        className="icon-plus"
-                      />
-                       
-                      Invite Member
-                    </span>
-                  </div>
-                </FlowLayout>
-              </a>
-            </Link>
-          </Button>
-        </div>
-      </SpreadLayout>
+                  Members
+                </div>
+              </Styled(div)>
+            </div>
+            <div>
+              <Link
+                className="pull-right"
+                disabled={false}
+                size="small"
+                to="new"
+              >
+                <a
+                  className="pull-right"
+                  disabled={false}
+                  href="new"
+                  size="small"
+                >
+                  <span
+                    className="icon-plus"
+                  />
+                   
+                  Invite Member
+                </a>
+              </Link>
+            </div>
+          </div>
+        </Styled(div)>
+      </SettingsPageHeading>
       <OrganizationAccessRequests
         accessRequestBusy={Array []}
         onApprove={[Function]}
         onDeny={[Function]}
         requestList={Array []}
       />
-      <div
-        className="panel panel-default horizontal-scroll"
-      >
-        <table
-          className="table member-list"
+      <Styled(div)>
+        <div
+          className="css-1ux7ps4"
         >
-          <colgroup>
-            <col
-              width="45%"
-            />
-            <col
-              width="15%"
-            />
-            <col
-              width="15%"
-            />
-            <col
-              width="25%"
-            />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>
-                Member
-              </th>
-              <th>
-                 
-              </th>
-              <th
-                className="squash"
+          <PanelHeader
+            disablePadding={true}
+          >
+            <Styled(div)
+              disablePadding={true}
+            >
+              <div
+                className="css-onhvcy"
               >
-                Role
-              </th>
-              <th
-                className="squash"
-              >
-                 
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <OrganizationMemberRow
-              canAddMembers={true}
-              canRemoveMembers={false}
-              currentUser={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
+                <Styled(div)>
+                  <div
+                    className="css-1203bpz"
+                  >
+                    <Flex
+                      align="center"
+                    >
+                      <Base
+                        align="center"
+                        className="css-5ipae5"
+                      >
+                        <div
+                          className="css-5ipae5"
+                          is={null}
+                        >
+                          <Box
+                            flex="1"
+                            px={2}
+                          >
+                            <Base
+                              className="css-pcjga5"
+                              flex="1"
+                              px={2}
+                            >
+                              <div
+                                className="css-pcjga5"
+                                is={null}
+                              >
+                                Member
+                              </div>
+                            </Base>
+                          </Box>
+                          <Box
+                            px={2}
+                            w={80}
+                          >
+                            <Base
+                              className="css-148weta"
+                              px={2}
+                              w={80}
+                            >
+                              <div
+                                className="css-148weta"
+                                is={null}
+                              >
+                                Status
+                              </div>
+                            </Base>
+                          </Box>
+                          <Box
+                            px={2}
+                            w={100}
+                          >
+                            <Base
+                              className="css-j9rhnd"
+                              px={2}
+                              w={100}
+                            >
+                              <div
+                                className="css-j9rhnd"
+                                is={null}
+                              >
+                                Role
+                              </div>
+                            </Base>
+                          </Box>
+                          <Box
+                            px={2}
+                            w={120}
+                          >
+                            <Base
+                              className="css-146bky9"
+                              px={2}
+                              w={120}
+                            >
+                              <div
+                                className="css-146bky9"
+                                is={null}
+                              >
+                                Actions
+                              </div>
+                            </Base>
+                          </Box>
+                        </div>
+                      </Base>
+                    </Flex>
+                  </div>
+                </Styled(div)>
+              </div>
+            </Styled(div)>
+          </PanelHeader>
+          <Styled(div)>
+            <div
+              className="css-0"
+            >
+              <OrganizationMemberRow
+                canAddMembers={true}
+                canRemoveMembers={false}
+                currentUser={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
                     "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
                 }
-              }
-              member={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "1",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry1@test.com",
-                    "has2fa": false,
+                member={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
                     "id": "1",
-                    "name": "Sentry 1 Name",
-                    "username": "Sentry 1 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry1@test.com",
+                      "has2fa": false,
+                      "id": "1",
+                      "name": "Sentry 1 Name",
+                      "username": "Sentry 1 Username",
+                    },
+                  }
                 }
-              }
-              memberCanLeave={false}
-              onLeave={[Function]}
-              onRemove={[Function]}
-              onSendInvite={[Function]}
-              orgId="org-id"
-              orgName="Organization Name"
-              requireLink={true}
-            >
-              <tr>
-                <td
-                  className="table-user-info"
+                memberCanLeave={false}
+                onLeave={[Function]}
+                onRemove={[Function]}
+                onSendInvite={[Function]}
+                orgId="org-id"
+                orgName="Organization Name"
+                params={
+                  Object {
+                    "orgId": "org-id",
+                  }
+                }
+                requireLink={true}
+                routes={Array []}
+              >
+                <Styled(Base)
+                  align="center"
+                  py={1}
                 >
-                  <Avatar
-                    className="avatar"
-                    gravatar={true}
-                    size={64}
-                    user={
-                      Object {
-                        "email": "sentry1@test.com",
-                        "has2fa": false,
-                        "id": "1",
-                        "name": "Sentry 1 Name",
-                        "username": "Sentry 1 Username",
-                      }
-                    }
+                  <Base
+                    align="center"
+                    className="css-1c22h1f"
+                    py={1}
                   >
-                    <span
-                      className="avatar"
+                    <div
+                      className="css-1c22h1f"
+                      is={null}
                     >
-                      <img
-                        onError={[Function]}
-                        onLoad={[Function]}
-                        src="undefined/avatar/c68ca8af553301ae11c5607b8bb672b4?s=64&d=blank"
-                      />
-                    </span>
-                  </Avatar>
-                  <h5>
-                    <Link
-                      to="/organizations/org-id/members/1/"
-                    >
-                      <a
-                        href="/organizations/org-id/members/1/"
-                      />
-                    </Link>
-                  </h5>
-                  <br />
-                </td>
-                <td
-                  className="status"
-                >
-                  <div>
-                    <div>
-                      <strong>
-                        Missing SSO Link
-                      </strong>
+                      <Box
+                        pl={2}
+                      >
+                        <Base
+                          className="css-wwmrss"
+                          pl={2}
+                        >
+                          <div
+                            className="css-wwmrss"
+                            is={null}
+                          >
+                            <Avatar
+                              className="avatar"
+                              gravatar={true}
+                              size={64}
+                              style={
+                                Object {
+                                  "height": 32,
+                                  "width": 32,
+                                }
+                              }
+                              user={
+                                Object {
+                                  "email": "sentry1@test.com",
+                                  "has2fa": false,
+                                  "id": "1",
+                                  "name": "Sentry 1 Name",
+                                  "username": "Sentry 1 Username",
+                                }
+                              }
+                            >
+                              <span
+                                className="avatar"
+                                style={
+                                  Object {
+                                    "height": 32,
+                                    "width": 32,
+                                  }
+                                }
+                              >
+                                <img
+                                  onError={[Function]}
+                                  onLoad={[Function]}
+                                  src="undefined/avatar/c68ca8af553301ae11c5607b8bb672b4?s=64&d=blank"
+                                />
+                              </span>
+                            </Avatar>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        flex="1"
+                        pl={1}
+                        pr={2}
+                      >
+                        <Base
+                          className="css-1gj33kt"
+                          flex="1"
+                          pl={1}
+                          pr={2}
+                        >
+                          <div
+                            className="css-1gj33kt"
+                            is={null}
+                          >
+                            <h5
+                              style={
+                                Object {
+                                  "margin": "0 0 3px",
+                                }
+                              }
+                            >
+                              <Styled(Link)
+                                to="1"
+                              >
+                                <Link
+                                  className="css-6xix1i"
+                                  to="1"
+                                >
+                                  <a
+                                    className="css-6xix1i"
+                                    href="1"
+                                  />
+                                </Link>
+                              </Styled(Link)>
+                            </h5>
+                            <Styled(div)>
+                              <div
+                                className="css-13cuz3w"
+                              />
+                            </Styled(div)>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        style={
+                          Object {
+                            "textAlign": "center",
+                          }
+                        }
+                        w={80}
+                      >
+                        <Base
+                          className="css-148weta"
+                          px={2}
+                          style={
+                            Object {
+                              "textAlign": "center",
+                            }
+                          }
+                          w={80}
+                        >
+                          <div
+                            className="css-148weta"
+                            is={null}
+                            style={
+                              Object {
+                                "textAlign": "center",
+                              }
+                            }
+                          >
+                            <div>
+                              <div>
+                                <strong>
+                                  Missing SSO Link
+                                </strong>
+                              </div>
+                              <Button
+                                disabled={false}
+                                onClick={[Function]}
+                                priority="primary"
+                                size="xsmall"
+                                style={
+                                  Object {
+                                    "marginTop": 2,
+                                    "padding": "0 4px",
+                                  }
+                                }
+                              >
+                                <button
+                                  className="button button-primary button-xs"
+                                  disabled={false}
+                                  onClick={[Function]}
+                                  role="button"
+                                  style={
+                                    Object {
+                                      "marginTop": 2,
+                                      "padding": "0 4px",
+                                    }
+                                  }
+                                >
+                                  <FlowLayout
+                                    truncate={false}
+                                  >
+                                    <div
+                                      className="flow-layout"
+                                    >
+                                      <span
+                                        className="button-label"
+                                      >
+                                        Resend invite
+                                      </span>
+                                    </div>
+                                  </FlowLayout>
+                                </button>
+                              </Button>
+                            </div>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={100}
+                      >
+                        <Base
+                          className="css-j9rhnd"
+                          px={2}
+                          w={100}
+                        >
+                          <div
+                            className="css-j9rhnd"
+                            is={null}
+                          />
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={120}
+                      >
+                        <Base
+                          className="css-146bky9"
+                          px={2}
+                          w={120}
+                        >
+                          <div
+                            className="css-146bky9"
+                            is={null}
+                          >
+                            <Button
+                              disabled={true}
+                              size="small"
+                              title="You cannot leave the organization as you are the only owner."
+                            >
+                              <button
+                                className="button tip button-default button-sm button-disabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                role="button"
+                              >
+                                <FlowLayout
+                                  truncate={false}
+                                >
+                                  <div
+                                    className="flow-layout"
+                                  >
+                                    <span
+                                      className="button-label"
+                                    >
+                                      <span
+                                        className="icon icon-exit"
+                                      />
+                                       
+                                      Leave
+                                    </span>
+                                  </div>
+                                </FlowLayout>
+                              </button>
+                            </Button>
+                          </div>
+                        </Base>
+                      </Box>
                     </div>
-                    <Button
-                      disabled={false}
-                      onClick={[Function]}
-                      priority="primary"
-                      size="xsmall"
-                      style={
-                        Object {
-                          "marginTop": 2,
-                          "padding": "0 4px",
-                        }
-                      }
+                  </Base>
+                </Styled(Base)>
+              </OrganizationMemberRow>
+              <OrganizationMemberRow
+                canAddMembers={true}
+                canRemoveMembers={false}
+                currentUser={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
+                    "id": "2",
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
+                }
+                member={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
+                    "id": "2",
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
+                }
+                memberCanLeave={false}
+                onLeave={[Function]}
+                onRemove={[Function]}
+                onSendInvite={[Function]}
+                orgId="org-id"
+                orgName="Organization Name"
+                params={
+                  Object {
+                    "orgId": "org-id",
+                  }
+                }
+                requireLink={true}
+                routes={Array []}
+              >
+                <Styled(Base)
+                  align="center"
+                  py={1}
+                >
+                  <Base
+                    align="center"
+                    className="css-1c22h1f"
+                    py={1}
+                  >
+                    <div
+                      className="css-1c22h1f"
+                      is={null}
                     >
-                      <button
-                        className="button button-primary button-xs"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginTop": 2,
-                            "padding": "0 4px",
-                          }
-                        }
+                      <Box
+                        pl={2}
                       >
-                        <FlowLayout
-                          truncate={false}
+                        <Base
+                          className="css-wwmrss"
+                          pl={2}
                         >
                           <div
-                            className="flow-layout"
+                            className="css-wwmrss"
+                            is={null}
                           >
-                            <span
-                              className="button-label"
+                            <Avatar
+                              className="avatar"
+                              gravatar={true}
+                              size={64}
+                              style={
+                                Object {
+                                  "height": 32,
+                                  "width": 32,
+                                }
+                              }
+                              user={
+                                Object {
+                                  "email": "sentry2@test.com",
+                                  "has2fa": true,
+                                  "id": "2",
+                                  "name": "Sentry 2 Name",
+                                  "username": "Sentry 2 Username",
+                                }
+                              }
                             >
-                              Resend invite
-                            </span>
+                              <span
+                                className="avatar"
+                                style={
+                                  Object {
+                                    "height": 32,
+                                    "width": 32,
+                                  }
+                                }
+                              >
+                                <img
+                                  onError={[Function]}
+                                  onLoad={[Function]}
+                                  src="undefined/avatar/4eca4e68b0a900e542fdf17e57d04dcd?s=64&d=blank"
+                                />
+                              </span>
+                            </Avatar>
                           </div>
-                        </FlowLayout>
-                      </button>
-                    </Button>
-                  </div>
-                </td>
-                <td
-                  className="squash"
-                />
-                <td
-                  className="align-right squash"
-                >
-                  <Button
-                    disabled={false}
-                    size="small"
-                    style={
-                      Object {
-                        "marginRight": 4,
-                      }
-                    }
-                    to="/organizations/org-id/members/1/"
-                  >
-                    <Link
-                      className="button button-default button-sm"
-                      disabled={false}
-                      onClick={[Function]}
-                      onlyActiveOnIndex={false}
-                      role="button"
-                      style={
-                        Object {
-                          "marginRight": 4,
-                        }
-                      }
-                      to="/organizations/org-id/members/1/"
-                    >
-                      <a
-                        className="button button-default button-sm"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginRight": 4,
-                          }
-                        }
+                        </Base>
+                      </Box>
+                      <Box
+                        flex="1"
+                        pl={1}
+                        pr={2}
                       >
-                        <FlowLayout
-                          truncate={false}
+                        <Base
+                          className="css-1gj33kt"
+                          flex="1"
+                          pl={1}
+                          pr={2}
                         >
                           <div
-                            className="flow-layout"
+                            className="css-1gj33kt"
+                            is={null}
                           >
-                            <span
-                              className="button-label"
+                            <h5
+                              style={
+                                Object {
+                                  "margin": "0 0 3px",
+                                }
+                              }
                             >
-                              Details
-                            </span>
+                              <Styled(Link)
+                                to="2"
+                              >
+                                <Link
+                                  className="css-6xix1i"
+                                  to="2"
+                                >
+                                  <a
+                                    className="css-6xix1i"
+                                    href="2"
+                                  />
+                                </Link>
+                              </Styled(Link)>
+                            </h5>
+                            <Styled(div)>
+                              <div
+                                className="css-13cuz3w"
+                              />
+                            </Styled(div)>
                           </div>
-                        </FlowLayout>
-                      </a>
-                    </Link>
-                  </Button>
-                  <Button
-                    disabled={true}
-                    size="small"
-                    title="You cannot leave the organization as you are the only owner."
-                  >
-                    <button
-                      className="button tip button-default button-sm button-disabled"
-                      disabled={true}
-                      onClick={[Function]}
-                      role="button"
-                    >
-                      <FlowLayout
-                        truncate={false}
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        style={
+                          Object {
+                            "textAlign": "center",
+                          }
+                        }
+                        w={80}
                       >
-                        <div
-                          className="flow-layout"
+                        <Base
+                          className="css-148weta"
+                          px={2}
+                          style={
+                            Object {
+                              "textAlign": "center",
+                            }
+                          }
+                          w={80}
                         >
-                          <span
-                            className="button-label"
+                          <div
+                            className="css-148weta"
+                            is={null}
+                            style={
+                              Object {
+                                "textAlign": "center",
+                              }
+                            }
                           >
-                            <span
-                              className="icon icon-exit"
-                            />
-                             
-                            Leave
-                          </span>
-                        </div>
-                      </FlowLayout>
-                    </button>
-                  </Button>
-                </td>
-              </tr>
-            </OrganizationMemberRow>
-            <OrganizationMemberRow
-              canAddMembers={true}
-              canRemoveMembers={false}
-              currentUser={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
-                    "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
-                }
-              }
-              member={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
-                    "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
-                }
-              }
-              memberCanLeave={false}
-              onLeave={[Function]}
-              onRemove={[Function]}
-              onSendInvite={[Function]}
-              orgId="org-id"
-              orgName="Organization Name"
-              requireLink={true}
-            >
-              <tr>
-                <td
-                  className="table-user-info"
-                >
-                  <Avatar
-                    className="avatar"
-                    gravatar={true}
-                    size={64}
-                    user={
-                      Object {
-                        "email": "sentry2@test.com",
-                        "has2fa": true,
-                        "id": "2",
-                        "name": "Sentry 2 Name",
-                        "username": "Sentry 2 Username",
-                      }
-                    }
-                  >
-                    <span
-                      className="avatar"
-                    >
-                      <img
-                        onError={[Function]}
-                        onLoad={[Function]}
-                        src="undefined/avatar/4eca4e68b0a900e542fdf17e57d04dcd?s=64&d=blank"
-                      />
-                    </span>
-                  </Avatar>
-                  <h5>
-                    <Link
-                      to="/organizations/org-id/members/2/"
-                    >
-                      <a
-                        href="/organizations/org-id/members/2/"
-                      />
-                    </Link>
-                  </h5>
-                  <br />
-                </td>
-                <td
-                  className="status"
-                >
-                  <div>
-                    <div>
-                      <strong>
-                        Missing SSO Link
-                      </strong>
+                            <div>
+                              <div>
+                                <strong>
+                                  Missing SSO Link
+                                </strong>
+                              </div>
+                              <Button
+                                disabled={false}
+                                onClick={[Function]}
+                                priority="primary"
+                                size="xsmall"
+                                style={
+                                  Object {
+                                    "marginTop": 2,
+                                    "padding": "0 4px",
+                                  }
+                                }
+                              >
+                                <button
+                                  className="button button-primary button-xs"
+                                  disabled={false}
+                                  onClick={[Function]}
+                                  role="button"
+                                  style={
+                                    Object {
+                                      "marginTop": 2,
+                                      "padding": "0 4px",
+                                    }
+                                  }
+                                >
+                                  <FlowLayout
+                                    truncate={false}
+                                  >
+                                    <div
+                                      className="flow-layout"
+                                    >
+                                      <span
+                                        className="button-label"
+                                      >
+                                        Resend invite
+                                      </span>
+                                    </div>
+                                  </FlowLayout>
+                                </button>
+                              </Button>
+                            </div>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={100}
+                      >
+                        <Base
+                          className="css-j9rhnd"
+                          px={2}
+                          w={100}
+                        >
+                          <div
+                            className="css-j9rhnd"
+                            is={null}
+                          />
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={120}
+                      >
+                        <Base
+                          className="css-146bky9"
+                          px={2}
+                          w={120}
+                        >
+                          <div
+                            className="css-146bky9"
+                            is={null}
+                          >
+                            <Button
+                              disabled={true}
+                              size="small"
+                              title="You cannot leave the organization as you are the only owner."
+                            >
+                              <button
+                                className="button tip button-default button-sm button-disabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                role="button"
+                              >
+                                <FlowLayout
+                                  truncate={false}
+                                >
+                                  <div
+                                    className="flow-layout"
+                                  >
+                                    <span
+                                      className="button-label"
+                                    >
+                                      <span
+                                        className="icon icon-exit"
+                                      />
+                                       
+                                      Leave
+                                    </span>
+                                  </div>
+                                </FlowLayout>
+                              </button>
+                            </Button>
+                          </div>
+                        </Base>
+                      </Box>
                     </div>
-                    <Button
-                      disabled={false}
-                      onClick={[Function]}
-                      priority="primary"
-                      size="xsmall"
-                      style={
-                        Object {
-                          "marginTop": 2,
-                          "padding": "0 4px",
-                        }
-                      }
-                    >
-                      <button
-                        className="button button-primary button-xs"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginTop": 2,
-                            "padding": "0 4px",
-                          }
-                        }
-                      >
-                        <FlowLayout
-                          truncate={false}
-                        >
-                          <div
-                            className="flow-layout"
-                          >
-                            <span
-                              className="button-label"
-                            >
-                              Resend invite
-                            </span>
-                          </div>
-                        </FlowLayout>
-                      </button>
-                    </Button>
-                  </div>
-                </td>
-                <td
-                  className="squash"
-                />
-                <td
-                  className="align-right squash"
-                >
-                  <Button
-                    disabled={false}
-                    size="small"
-                    style={
-                      Object {
-                        "marginRight": 4,
-                      }
-                    }
-                    to="/organizations/org-id/members/2/"
-                  >
-                    <Link
-                      className="button button-default button-sm"
-                      disabled={false}
-                      onClick={[Function]}
-                      onlyActiveOnIndex={false}
-                      role="button"
-                      style={
-                        Object {
-                          "marginRight": 4,
-                        }
-                      }
-                      to="/organizations/org-id/members/2/"
-                    >
-                      <a
-                        className="button button-default button-sm"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginRight": 4,
-                          }
-                        }
-                      >
-                        <FlowLayout
-                          truncate={false}
-                        >
-                          <div
-                            className="flow-layout"
-                          >
-                            <span
-                              className="button-label"
-                            >
-                              Details
-                            </span>
-                          </div>
-                        </FlowLayout>
-                      </a>
-                    </Link>
-                  </Button>
-                  <Button
-                    disabled={true}
-                    size="small"
-                    title="You cannot leave the organization as you are the only owner."
-                  >
-                    <button
-                      className="button tip button-default button-sm button-disabled"
-                      disabled={true}
-                      onClick={[Function]}
-                      role="button"
-                    >
-                      <FlowLayout
-                        truncate={false}
-                      >
-                        <div
-                          className="flow-layout"
-                        >
-                          <span
-                            className="button-label"
-                          >
-                            <span
-                              className="icon icon-exit"
-                            />
-                             
-                            Leave
-                          </span>
-                        </div>
-                      </FlowLayout>
-                    </button>
-                  </Button>
-                </td>
-              </tr>
-            </OrganizationMemberRow>
-            <OrganizationMemberRow
-              canAddMembers={true}
-              canRemoveMembers={false}
-              currentUser={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": false,
-                  },
-                  "id": "2",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry2@test.com",
-                    "has2fa": true,
+                  </Base>
+                </Styled(Base)>
+              </OrganizationMemberRow>
+              <OrganizationMemberRow
+                canAddMembers={true}
+                canRemoveMembers={false}
+                currentUser={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": false,
+                    },
                     "id": "2",
-                    "name": "Sentry 2 Name",
-                    "username": "Sentry 2 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry2@test.com",
+                      "has2fa": true,
+                      "id": "2",
+                      "name": "Sentry 2 Name",
+                      "username": "Sentry 2 Username",
+                    },
+                  }
                 }
-              }
-              member={
-                Object {
-                  "email": "",
-                  "flags": Object {
-                    "sso:linked": true,
-                  },
-                  "id": "3",
-                  "name": "",
-                  "pending": false,
-                  "roleName": "",
-                  "user": Object {
-                    "email": "sentry3@test.com",
-                    "has2fa": true,
+                member={
+                  Object {
+                    "email": "",
+                    "flags": Object {
+                      "sso:linked": true,
+                    },
                     "id": "3",
-                    "name": "Sentry 3 Name",
-                    "username": "Sentry 3 Username",
-                  },
+                    "name": "",
+                    "pending": false,
+                    "roleName": "",
+                    "user": Object {
+                      "email": "sentry3@test.com",
+                      "has2fa": true,
+                      "id": "3",
+                      "name": "Sentry 3 Name",
+                      "username": "Sentry 3 Username",
+                    },
+                  }
                 }
-              }
-              memberCanLeave={false}
-              onLeave={[Function]}
-              onRemove={[Function]}
-              onSendInvite={[Function]}
-              orgId="org-id"
-              orgName="Organization Name"
-              requireLink={true}
-            >
-              <tr>
-                <td
-                  className="table-user-info"
+                memberCanLeave={false}
+                onLeave={[Function]}
+                onRemove={[Function]}
+                onSendInvite={[Function]}
+                orgId="org-id"
+                orgName="Organization Name"
+                params={
+                  Object {
+                    "orgId": "org-id",
+                  }
+                }
+                requireLink={true}
+                routes={Array []}
+              >
+                <Styled(Base)
+                  align="center"
+                  py={1}
                 >
-                  <Avatar
-                    className="avatar"
-                    gravatar={true}
-                    size={64}
-                    user={
-                      Object {
-                        "email": "sentry3@test.com",
-                        "has2fa": true,
-                        "id": "3",
-                        "name": "Sentry 3 Name",
-                        "username": "Sentry 3 Username",
-                      }
-                    }
+                  <Base
+                    align="center"
+                    className="css-1c22h1f"
+                    py={1}
                   >
-                    <span
-                      className="avatar"
+                    <div
+                      className="css-1c22h1f"
+                      is={null}
                     >
-                      <img
-                        onError={[Function]}
-                        onLoad={[Function]}
-                        src="undefined/avatar/40d78e2a4587a53a171944ffe71ee3d4?s=64&d=blank"
-                      />
-                    </span>
-                  </Avatar>
-                  <h5>
-                    <Link
-                      to="/organizations/org-id/members/3/"
-                    >
-                      <a
-                        href="/organizations/org-id/members/3/"
-                      />
-                    </Link>
-                  </h5>
-                  <br />
-                </td>
-                <td
-                  className="status"
-                />
-                <td
-                  className="squash"
-                />
-                <td
-                  className="align-right squash"
-                >
-                  <Button
-                    disabled={false}
-                    size="small"
-                    style={
-                      Object {
-                        "marginRight": 4,
-                      }
-                    }
-                    to="/organizations/org-id/members/3/"
-                  >
-                    <Link
-                      className="button button-default button-sm"
-                      disabled={false}
-                      onClick={[Function]}
-                      onlyActiveOnIndex={false}
-                      role="button"
-                      style={
-                        Object {
-                          "marginRight": 4,
-                        }
-                      }
-                      to="/organizations/org-id/members/3/"
-                    >
-                      <a
-                        className="button button-default button-sm"
-                        disabled={false}
-                        onClick={[Function]}
-                        role="button"
-                        style={
-                          Object {
-                            "marginRight": 4,
-                          }
-                        }
+                      <Box
+                        pl={2}
                       >
-                        <FlowLayout
-                          truncate={false}
+                        <Base
+                          className="css-wwmrss"
+                          pl={2}
                         >
                           <div
-                            className="flow-layout"
+                            className="css-wwmrss"
+                            is={null}
                           >
-                            <span
-                              className="button-label"
+                            <Avatar
+                              className="avatar"
+                              gravatar={true}
+                              size={64}
+                              style={
+                                Object {
+                                  "height": 32,
+                                  "width": 32,
+                                }
+                              }
+                              user={
+                                Object {
+                                  "email": "sentry3@test.com",
+                                  "has2fa": true,
+                                  "id": "3",
+                                  "name": "Sentry 3 Name",
+                                  "username": "Sentry 3 Username",
+                                }
+                              }
                             >
-                              Details
-                            </span>
+                              <span
+                                className="avatar"
+                                style={
+                                  Object {
+                                    "height": 32,
+                                    "width": 32,
+                                  }
+                                }
+                              >
+                                <img
+                                  onError={[Function]}
+                                  onLoad={[Function]}
+                                  src="undefined/avatar/40d78e2a4587a53a171944ffe71ee3d4?s=64&d=blank"
+                                />
+                              </span>
+                            </Avatar>
                           </div>
-                        </FlowLayout>
-                      </a>
-                    </Link>
-                  </Button>
-                  <Button
-                    disabled={true}
-                    size="small"
-                    title="You cannot leave the organization as you are the only owner."
-                  >
-                    <button
-                      className="button tip button-default button-sm button-disabled"
-                      disabled={true}
-                      onClick={[Function]}
-                      role="button"
-                    >
-                      <FlowLayout
-                        truncate={false}
+                        </Base>
+                      </Box>
+                      <Box
+                        flex="1"
+                        pl={1}
+                        pr={2}
                       >
-                        <div
-                          className="flow-layout"
+                        <Base
+                          className="css-1gj33kt"
+                          flex="1"
+                          pl={1}
+                          pr={2}
                         >
-                          <span
-                            className="button-label"
+                          <div
+                            className="css-1gj33kt"
+                            is={null}
+                          >
+                            <h5
+                              style={
+                                Object {
+                                  "margin": "0 0 3px",
+                                }
+                              }
+                            >
+                              <Styled(Link)
+                                to="3"
+                              >
+                                <Link
+                                  className="css-6xix1i"
+                                  to="3"
+                                >
+                                  <a
+                                    className="css-6xix1i"
+                                    href="3"
+                                  />
+                                </Link>
+                              </Styled(Link)>
+                            </h5>
+                            <Styled(div)>
+                              <div
+                                className="css-13cuz3w"
+                              />
+                            </Styled(div)>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        style={
+                          Object {
+                            "textAlign": "center",
+                          }
+                        }
+                        w={80}
+                      >
+                        <Base
+                          className="css-148weta"
+                          px={2}
+                          style={
+                            Object {
+                              "textAlign": "center",
+                            }
+                          }
+                          w={80}
+                        >
+                          <div
+                            className="css-148weta"
+                            is={null}
+                            style={
+                              Object {
+                                "textAlign": "center",
+                              }
+                            }
                           >
                             <span
-                              className="icon icon-exit"
+                              className="icon-check"
+                              style={
+                                Object {
+                                  "color": "green",
+                                }
+                              }
                             />
-                             
-                            Leave
-                          </span>
-                        </div>
-                      </FlowLayout>
-                    </button>
-                  </Button>
-                </td>
-              </tr>
-            </OrganizationMemberRow>
-          </tbody>
-        </table>
-      </div>
+                          </div>
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={100}
+                      >
+                        <Base
+                          className="css-j9rhnd"
+                          px={2}
+                          w={100}
+                        >
+                          <div
+                            className="css-j9rhnd"
+                            is={null}
+                          />
+                        </Base>
+                      </Box>
+                      <Box
+                        px={2}
+                        w={120}
+                      >
+                        <Base
+                          className="css-146bky9"
+                          px={2}
+                          w={120}
+                        >
+                          <div
+                            className="css-146bky9"
+                            is={null}
+                          >
+                            <Button
+                              disabled={true}
+                              size="small"
+                              title="You cannot leave the organization as you are the only owner."
+                            >
+                              <button
+                                className="button tip button-default button-sm button-disabled"
+                                disabled={true}
+                                onClick={[Function]}
+                                role="button"
+                              >
+                                <FlowLayout
+                                  truncate={false}
+                                >
+                                  <div
+                                    className="flow-layout"
+                                  >
+                                    <span
+                                      className="button-label"
+                                    >
+                                      <span
+                                        className="icon icon-exit"
+                                      />
+                                       
+                                      Leave
+                                    </span>
+                                  </div>
+                                </FlowLayout>
+                              </button>
+                            </Button>
+                          </div>
+                        </Base>
+                      </Box>
+                    </div>
+                  </Base>
+                </Styled(Base)>
+              </OrganizationMemberRow>
+            </div>
+          </Styled(div)>
+        </div>
+      </Styled(div)>
     </div>
   </DocumentTitle>
 </OrganizationMembersView>

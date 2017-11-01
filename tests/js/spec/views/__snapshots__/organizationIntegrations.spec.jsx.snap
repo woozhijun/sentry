@@ -44,27 +44,36 @@ exports[`OrganizationIntegrations render() with a provider renders 1`] = `
                 />
               </div>
             </a>
-            <ul
-              className="dropdown-menu"
-              onClick={[Function]}
+            <DropdownReact
+              alwaysRenderMenu={true}
+              keepMenuOpen={false}
+              onClose={[Function]}
+              renderComponent={[Function]}
+              shouldIgnoreClickOutside={[Function]}
+              visible={true}
             >
-              <MenuItem
-                noAnchor={true}
+              <ul
+                className="dropdown-menu"
+                onClick={[Function]}
               >
-                <li
-                  className=""
-                  href={null}
-                  role="presentation"
-                  title={null}
+                <MenuItem
+                  noAnchor={true}
                 >
-                  <a
-                    onClick={[Function]}
+                  <li
+                    className=""
+                    href={null}
+                    role="presentation"
+                    title={null}
                   >
-                    GitHub
-                  </a>
-                </li>
-              </MenuItem>
-            </ul>
+                    <a
+                      onClick={[Function]}
+                    >
+                      GitHub
+                    </a>
+                  </li>
+                </MenuItem>
+              </ul>
+            </DropdownReact>
           </span>
         </DropdownReact>
       </div>
@@ -145,27 +154,36 @@ exports[`OrganizationIntegrations render() with a provider renders with a reposi
                 />
               </div>
             </a>
-            <ul
-              className="dropdown-menu"
-              onClick={[Function]}
+            <DropdownReact
+              alwaysRenderMenu={true}
+              keepMenuOpen={false}
+              onClose={[Function]}
+              renderComponent={[Function]}
+              shouldIgnoreClickOutside={[Function]}
+              visible={true}
             >
-              <MenuItem
-                noAnchor={true}
+              <ul
+                className="dropdown-menu"
+                onClick={[Function]}
               >
-                <li
-                  className=""
-                  href={null}
-                  role="presentation"
-                  title={null}
+                <MenuItem
+                  noAnchor={true}
                 >
-                  <a
-                    onClick={[Function]}
+                  <li
+                    className=""
+                    href={null}
+                    role="presentation"
+                    title={null}
                   >
-                    GitHub
-                  </a>
-                </li>
-              </MenuItem>
-            </ul>
+                    <a
+                      onClick={[Function]}
+                    >
+                      GitHub
+                    </a>
+                  </li>
+                </MenuItem>
+              </ul>
+            </DropdownReact>
           </span>
         </DropdownReact>
       </div>
@@ -388,10 +406,19 @@ exports[`OrganizationIntegrations render() without any providers renders 1`] = `
                 />
               </div>
             </a>
-            <ul
-              className="dropdown-menu"
-              onClick={[Function]}
-            />
+            <DropdownReact
+              alwaysRenderMenu={true}
+              keepMenuOpen={false}
+              onClose={[Function]}
+              renderComponent={[Function]}
+              shouldIgnoreClickOutside={[Function]}
+              visible={true}
+            >
+              <ul
+                className="dropdown-menu"
+                onClick={[Function]}
+              />
+            </DropdownReact>
           </span>
         </DropdownReact>
       </div>

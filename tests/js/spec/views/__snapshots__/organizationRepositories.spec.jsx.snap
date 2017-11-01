@@ -42,72 +42,57 @@ exports[`OrganizationRepositories render() with a provider renders 1`] = `
                 />
               </div>
             </a>
-            <ul
-              className="dropdown-menu"
-              onClick={[Function]}
+            <DropdownReact
+              alwaysRenderMenu={true}
+              keepMenuOpen={false}
+              onClose={[Function]}
+              renderComponent={[Function]}
+              shouldIgnoreClickOutside={[Function]}
+              visible={true}
             >
-              <MenuItem
-                noAnchor={true}
+              <ul
+                className="dropdown-menu"
+                onClick={[Function]}
               >
-                <li
-                  className=""
-                  href={null}
-                  role="presentation"
-                  title={null}
+                <MenuItem
+                  noAnchor={true}
                 >
-                  <AddRepositoryLink
-                    onSuccess={[Function]}
-                    orgId="org-slug"
-                    provider={
-                      Object {
-                        "config": Array [
-                          Object {
-                            "help": "Enter your repository name, including the owner.",
-                            "label": "Repository Name",
-                            "name": "name",
-                            "placeholder": "e.g. getsentry/sentry",
-                            "required": true,
-                            "type": "text",
-                          },
-                        ],
-                        "id": "github",
-                        "name": "GitHub",
-                      }
-                    }
+                  <li
+                    className=""
+                    href={null}
+                    role="presentation"
+                    title={null}
                   >
-                    <a
-                      onClick={[Function]}
-                    >
-                      GitHub
-                      <Modal
-                        animation={false}
-                        autoFocus={true}
-                        backdrop={true}
-                        bsClass="modal"
-                        dialogComponentClass={[Function]}
-                        enforceFocus={true}
-                        keyboard={true}
-                        manager={
-                          ModalManager {
-                            "containers": Array [],
-                            "data": Array [],
-                            "handleContainerOverflow": true,
-                            "hideSiblingNodes": true,
-                            "modals": Array [],
-                          }
+                    <AddRepositoryLink
+                      onSuccess={[Function]}
+                      orgId="org-slug"
+                      provider={
+                        Object {
+                          "config": Array [
+                            Object {
+                              "help": "Enter your repository name, including the owner.",
+                              "label": "Repository Name",
+                              "name": "name",
+                              "placeholder": "e.g. getsentry/sentry",
+                              "required": true,
+                              "type": "text",
+                            },
+                          ],
+                          "id": "github",
+                          "name": "GitHub",
                         }
-                        onHide={[Function]}
-                        renderBackdrop={[Function]}
-                        restoreFocus={true}
-                        show={false}
+                      }
+                    >
+                      <a
+                        onClick={[Function]}
                       >
+                        GitHub
                         <Modal
+                          animation={false}
                           autoFocus={true}
                           backdrop={true}
-                          backdropClassName="modal-backdrop"
-                          backdropTransitionTimeout={150}
-                          containerClassName="modal-open"
-                          dialogTransitionTimeout={300}
+                          bsClass="modal"
+                          dialogComponentClass={[Function]}
                           enforceFocus={true}
                           keyboard={true}
                           manager={
@@ -119,19 +104,43 @@ exports[`OrganizationRepositories render() with a provider renders 1`] = `
                               "modals": Array [],
                             }
                           }
-                          onEntering={[Function]}
-                          onExited={[Function]}
                           onHide={[Function]}
                           renderBackdrop={[Function]}
                           restoreFocus={true}
                           show={false}
-                        />
-                      </Modal>
-                    </a>
-                  </AddRepositoryLink>
-                </li>
-              </MenuItem>
-            </ul>
+                        >
+                          <Modal
+                            autoFocus={true}
+                            backdrop={true}
+                            backdropClassName="modal-backdrop"
+                            backdropTransitionTimeout={150}
+                            containerClassName="modal-open"
+                            dialogTransitionTimeout={300}
+                            enforceFocus={true}
+                            keyboard={true}
+                            manager={
+                              ModalManager {
+                                "containers": Array [],
+                                "data": Array [],
+                                "handleContainerOverflow": true,
+                                "hideSiblingNodes": true,
+                                "modals": Array [],
+                              }
+                            }
+                            onEntering={[Function]}
+                            onExited={[Function]}
+                            onHide={[Function]}
+                            renderBackdrop={[Function]}
+                            restoreFocus={true}
+                            show={false}
+                          />
+                        </Modal>
+                      </a>
+                    </AddRepositoryLink>
+                  </li>
+                </MenuItem>
+              </ul>
+            </DropdownReact>
           </span>
         </DropdownReact>
       </div>
@@ -210,72 +219,57 @@ exports[`OrganizationRepositories render() with a provider renders with a reposi
                 />
               </div>
             </a>
-            <ul
-              className="dropdown-menu"
-              onClick={[Function]}
+            <DropdownReact
+              alwaysRenderMenu={true}
+              keepMenuOpen={false}
+              onClose={[Function]}
+              renderComponent={[Function]}
+              shouldIgnoreClickOutside={[Function]}
+              visible={true}
             >
-              <MenuItem
-                noAnchor={true}
+              <ul
+                className="dropdown-menu"
+                onClick={[Function]}
               >
-                <li
-                  className=""
-                  href={null}
-                  role="presentation"
-                  title={null}
+                <MenuItem
+                  noAnchor={true}
                 >
-                  <AddRepositoryLink
-                    onSuccess={[Function]}
-                    orgId="org-slug"
-                    provider={
-                      Object {
-                        "config": Array [
-                          Object {
-                            "help": "Enter your repository name, including the owner.",
-                            "label": "Repository Name",
-                            "name": "name",
-                            "placeholder": "e.g. getsentry/sentry",
-                            "required": true,
-                            "type": "text",
-                          },
-                        ],
-                        "id": "github",
-                        "name": "GitHub",
-                      }
-                    }
+                  <li
+                    className=""
+                    href={null}
+                    role="presentation"
+                    title={null}
                   >
-                    <a
-                      onClick={[Function]}
-                    >
-                      GitHub
-                      <Modal
-                        animation={false}
-                        autoFocus={true}
-                        backdrop={true}
-                        bsClass="modal"
-                        dialogComponentClass={[Function]}
-                        enforceFocus={true}
-                        keyboard={true}
-                        manager={
-                          ModalManager {
-                            "containers": Array [],
-                            "data": Array [],
-                            "handleContainerOverflow": true,
-                            "hideSiblingNodes": true,
-                            "modals": Array [],
-                          }
+                    <AddRepositoryLink
+                      onSuccess={[Function]}
+                      orgId="org-slug"
+                      provider={
+                        Object {
+                          "config": Array [
+                            Object {
+                              "help": "Enter your repository name, including the owner.",
+                              "label": "Repository Name",
+                              "name": "name",
+                              "placeholder": "e.g. getsentry/sentry",
+                              "required": true,
+                              "type": "text",
+                            },
+                          ],
+                          "id": "github",
+                          "name": "GitHub",
                         }
-                        onHide={[Function]}
-                        renderBackdrop={[Function]}
-                        restoreFocus={true}
-                        show={false}
+                      }
+                    >
+                      <a
+                        onClick={[Function]}
                       >
+                        GitHub
                         <Modal
+                          animation={false}
                           autoFocus={true}
                           backdrop={true}
-                          backdropClassName="modal-backdrop"
-                          backdropTransitionTimeout={150}
-                          containerClassName="modal-open"
-                          dialogTransitionTimeout={300}
+                          bsClass="modal"
+                          dialogComponentClass={[Function]}
                           enforceFocus={true}
                           keyboard={true}
                           manager={
@@ -287,19 +281,43 @@ exports[`OrganizationRepositories render() with a provider renders with a reposi
                               "modals": Array [],
                             }
                           }
-                          onEntering={[Function]}
-                          onExited={[Function]}
                           onHide={[Function]}
                           renderBackdrop={[Function]}
                           restoreFocus={true}
                           show={false}
-                        />
-                      </Modal>
-                    </a>
-                  </AddRepositoryLink>
-                </li>
-              </MenuItem>
-            </ul>
+                        >
+                          <Modal
+                            autoFocus={true}
+                            backdrop={true}
+                            backdropClassName="modal-backdrop"
+                            backdropTransitionTimeout={150}
+                            containerClassName="modal-open"
+                            dialogTransitionTimeout={300}
+                            enforceFocus={true}
+                            keyboard={true}
+                            manager={
+                              ModalManager {
+                                "containers": Array [],
+                                "data": Array [],
+                                "handleContainerOverflow": true,
+                                "hideSiblingNodes": true,
+                                "modals": Array [],
+                              }
+                            }
+                            onEntering={[Function]}
+                            onExited={[Function]}
+                            onHide={[Function]}
+                            renderBackdrop={[Function]}
+                            restoreFocus={true}
+                            show={false}
+                          />
+                        </Modal>
+                      </a>
+                    </AddRepositoryLink>
+                  </li>
+                </MenuItem>
+              </ul>
+            </DropdownReact>
           </span>
         </DropdownReact>
       </div>
@@ -549,10 +567,19 @@ exports[`OrganizationRepositories render() without any providers renders 1`] = `
                 />
               </div>
             </a>
-            <ul
-              className="dropdown-menu"
-              onClick={[Function]}
-            />
+            <DropdownReact
+              alwaysRenderMenu={true}
+              keepMenuOpen={false}
+              onClose={[Function]}
+              renderComponent={[Function]}
+              shouldIgnoreClickOutside={[Function]}
+              visible={true}
+            >
+              <ul
+                className="dropdown-menu"
+                onClick={[Function]}
+              />
+            </DropdownReact>
           </span>
         </DropdownReact>
       </div>

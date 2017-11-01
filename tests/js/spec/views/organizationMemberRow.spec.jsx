@@ -30,6 +30,7 @@ describe('OrganizationMemberRow', function() {
   };
 
   let defaultProps = {
+    routes: [],
     orgId: 'org-slug',
     orgName: 'Organization Name',
     status: '',
