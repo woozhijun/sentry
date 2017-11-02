@@ -13,9 +13,9 @@ class SettingsPageHeading extends React.Component {
     return (
       <Wrapper>
         {this.props.label && (
-          <div style={{flex: '1'}}>
+          <LabelContainer>
             <Label>{this.props.label}</Label>
-          </div>
+          </LabelContainer>
         )}
         {this.props.action && <div>{this.props.action}</div>}
       </Wrapper>
@@ -28,6 +28,11 @@ const Wrapper = styled.div`
   font-size: 14px;
   box-shadow: inset 0 -1px 0 ${p => p.theme.borderLight};
   margin-bottom: 30px;
+`;
+
+const LabelContainer = styled.div`
+  display: flex;
+  flex: 1;
 `;
 
 const Label = styled.div`

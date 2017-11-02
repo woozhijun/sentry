@@ -107,7 +107,7 @@ export default class OrganizationMemberRow extends React.PureComponent {
     let isInviting = status === 'loading';
 
     return (
-      <Row align="center" py={1} key={id}>
+      <Row align="center" py={1}>
         <Box pl={2}>
           <Avatar style={{width: 32, height: 32}} user={user ? user : {email}} />
         </Box>
