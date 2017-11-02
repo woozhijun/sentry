@@ -1,16 +1,11 @@
 import {browserHistory} from 'react-router';
-import DocumentTitle from 'react-document-title';
+import PropTypes from 'prop-types';
 import React from 'react';
 
-import {t} from '../../../../locale';
-import ApiMixin from '../../../../mixins/apiMixin';
-import Avatar from '../../../../components/avatar';
-import DateTime from '../../../../components/dateTime';
-import LoadingError from '../../../../components/loadingError';
-import LoadingIndicator from '../../../../components/loadingIndicator';
-import OrganizationState from '../../../../mixins/organizationState';
-import Pagination from '../../../../components/pagination';
-import SelectInput from '../../../../components/selectInput';
+import LazyLoad from '../../../../components/lazyLoad';
+import OrganizationSettingsView from '../../../organizationSettingsView';
+import SentryTypes from '../../../../proptypes';
+import getSettingsComponent from '../../../../utils/getSettingsComponent';
 
 const EVENT_TYPES = [
   'member.invite',
@@ -46,173 +41,66 @@ const EVENT_TYPES = [
   'api-key.remove',
 ].sort();
 
-const AUditLog = React.createClass({
-  mixins: [ApiMixin, OrganizationState],
+class AuditLogView extends OrganizationSettingsView {
+  static propTypes = {
+    routes: PropTypes.array,
+  };
 
-  getInitialState() {
-    return {
-      loading: true,
-      error: false,
-      entryList: [],
-    };
-  },
+  static contextTypes = {
+    organization: SentryTypes.Organization,
+  };
 
-  componentWillMount() {
-    this.fetchData();
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.location.search !== this.props.location.search ||
-      nextProps.params.orgId !== this.props.params.orgId
-    ) {
-      this.remountComponent();
-    }
-  },
-
-  remountComponent() {
-    this.setState(this.getInitialState(), this.fetchData);
-  },
-
-  fetchData() {
-    this.setState({
-      loading: true,
-    });
-
-    this.api.request(this.getEndpoint(), {
-      query: this.props.location.query,
-      success: (data, _, jqXHR) => {
-        this.setState({
-          loading: false,
-          error: false,
-          entryList: data,
-          pageLinks: jqXHR.getResponseHeader('Link'),
-        });
-      },
-      error: () => {
-        this.setState({
-          loading: false,
-          error: true,
-        });
-      },
-    });
-  },
-
-  getEndpoint() {
-    return `/organizations/${this.props.params.orgId}/audit-logs/`;
-  },
+  getEndpoints() {
+    return [
+      [
+        'entryList',
+        `/organizations/${this.props.params.orgId}/audit-logs/`,
+        {
+          query: this.props.location.query,
+        },
+      ],
+    ];
+  }
 
   getTitle() {
     let org = this.context.organization;
     return `${org.name} Audit Log`;
-  },
+  }
 
-  onEventSelect(sel) {
+  handleEventSelect = sel => {
     let value = sel.val();
+
+    // Dont update if event has not changed
     if (this.props.location.query.event === value) {
       return;
     }
-    let queryParams = {
-      event: value,
-    };
-    browserHistory.pushState(null, this.props.location.pathname, queryParams);
-  },
 
-  renderResults() {
-    if (this.state.entryList.length === 0) {
-      return (
-        <tr>
-          <td colSpan="4">{t('No results found.')}</td>
-        </tr>
-      );
-    }
-
-    return this.state.entryList.map(entry => {
-      return (
-        <tr key={entry.id}>
-          <td className="table-user-info">
-            {entry.actor.email && <Avatar user={entry.actor} />}
-            <h5>{entry.actor.name}</h5>
-            {entry.note}
-          </td>
-          <td>{entry.event}</td>
-          <td>{entry.ipAddress}</td>
-          <td>
-            <DateTime date={entry.dateCreated} />
-          </td>
-        </tr>
-      );
+    browserHistory.push({
+      pathname: this.props.location.pathname,
+      search: `?event=${value}`,
     });
-  },
+  };
 
-  render() {
+  renderBody() {
     let currentEventType = this.props.location.query.event;
 
     return (
-      <DocumentTitle title={this.getTitle()}>
-        <div>
-          <h3>{t('Audit Log')}</h3>
-
-          <div className="pull-right">
-            <form className="form-horizontal" style={{marginBottom: 20}}>
-              <div className="control-group">
-                <div className="controls">
-                  <SelectInput
-                    name="event"
-                    onChange={this.onEventSelect}
-                    value={currentEventType}
-                    style={{width: 250}}
-                  >
-                    <option key="any" value="">
-                      {t('Any')}
-                    </option>
-                    {EVENT_TYPES.map(eventType => {
-                      return <option key={eventType}>{eventType}</option>;
-                    })}
-                  </SelectInput>
-                </div>
-              </div>
-            </form>
-          </div>
-
-          <p>{t('Sentry keeps track of important events within your organization.')}</p>
-
-          <div className="panel panel-default horizontal-scroll c-b">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>{t('Member')}</th>
-                  <th>{t('Action')}</th>
-                  <th>{t('IP')}</th>
-                  <th>{t('Time')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.loading ? (
-                  <tr>
-                    <td colSpan="4">
-                      <LoadingIndicator />
-                    </td>
-                  </tr>
-                ) : this.state.error ? (
-                  <tr>
-                    <td colSpan="4">
-                      <LoadingError onRetry={this.fetchData} />
-                    </td>
-                  </tr>
-                ) : (
-                  this.renderResults()
-                )}
-              </tbody>
-            </table>
-          </div>
-          {this.state.pageLinks && (
-            <Pagination pageLinks={this.state.pageLinks} {...this.props} />
+      <LazyLoad
+        component={() =>
+          getSettingsComponent(
+            () => import('./auditLogList'),
+            () => import('./auditLogList.old'),
+            this.props.routes
           )}
-        </div>
-      </DocumentTitle>
+        entries={this.state.entryList}
+        pageLinks={this.state.pageLinks}
+        eventType={currentEventType}
+        eventTypes={EVENT_TYPES}
+        onEventSelect={this.handleEventSelect}
+        {...this.props}
+      />
     );
-  },
-});
+  }
+}
 
-export default AUditLog;
+export default AuditLogView;
