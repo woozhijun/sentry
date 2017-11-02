@@ -1,4 +1,5 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
 import {browserHistory} from 'react-router';
 
 import ApiMixin from '../mixins/apiMixin';
@@ -11,7 +12,8 @@ import OrganizationState from '../mixins/organizationState';
 import OrganizationHomeContainer from '../components/organizations/homeContainer';
 import {t} from '../locale';
 
-const TeamDetails = React.createClass({
+const TeamDetails = createReactClass({
+  displayName: 'TeamDetails',
   mixins: [ApiMixin, OrganizationState],
 
   getInitialState() {

@@ -1,4 +1,5 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
 import {browserHistory} from 'react-router';
 import Raven from 'raven-js';
 
@@ -8,7 +9,8 @@ import ProjectContext from '../../projects/projectContext';
 import ProjectDocsContext from '../../projectInstall/docsContext';
 import ProjectInstallPlatform from '../../projectInstall/platform';
 
-const Configure = React.createClass({
+const Configure = createReactClass({
+  displayName: 'Configure',
   mixins: [ApiMixin],
 
   getInitialState() {

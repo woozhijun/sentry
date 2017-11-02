@@ -1,11 +1,14 @@
 import jQuery from 'jquery';
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 
 require('bootstrap/js/dropdown');
 
-const DropdownLink = React.createClass({
+const DropdownLink = createReactClass({
+  displayName: 'DropdownLink',
+
   propTypes: {
     title: PropTypes.node,
     /** display dropdown caret */
@@ -26,6 +29,7 @@ const DropdownLink = React.createClass({
       caret: true,
     };
   },
+
   getInitialState() {
     return {
       isOpen: false,
