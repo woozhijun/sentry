@@ -29,11 +29,10 @@ class SettingsBreadcrumb extends React.Component {
           return (
             <span key={`${route.name}:${route.path}`}>
               <Crumb to={recreateRoute(route, {routes, params})}>{route.name}</Crumb>
-              {!isLast && (
+              {!isLast &&
                 <Divider>
                   <IconChevronRight size="15" />
-                </Divider>
-              )}
+                </Divider>}
             </span>
           );
         })}
@@ -49,26 +48,22 @@ const Breadcrumbs = withTheme(
   `
 );
 
-const Crumb = withTheme(
-  styled(Link)`
+const Crumb = styled(Link)`
     font-size: 18px;
     color: ${p => p.theme.gray3};
-    margin-right: 10px;
+    margin-right: 8px;
     cursor: pointer;
 
     &:hover {
       color: ${p => p.theme.gray5};
     }
-  `
-);
+  `;
 
-const Divider = withTheme(
-  styled.span`
-    margin-right: 10px;
+const Divider = styled.span`
+    margin-right: 8px;
     color: ${p => p.theme.gray1};
     position: relative;
     top: -1px;
-  `
-);
+  `;
 
 export default SettingsBreadcrumb;
