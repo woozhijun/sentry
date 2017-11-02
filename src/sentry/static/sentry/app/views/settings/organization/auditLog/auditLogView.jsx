@@ -1,17 +1,16 @@
-import React from 'react';
-import DocumentTitle from 'react-document-title';
 import {browserHistory} from 'react-router';
+import DocumentTitle from 'react-document-title';
+import React from 'react';
 
-import ApiMixin from '../mixins/apiMixin';
-import DateTime from '../components/dateTime';
-import Avatar from '../components/avatar';
-import LoadingIndicator from '../components/loadingIndicator';
-import LoadingError from '../components/loadingError';
-import OrganizationState from '../mixins/organizationState';
-import Pagination from '../components/pagination';
-import SelectInput from '../components/selectInput';
-
-import {t} from '../locale';
+import {t} from '../../../../locale';
+import ApiMixin from '../../../../mixins/apiMixin';
+import Avatar from '../../../../components/avatar';
+import DateTime from '../../../../components/dateTime';
+import LoadingError from '../../../../components/loadingError';
+import LoadingIndicator from '../../../../components/loadingIndicator';
+import OrganizationState from '../../../../mixins/organizationState';
+import Pagination from '../../../../components/pagination';
+import SelectInput from '../../../../components/selectInput';
 
 const EVENT_TYPES = [
   'member.invite',
@@ -47,7 +46,7 @@ const EVENT_TYPES = [
   'api-key.remove',
 ].sort();
 
-const OrganizationAuditLog = React.createClass({
+const AUditLog = React.createClass({
   mixins: [ApiMixin, OrganizationState],
 
   getInitialState() {
@@ -216,4 +215,4 @@ const OrganizationAuditLog = React.createClass({
   },
 });
 
-export default OrganizationAuditLog;
+export default AUditLog;

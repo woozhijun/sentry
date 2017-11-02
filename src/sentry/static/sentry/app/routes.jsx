@@ -36,7 +36,7 @@ import OnboardingConfigure from './views/onboarding/configure/index';
 import OnboardingWizard from './views/onboarding/index';
 import OrganizationApiKeyDetailsView from './views/settings/organization/apiKeys/organizationApiKeyDetailsView';
 import OrganizationApiKeysView from './views/settings/organization/apiKeys/organizationApiKeysView';
-import OrganizationAuditLog from './views/organizationAuditLog';
+import OrganizationAuditLogView from './views/settings/organization/auditLog/auditLogView';
 import OrganizationAuthView from './views/settings/organization/auth/organizationAuthView';
 import OrganizationContext from './views/organizationContext';
 import OrganizationCreate from './views/organizationCreate';
@@ -141,7 +141,7 @@ const orgSettingsRoutes = [
     key="audit-log"
     path="audit-log/"
     name="Audit Log"
-    component={errorHandler(OrganizationAuditLog)}
+    component={errorHandler(OrganizationAuditLogView)}
   />,
 
   <Route
