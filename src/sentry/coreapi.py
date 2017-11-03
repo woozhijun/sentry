@@ -1080,11 +1080,8 @@ class LazyData(MutableMapping):
 
         data['sdk']['client_ip'] = self._client_ip
 
-        if 'project' not in data:
-            data['project'] = self._project.id
-
-        if 'key_id' not in data:
-            data['key_id'] = self._key.id
+        data['project'] = self._project.id
+        data['key_id'] = self._key.id
 
         # we always fill in the IP so that filters and other items can
         # access it (even if it eventually gets scrubbed)
