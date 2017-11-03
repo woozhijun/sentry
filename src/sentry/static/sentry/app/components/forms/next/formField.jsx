@@ -18,12 +18,9 @@ const SettingsPanelItemWrapper = styled(Flex)`
   align-items: center;
   transition: background 0.15s;
 
-  ${p =>
-    p.highlighted
-      ? css`
-          background-color: green;
-        `
-      : ''} &:last-child {
+  ${p => (p.highlighted ? css`
+          outline: 1px solid ${p.theme.purple};
+        ` : '')} &:last-child {
     border-bottom: none;
   }
 `;
@@ -273,11 +270,10 @@ class FormField extends React.Component {
         onMouseOut={e => this.handleHover(false, e)}
       >
         <SettingsPanelItemDesc>
-          {label && (
+          {label &&
             <SettingsPanelItemLabel>
               {label} {required && <SettingsRequiredBadge />}
-            </SettingsPanelItemLabel>
-          )}
+            </SettingsPanelItemLabel>}
           {help && <SettingsPanelItemHelp>{help}</SettingsPanelItemHelp>}
         </SettingsPanelItemDesc>
         <SettingsPanelItemCtrl>
@@ -305,11 +301,10 @@ class FormField extends React.Component {
           </Observer>
 
           {disabled &&
-            disabledReason && (
-              <span className="disabled-indicator tip" title={disabledReason}>
-                <span className="icon-question" />
-              </span>
-            )}
+            disabledReason &&
+            <span className="disabled-indicator tip" title={disabledReason}>
+              <span className="icon-question" />
+            </span>}
 
           <Observer>
             {() => {
