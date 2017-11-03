@@ -1,12 +1,13 @@
-import {Link} from 'react-router';
+import {Link, browserHistory} from 'react-router';
+import {css} from 'emotion';
+import Downshift from 'downshift';
 import React from 'react';
 import styled from 'react-emotion';
 
 import {searchIndex} from '../../../data/forms/organizationGeneralSettings';
-import DropdownMenu from '../../../components/dropdownMenu';
-import replaceRouterParams from '../../../utils/replaceRouterParams';
-
+import {t} from '../../../locale';
 import IconSearch from '../../../icons/icon-search';
+import replaceRouterParams from '../../../utils/replaceRouterParams';
 
 const MIN_SEARCH_LENGTH = 2;
 
@@ -22,7 +23,7 @@ const SearchInputIcon = styled(IconSearch)`
 `;
 
 const SearchInput = styled.input`
-  transition: border-color .15s ease;
+  transition: border-color 0.15s ease;
   font-size: 14px;
   width: 220px;
   line-height: 1;
@@ -39,7 +40,7 @@ const SearchInput = styled.input`
   }
 
   &::placeholder {
-    color: ${p => p.theme.gray2}
+    color: ${p => p.theme.gray2};
   }
 `;
 
@@ -64,12 +65,12 @@ const SearchItem = styled(Link)`
   padding: 16px 16px 14px;
   border-bottom: 1px solid ${p => p.theme.borderLight};
 
-  &:hover {
-    color: ${p => p.theme.purpleDarkest}
-    background: ${p => p.theme.offWhite};
-  }
-
-  &:first-child {
+  ${p =>
+    p.highlighted &&
+    css`
+      color: ${p.theme.purpleDarkest};
+      background: ${p.theme.offWhite};
+    `} &:first-child {
     border-radius: 5px 5px 0 0;
   }
 
@@ -89,70 +90,96 @@ const SearchDetail = styled.div`
 class SettingsSearch extends React.Component {
   static propTypes = {};
 
-  constructor(props) {
-    super(props);
+  handleSelect = (item, state) => {
+    if (!item) return;
 
-    this.state = {
-      searchTerm: '',
-      searchResults: [],
-    };
-  }
+    let {to} = item;
+    if (!to) return;
 
-  clearResults = () => {
-    this.setState({
-      searchTerm: '',
-      searchResults: [],
-    });
-  };
-
-  handleSearch = e => {
-    let searchTerm = e.target.value;
-    // min search length
-    let isValidSearch = searchTerm.length > MIN_SEARCH_LENGTH;
-    let searchResults = !isValidSearch
-      ? []
-      : Object.keys(searchIndex)
-          .filter(index => index.indexOf(searchTerm) > -1)
-          .map(index => searchIndex[index]);
-
-    this.setState({
-      searchTerm,
-      searchResults,
-    });
+    browserHistory.push(item.to);
   };
 
   render() {
     let {params} = this.props;
-    let hasResults = this.state.searchResults.length > 0;
 
     return (
-      <SettingsSearchContainer>
-        <SearchInputWrapper>
-          <SearchInputIcon size="14px" />
-          <SearchInput
-            type="text"
-            onChange={this.handleSearch}
-            value={this.state.searchTerm}
-            placeholder="Search settings (or press t)"
-          />
-        </SearchInputWrapper>
+      <Downshift
+        defaultHighlightedIndex={0}
+        itemToString={() => ''}
+        onSelect={this.handleSelect}
+        onStateChange={this.handleStateChange}
+      >
+        {({
+          getInputProps,
+          getItemProps,
+          getRootProps,
+          isOpen,
+          inputValue,
+          selectedItem,
+          highlightedIndex,
+          onChange,
+        }) => {
+          let isValidSearch = inputValue.length > MIN_SEARCH_LENGTH;
 
-        <DropdownMenu visible={hasResults} renderComponent={() => <DropdownBox />}>
-          {this.state.searchResults.map(({route, groupTitle, field}) => (
-            <SearchItem
-              key={field.name}
-              to={`${replaceRouterParams(route, params)}#${encodeURIComponent(field.name)}`}
-              onClick={this.clearResults}
-            >
-              <div>
-                <span>{field.label}</span>
-              </div>
+          let matches =
+            isValidSearch &&
+            isOpen &&
+            Object.keys(searchIndex).filter(
+              key => key.indexOf(inputValue.toLowerCase()) > -1
+            );
 
-              <SearchDetail>{field.help}</SearchDetail>
-            </SearchItem>
-          ))}
-        </DropdownMenu>
-      </SettingsSearchContainer>
+          return (
+            <SettingsSearchContainer {...getRootProps({refKey: 'innerRef'})}>
+              <SearchInputWrapper>
+                <SearchInputIcon size="14px" />
+                <SearchInput
+                  {...getInputProps({
+                    type: 'text',
+                    placeholder: 'Search settings (or press /)',
+                  })}
+                />
+              </SearchInputWrapper>
+
+              {isValidSearch && isOpen ? (
+                <DropdownBox>
+                  {matches && matches.length ? (
+                    matches.map((key, index) => {
+                      let item = searchIndex[key];
+                      let {route, field} = item;
+                      let to = `${replaceRouterParams(
+                        route,
+                        params
+                      )}#${encodeURIComponent(field.name)}`;
+
+                      return (
+                        <SearchItem
+                          {...getItemProps({
+                            item: {
+                              ...item,
+                              to,
+                            },
+                          })}
+                          highlighted={index === highlightedIndex}
+                          to={to}
+                          key={field.name}
+                        >
+                          <div>
+                            <span>{field.label}</span>
+                          </div>
+
+                          <SearchDetail>{field.help}</SearchDetail>
+                        </SearchItem>
+                      );
+                    })
+                  ) : (
+                    <SearchItem>{t('No results found')}</SearchItem>
+                  )}
+                </DropdownBox>
+              ) : null}
+            </SettingsSearchContainer>
+          );
+        }}
+      </Downshift>
     );
   }
 }

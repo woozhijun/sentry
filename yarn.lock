@@ -2848,6 +2848,10 @@ dot-prop@^4.1.0:
   dependencies:
     is-obj "^1.0.0"
 
+downshift@^1.16.2:
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/downshift/-/downshift-1.16.2.tgz#8e69de5789da37f8abd2af8264a0abada8839c13"
+
 ease-component@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/ease-component/-/ease-component-1.0.0.tgz#b375726db0b5b04595b77440396fec7daa5d77c9"

@@ -74,6 +74,7 @@ const OrganizationGeneralSettingsView = React.createClass({
             <div>
               <SettingsPageHeader label={t('Organization Settings')} />
               <this.state.Form
+                {...this.props}
                 initialData={data}
                 orgId={orgId}
                 access={access}

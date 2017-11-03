@@ -26,14 +26,24 @@ class JsonForm extends React.Component {
   };
 
   componentDidMount() {
-    let hash = this.context.location.hash;
+    this.scrollToHash();
+  }
+
+  componentWillReceiveProps(nextProps, e) {
+    if (this.props.location.hash !== nextProps.location.hash) {
+      this.scrollToHash(nextProps.location.hash);
+    }
+  }
+
+  scrollToHash(toHash) {
+    let hash = toHash || this.props.location.hash;
 
     if (!hash) return;
 
     // Push onto callback queue so it runs after the DOM is updated,
     // this is required when navigating from a different page so that
     // the element is rendered on the page before trying to getElementById.
-    scrollToElement(hash, {offset: -120});
+    scrollToElement(hash, {align: 'middle', offset: -100});
   }
 
   render() {

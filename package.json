@@ -28,6 +28,7 @@
     "crypto-js": "3.1.5",
     "css-loader": "^0.28.2",
     "diff": "^3.3.0",
+    "downshift": "^1.16.2",
     "emotion": "^8.0.2-12",
     "emotion-theming": "^8.0.2-10",
     "enzyme-to-json": "^1.5.1",

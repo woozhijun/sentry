@@ -98,7 +98,7 @@ const forms = [
         extraHelp:
           'Note: These fields will be used in addition to project specific fields.',
         getValue: val => extractMultilineFields(val),
-        setValue: val => (Array.isArray(val) ? val.join('\n') : ''),
+        setValue: val => (val && typeof val.join === 'function' && val.join('\n')) || '',
       },
       {
         name: 'safeFields',
@@ -111,7 +111,7 @@ const forms = [
         extraHelp:
           'Note: These fields will be used in addition to project specific fields.',
         getValue: val => extractMultilineFields(val),
-        setValue: val => (Array.isArray(val) ? val.join('\n') : ''),
+        setValue: val => (val && typeof val.join === 'function' && val.join('\n')) || '',
       },
       {
         name: 'scrubIPAddresses',
