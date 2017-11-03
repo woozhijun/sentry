@@ -3,12 +3,13 @@ import {Link} from 'react-router';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'react-emotion';
+
+import IconChevronLeft from '../../icons/icon-chevron-left';
 import SettingsActivity from './components/settingsActivity';
 import SettingsBreadcrumb from './components/settingsBreadcrumb';
 import SettingsHeader from './components/settingsHeader';
 import SettingsSearch from './components/settingsSearch';
-
-import IconChevronLeft from '../../icons/icon-chevron-left';
+import replaceRouterParams from '../../utils/replaceRouterParams';
 
 let StyledWarning = styled.div`
   margin-bottom: 30px;
@@ -52,10 +53,12 @@ const BackIcon = styled.span`
   margin-right: 8px;
 `;
 
-let BackButton = () => {
+let BackButton = ({to}) => {
   return (
-    <BackButtonWrapper to="/">
-      <BackIcon><IconChevronLeft size="15" /></BackIcon>Back
+    <BackButtonWrapper to={to}>
+      <BackIcon>
+        <IconChevronLeft size="15" />
+      </BackIcon>Back
     </BackButtonWrapper>
   );
 };
@@ -77,7 +80,7 @@ class SettingsLayout extends React.Component {
     return (
       <div>
         <SettingsHeader>
-          <BackButton />
+          <BackButton to={replaceRouterParams('/:orgId', params)} />
           <Box flex="1">
             <SettingsBreadcrumb params={params} routes={childRoutes} route={childRoute} />
           </Box>
