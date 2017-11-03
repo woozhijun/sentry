@@ -1,8 +1,7 @@
+import Downshift from 'downshift';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-
-import DropdownMenu from './dropdownMenu';
 
 class DropdownReact extends React.Component {
   static propTypes = {
@@ -94,7 +93,12 @@ class DropdownReact extends React.Component {
   handleClose = e => {
     let {onClose, isOpen} = this.props;
     let isControlled = typeof isOpen !== 'undefined';
+
     if (!isControlled) {
+      let {shouldIgnoreClickOutside} = this.props;
+      if (this.dropdownActor.contains(e.target)) return;
+      if (typeof shouldIgnoreClickOutside !== 'function') return;
+      if (shouldIgnoreClickOutside(e)) return;
       this.setState({isOpen: false});
     }
 
@@ -113,6 +117,8 @@ class DropdownReact extends React.Component {
       this.handleOpen(e);
     }
   };
+
+  handleStateChange = (changes, helpers) => {};
 
   render() {
     let {
@@ -147,30 +153,34 @@ class DropdownReact extends React.Component {
     // .dropdown-actor-title = flexbox to fix vertical alignment on firefox
     // Need the extra container because dropdown-menu alignment is off if `dropdown-actor` is a flexbox
     return (
-      <span className={topLevelCx}>
-        <a
-          className={cx}
-          ref={ref => (this.dropdownActor = ref)}
-          onClick={this.handleToggle}
-        >
-          <div className="dropdown-actor-title">
-            <span>{title}</span>
-            {caret && <i className="icon-arrow-down" />}
-          </div>
-        </a>
-        <DropdownMenu
-          visible={shouldShowDropdown}
-          keepMenuOpen={keepMenuOpen}
-          alwaysRenderMenu={alwaysRenderMenu}
-          shouldIgnoreClickOutside={this.shouldIgnoreClickOutside}
-          onClose={this.handleClose}
-          renderComponent={() => (
-            <ul className={classNames(menuClasses, 'dropdown-menu')} />
-          )}
-        >
-          {children}
-        </DropdownMenu>
-      </span>
+      <Downshift
+        isOpen={shouldShowDropdown}
+        onStateChange={this.handleStateChange}
+        onOuterClick={this.handleClose}
+      >
+        {({isOpen}) => {
+          let shouldRenderMenu = keepMenuOpen || alwaysRenderMenu || isOpen;
+
+          return (
+            <span className={topLevelCx}>
+              <a
+                className={cx}
+                ref={ref => (this.dropdownActor = ref)}
+                onClick={this.handleToggle}
+              >
+                <div className="dropdown-actor-title">
+                  <span>{title}</span>
+                  {caret && <i className="icon-arrow-down" />}
+                </div>
+              </a>
+
+              {shouldRenderMenu && (
+                <ul className={classNames(menuClasses, 'dropdown-menu')}>{children}</ul>
+              )}
+            </span>
+          );
+        }}
+      </Downshift>
     );
   }
 }
