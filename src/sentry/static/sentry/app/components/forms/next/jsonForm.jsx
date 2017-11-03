@@ -25,6 +25,11 @@ class JsonForm extends React.Component {
     location: PropTypes.object,
   };
 
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = {highlighted: props.location.hash};
+  }
+
   componentDidMount() {
     this.scrollToHash();
   }
@@ -32,6 +37,7 @@ class JsonForm extends React.Component {
   componentWillReceiveProps(nextProps, e) {
     if (this.props.location.hash !== nextProps.location.hash) {
       this.scrollToHash(nextProps.location.hash);
+      this.setState({highlighted: nextProps.location.hash});
     }
   }
 
@@ -57,7 +63,12 @@ class JsonForm extends React.Component {
               <PanelHeader>{title}</PanelHeader>
               <PanelBody>
                 {fields.map(field => (
-                  <FieldFromConfig key={field.name} {...otherProps} field={field} />
+                  <FieldFromConfig
+                    key={field.name}
+                    {...otherProps}
+                    field={field}
+                    highlighted={this.state.highlighted === `#${field.name}`}
+                  />
                 ))}
               </PanelBody>
             </Panel>

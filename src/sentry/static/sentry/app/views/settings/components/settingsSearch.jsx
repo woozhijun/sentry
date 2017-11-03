@@ -102,6 +102,9 @@ class SettingsSearch extends React.Component {
   render() {
     let {params} = this.props;
 
+    // TODO Create search index based on route
+    // (i.e. can only search project settings when a project is in context)
+
     return (
       <Downshift
         defaultHighlightedIndex={0}

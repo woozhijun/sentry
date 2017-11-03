@@ -1,5 +1,6 @@
 import {Box, Flex} from 'grid-emotion';
 import {Observer} from 'mobx-react';
+import {css} from 'emotion';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -17,7 +18,12 @@ const SettingsPanelItemWrapper = styled(Flex)`
   align-items: center;
   transition: background 0.15s;
 
-  &:last-child {
+  ${p =>
+    p.highlighted
+      ? css`
+          background-color: green;
+        `
+      : ''} &:last-child {
     border-bottom: none;
   }
 `;
@@ -133,6 +139,7 @@ class FormField extends React.Component {
     help: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
     required: PropTypes.bool,
     hideErrorMessage: PropTypes.bool,
+    highlighted: PropTypes.bool,
 
     // the following should only be used without form context
     onChange: PropTypes.func,
@@ -247,12 +254,21 @@ class FormField extends React.Component {
   };
 
   render() {
-    let {required, label, disabled, disabledReason, hideErrorMessage, help} = this.props;
+    let {
+      highlighted,
+      required,
+      label,
+      disabled,
+      disabledReason,
+      hideErrorMessage,
+      help,
+    } = this.props;
     let id = this.getId();
     let model = this.getModel();
 
     return (
       <SettingsPanelItemWrapper
+        highlighted={highlighted}
         onMouseOver={e => this.handleHover(true, e)}
         onMouseOut={e => this.handleHover(false, e)}
       >
