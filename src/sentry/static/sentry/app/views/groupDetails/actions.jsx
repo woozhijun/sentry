@@ -12,6 +12,7 @@ import DropdownLink from '../../components/dropdownLink';
 import Duration from '../../components/duration';
 import GroupActions from '../../actions/groupActions';
 import GroupState from '../../mixins/groupState';
+import HookStore from '../../stores/hookStore';
 import IndicatorStore from '../../stores/indicatorStore';
 import IssuePluginActions from '../../components/group/issuePluginActions';
 import LinkWithConfirmation from '../../components/linkWithConfirmation';
@@ -373,9 +374,42 @@ const IgnoreActions = React.createClass({
 
 const DeleteActions = React.createClass({
   propTypes: {
+    organization: PropTypes.object.isRequired,
     project: PropTypes.object.isRequired,
     onDelete: PropTypes.func.isRequired,
     onDiscard: PropTypes.func.isRequired,
+  },
+
+  getInitialState() {
+    return {
+      hooksDisabled: HookStore.get('project:discard-groups:disabled')
+    };
+  },
+
+  renderDisabledDiscard() {
+    let {project, organization} = this.props;
+    return this.state.hooksDisabled.map(hook => hook(organization, project));
+  },
+
+  renderDiscard() {
+    return (
+      <DropdownLink caret={true} className="group-delete btn btn-default btn-sm">
+        <li>
+          <LinkWithConfirmation
+            title={t('Discard')}
+            message={t(
+              'Discarding this event will result in the deletion ' +
+                'of most data associated with this issue and future ' +
+                'events being discarded before reaching your stream. ' +
+                'Are you sure you wish to continue?'
+            )}
+            onConfirm={this.props.onDiscard}
+          >
+            <span>{t('Delete and discard future events')}</span>
+          </LinkWithConfirmation>
+        </li>
+      </DropdownLink>
+    );
   },
 
   render() {
@@ -392,24 +426,9 @@ const DeleteActions = React.createClass({
         >
           <span className="icon-trash" />
         </LinkWithConfirmation>
-        {features.has('discard-groups') && (
-          <DropdownLink caret={true} className="group-delete btn btn-default btn-sm">
-            <li>
-              <LinkWithConfirmation
-                title={t('Discard')}
-                message={t(
-                  'Discarding this event will result in the deletion ' +
-                    'of most data associated with this issue and future ' +
-                    'events being discarded before reaching your stream. ' +
-                    'Are you sure you wish to continue?'
-                )}
-                onConfirm={this.props.onDiscard}
-              >
-                <span>{t('Delete and discard future events')}</span>
-              </LinkWithConfirmation>
-            </li>
-          </DropdownLink>
-        )}
+        {features.has('discard-groups')
+          ? this.renderDiscard()
+          : this.renderDisabledDiscard()}
       </div>
     );
   },
@@ -583,6 +602,7 @@ const GroupDetailsActions = React.createClass({
         </div>
         <DeleteActions
           project={project}
+          organization={org}
           onDelete={this.onDelete}
           onDiscard={this.onDiscard}
         />
