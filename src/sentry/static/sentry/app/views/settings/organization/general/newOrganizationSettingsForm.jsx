@@ -18,7 +18,8 @@ import PanelHeader from '../../../../components/forms/next/styled/panelHeader';
 import Select2Field from '../../../../components/forms/next/select2Field';
 import TextField from '../../../../components/forms/next/textField';
 import TextareaField from '../../../../components/forms/next/textareaField';
-import organizationSettingsFields from '../../../../data/forms/organizationGeneralSettings';
+import organizationSettingsFields
+  from '../../../../data/forms/organizationGeneralSettings';
 
 const NewOrganizationSettingsForm = React.createClass({
   propTypes: {
@@ -98,7 +99,7 @@ const NewOrganizationSettingsForm = React.createClass({
             <PanelHeader>{t('Membership')}</PanelHeader>
 
             <PanelBody>
-              {access.has('org:admin') && (
+              {access.has('org:admin') &&
                 <Select2Field
                   name="defaultRole"
                   label={t('Default Role')}
@@ -106,8 +107,7 @@ const NewOrganizationSettingsForm = React.createClass({
                   getValue={val => (this.props.access.has('org:admin') ? val : undefined)}
                   help={t('The default role new members will receive.')}
                   required
-                />
-              )}
+                />}
 
               <BooleanField
                 name="openMembership"

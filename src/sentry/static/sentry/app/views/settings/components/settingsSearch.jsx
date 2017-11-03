@@ -45,6 +45,7 @@ const SearchInput = styled.input`
 
 const DropdownBox = styled.div`
   background: #fff;
+  border: 1px solid ${p => p.theme.borderDark};
   box-shadow: ${p => p.theme.dropShadowHeavy};
   position: absolute;
   top: 36px;

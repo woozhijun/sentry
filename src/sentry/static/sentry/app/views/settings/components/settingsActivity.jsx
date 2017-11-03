@@ -1,17 +1,35 @@
-import {Box} from 'grid-emotion';
-import {withTheme} from 'emotion-theming';
 import React from 'react';
 import Reflux from 'reflux';
 import styled from 'react-emotion';
 
 import SettingsIndicatorStore from '../../../stores/settingsIndicatorStore';
 
-const Container = withTheme(
-  styled(Box)`
-    font-size: 14px;
-    color: ${p => p.theme.gray2};
-  `
-);
+const Container = styled.div`
+  position: fixed;
+  bottom: 32px;
+  right: 40px;
+  font-size: 15px;
+  color: ${p => p.theme.gray5};
+  background: #fff;
+  border-radius: 3px;
+  border: 1px solid ${p => p.theme.borderDark};
+  box-shadow: ${p => p.theme.dropShadowHeavy};
+  padding: 12px 24px;
+  line-height: 1;
+`;
+
+const Undo = styled.div`
+  display: inline-block;
+  color: ${p => p.theme.gray2};
+  padding-left: 16px;
+  margin-left: 16px;
+  border-left: 1px solid ${p => p.theme.borderLight};
+  cursor: pointer;
+
+  &:hover {
+    color: ${p => p.theme.gray3};
+  }
+`;
 
 const SettingsActivity = React.createClass({
   mixins: [Reflux.connect(SettingsIndicatorStore, 'activity')],
@@ -29,7 +47,12 @@ const SettingsActivity = React.createClass({
       return null;
     }
 
-    return <Container type={activity.type}>{activity.message}</Container>;
+    return (
+      <Container type={activity.type}>
+        {activity.message}
+        <Undo>Undo</Undo>
+      </Container>
+    );
   },
 });
 
