@@ -90,12 +90,12 @@ export default class Form extends React.Component {
 
   onSubmitSuccess = data => {
     this.model.submitSuccess(data);
-    this.props.onSubmitSuccess && this.props.onSubmitSuccess(data);
+    this.props.onSubmitSuccess && this.props.onSubmitSuccess(data, this.model);
   };
 
   onSubmitError = error => {
     this.model.submitError(error);
-    this.props.onSubmitError && this.props.onSubmitError(error);
+    this.props.onSubmitError && this.props.onSubmitError(error, this.model);
   };
 
   render() {

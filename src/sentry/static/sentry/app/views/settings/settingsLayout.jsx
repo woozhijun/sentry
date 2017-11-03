@@ -7,6 +7,7 @@ import SettingsActivity from './components/settingsActivity';
 import SettingsBreadcrumb from './components/settingsBreadcrumb';
 import SettingsHeader from './components/settingsHeader';
 import SettingsSearch from './components/settingsSearch';
+
 let StyledWarning = styled.div`
   margin-bottom: 30px;
 `;

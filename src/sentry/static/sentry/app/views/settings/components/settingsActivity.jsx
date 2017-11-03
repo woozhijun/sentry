@@ -2,6 +2,8 @@ import React from 'react';
 import Reflux from 'reflux';
 import styled from 'react-emotion';
 
+import {t} from '../../../locale';
+import {undo} from '../../../actionCreators/settingsIndicator';
 import SettingsIndicatorStore from '../../../stores/settingsIndicatorStore';
 
 const Container = styled.div`
@@ -47,10 +49,12 @@ const SettingsActivity = React.createClass({
       return null;
     }
 
+    let showUndo = activity.type !== 'error' && activity.type !== 'undo';
+
     return (
       <Container type={activity.type}>
         {activity.message}
-        <Undo>Undo</Undo>
+        {showUndo && <Undo onClick={undo}>{t('Undo')}</Undo>}
       </Container>
     );
   },

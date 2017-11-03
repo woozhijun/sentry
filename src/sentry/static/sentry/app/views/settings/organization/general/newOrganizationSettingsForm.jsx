@@ -11,6 +11,8 @@ import Form from '../../../../components/forms/next/form';
 import JsonForm from '../../../../components/forms/next/jsonForm';
 import organizationSettingsFields from '../../../../data/forms/organizationGeneralSettings';
 
+const TOAST_DURATION = 5000;
+
 const NewOrganizationSettingsForm = React.createClass({
   propTypes: {
     location: PropTypes.object,
@@ -32,8 +34,20 @@ const NewOrganizationSettingsForm = React.createClass({
         saveOnBlur
         allowUndo
         initialData={initialData}
-        onSubmitSuccess={() => addSuccessMessage('Change saved', 3000)}
-        onSubmitError={() => addErrorMessage('Unable to save change', 3000)}
+        onSubmitSuccess={(change, model, id) => {
+          if (!model) return;
+
+          let label = model.getDescriptor(id, 'label');
+
+          if (!label) return;
+
+          addSuccessMessage(
+            `Changed ${label} from "${change.old}" to "${change.new}"`,
+            TOAST_DURATION,
+            {model, id}
+          );
+        }}
+        onSubmitError={() => addErrorMessage('Unable to save change', TOAST_DURATION)}
       >
         <Box>
           <JsonForm location={this.props.location} forms={organizationSettingsFields} />

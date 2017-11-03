@@ -6,6 +6,10 @@ export function remove() {
   SettingsIndicatorActions.remove();
 }
 
+export function undo() {
+  SettingsIndicatorActions.undo();
+}
+
 export function addMessage(msg, type, options = {}) {
   let {duration} = options;
 
@@ -21,10 +25,10 @@ export function addMessage(msg, type, options = {}) {
   }
 }
 
-export function addErrorMessage(msg, duration) {
-  addMessage(msg, 'error', {duration});
+export function addErrorMessage(msg, duration, options = {}) {
+  addMessage(msg, 'error', {...options, duration});
 }
 
-export function addSuccessMessage(msg, duration) {
-  addMessage(msg, 'success', {duration});
+export function addSuccessMessage(msg, duration, options = {}) {
+  addMessage(msg, 'success', {...options, duration});
 }

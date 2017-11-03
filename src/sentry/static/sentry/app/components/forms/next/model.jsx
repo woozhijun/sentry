@@ -209,10 +209,11 @@ class FormModel {
   @action
   undo() {
     // Always have initial data snapshot
-    if (this.snapshots.length < 2) return;
+    if (this.snapshots.length < 2) return null;
 
     this.snapshots.shift();
     this.fields.replace(this.snapshots[0]);
+    return true;
   }
 
   /**
@@ -257,6 +258,7 @@ class FormModel {
         this.setSaving(id, false);
 
         // Updating initialData and save snapshot
+        let oldValue = this.initialData[id];
         this.initialData[id] = newValue;
 
         if (saveSnapshot) {
@@ -265,7 +267,7 @@ class FormModel {
         }
 
         if (this.options.onSubmitSuccess) {
-          this.options.onSubmitSuccess(data);
+          this.options.onSubmitSuccess({old: oldValue, new: newValue}, this, id);
         }
 
         return data;
@@ -278,7 +280,7 @@ class FormModel {
 
         console.error(error);
         if (this.options.onSubmitError) {
-          this.options.onSubmitError(error);
+          this.options.onSubmitError(error, this, id);
         }
 
         return error;
