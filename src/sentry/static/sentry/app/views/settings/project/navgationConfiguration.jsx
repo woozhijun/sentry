@@ -11,7 +11,7 @@ export default function getConfiguration({project}) {
       items: [
         {
           path: `${pathPrefix}/settings/`,
-          title: t('General (needs react)'),
+          title: t('General'),
         },
         {
           path: `${pathPrefix}/alerts/`,
@@ -19,16 +19,16 @@ export default function getConfiguration({project}) {
         },
         {
           path: `${pathPrefix}/quotas/`,
-          title: t('Rate Limits (needs react)'),
+          title: t('Rate Limits'),
           show: ({features}) => features.has('quotas'),
         },
         {
           path: `${pathPrefix}/tags/`,
-          title: t('Tags (needs react)'),
+          title: t('Tags'),
         },
         {
           path: `${pathPrefix}/issue-tracking/`,
-          title: t('Issue Tracking (needs react)'),
+          title: t('Issue Tracking'),
         },
         {
           path: `${pathPrefix}/release-tracking/`,
@@ -88,7 +88,7 @@ export default function getConfiguration({project}) {
       items: [
         {
           path: `${pathPrefix}/plugins/`,
-          title: t('All Integrations (needs react)'),
+          title: t('All Integrations'),
         },
         ...plugins.map(plugin => ({
           path: `${pathPrefix}/plugins/${plugin.id}/`,
