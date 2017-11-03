@@ -11,7 +11,7 @@ import Form from '../../../../components/forms/next/form';
 import JsonForm from '../../../../components/forms/next/jsonForm';
 import organizationSettingsFields from '../../../../data/forms/organizationGeneralSettings';
 
-const TOAST_DURATION = 5000;
+const TOAST_DURATION = 10000;
 
 const NewOrganizationSettingsForm = React.createClass({
   propTypes: {

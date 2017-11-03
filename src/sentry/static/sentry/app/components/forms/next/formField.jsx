@@ -250,7 +250,7 @@ class FormField extends React.Component {
     }
 
     // Always call this, so model can decide what to do
-    model.saveField(name, value);
+    model.handleFieldBlur(name, value);
   };
 
   render() {

@@ -2,6 +2,7 @@ import {observable, computed, action} from 'mobx';
 import _ from 'lodash';
 
 import {Client} from '../../../api';
+import {defined} from '../../../utils';
 import FormState from '../state';
 
 class FormModel {
@@ -213,28 +214,26 @@ class FormModel {
 
     this.snapshots.shift();
     this.fields.replace(this.snapshots[0]);
+
     return true;
   }
 
   /**
-   * This is called when a field is blurred
+   * Saves a field with new value
    *
-   * If `saveOnBlur` is set, field has changes, field does not have errors, then it will:
+   * If field has changes, field does not have errors, then it will:
    * Save a snapshot, apply any data transforms, perform api request.
    *
-   * If successful then: 1) reset save state, 2) update `initialData`, 3) save snapshot, 4) handle callbacks
-   * If failed then: 1) reset save state, 2) add error state, 3) handle callbacks
+   * If successful then: 1) reset save state, 2) update `initialData`, 3) save snapshot
+   * If failed then: 1) reset save state, 2) add error state
    */
   @action
   saveField(id, currentValue) {
-    // Nothing to do if `saveOnBlur` is not on
-    if (!this.options.saveOnBlur) return null;
-
     // Don't save if field hasn't changed
     // Don't need to check for error state since initialData wouldn't have updated since last error
     if (
       currentValue === this.initialData[id] ||
-      (currentValue === '' && typeof this.initialData[id] === 'undefined')
+      (currentValue === '' && !defined(this.initialData[id]))
     )
       return null;
 
@@ -266,11 +265,7 @@ class FormModel {
           saveSnapshot = null;
         }
 
-        if (this.options.onSubmitSuccess) {
-          this.options.onSubmitSuccess({old: oldValue, new: newValue}, this, id);
-        }
-
-        return data;
+        return {old: oldValue, new: newValue};
       })
       .catch(error => {
         // should we revert field value to last known state?
@@ -278,12 +273,38 @@ class FormModel {
         saveSnapshot = null;
         this.setError(id, 'Failed to save');
 
+        // eslint-disable-next-line no-console
         console.error(error);
+        throw error;
+      });
+  }
+
+  /**
+   * This is called when a field is blurred
+   *
+   * If `saveOnBlur` is set then call `saveField` and handle form callbacks accordingly
+   */
+  @action
+  handleFieldBlur(id, currentValue) {
+    // Nothing to do if `saveOnBlur` is not on
+    if (!this.options.saveOnBlur) return null;
+
+    let savePromise = this.saveField(id, currentValue);
+
+    if (!savePromise) return null;
+
+    return savePromise
+      .then(change => {
+        if (this.options.onSubmitSuccess) {
+          this.options.onSubmitSuccess(change, this, id);
+        }
+        return change;
+      })
+      .catch(error => {
         if (this.options.onSubmitError) {
           this.options.onSubmitError(error, this, id);
         }
-
-        return error;
+        return {};
       });
   }
 

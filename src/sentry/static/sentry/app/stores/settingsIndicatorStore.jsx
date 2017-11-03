@@ -40,6 +40,7 @@ const SettingsIndicatorStore = Reflux.createStore({
     this.remove();
     let oldValue = this.model.getValue(this.id);
     let didUndo = this.model.undo();
+    let newValue = this.model.getValue(this.id);
 
     if (!didUndo) return;
 
@@ -47,11 +48,10 @@ const SettingsIndicatorStore = Reflux.createStore({
     let label = this.model.getDescriptor(this.id, 'label');
     if (!label) return;
 
-    this.add(
-      `Restored ${label} from "${oldValue}" to "${this.model.getValue(this.id)}"`,
-      'undo',
-      5000
-    );
+    // hmm...
+    this.model.saveField(this.id, newValue).then(() => {
+      this.add(`Restored ${label} from "${oldValue}" to "${newValue}"`, 'undo', 5000);
+    });
   },
 });
 
