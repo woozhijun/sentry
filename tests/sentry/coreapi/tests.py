@@ -478,21 +478,21 @@ class ValidateDataTest(BaseAPITest):
         assert data['time_spent'] == 123
 
     def test_fingerprints(self):
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'fingerprint': '2012-01-01T10:30:45',
         })
         assert not data.get('fingerprint')
         assert data['errors'][0]['type'] == 'invalid_data'
         assert data['errors'][0]['name'] == 'fingerprint'
 
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'fingerprint': ['foo', ['bar']],
         })
         assert not data.get('fingerprint')
         assert data['errors'][0]['type'] == 'invalid_data'
         assert data['errors'][0]['name'] == 'fingerprint'
 
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'fingerprint': ['{{default}}', 1, 'bar', 4.5],
         })
         assert data.get('fingerprint') == ['{{default}}', '1', 'bar', '4.5']
@@ -500,7 +500,7 @@ class ValidateDataTest(BaseAPITest):
 
     def test_messages(self):
         # Just 'message': wrap it in interface
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'message': 'foo is bar',
         })
         assert 'message' not in data
@@ -508,7 +508,7 @@ class ValidateDataTest(BaseAPITest):
 
         # both 'message' and interface with no 'formatted' value, put 'message'
         # into 'formatted'.
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'message': 'foo is bar',
             'sentry.interfaces.Message': {
                 'message': 'something else',
@@ -521,7 +521,7 @@ class ValidateDataTest(BaseAPITest):
         }
 
         # both 'message' and complete interface, 'message' is discarded
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'message': 'foo is bar',
             'sentry.interfaces.Message': {
                 'message': 'something else',
@@ -539,7 +539,7 @@ class ValidateDataTest(BaseAPITest):
         # both 'message' and complete valid interface but interface has the same
         # value for both keys so the 'formatted' value is discarded and ends up
         # being replaced with 'message'
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'message': 'foo is bar',
             'sentry.interfaces.Message': {
                 'message': 'something else',
@@ -555,7 +555,7 @@ class ValidateDataTest(BaseAPITest):
 
         # interface discarded as invalid, replaced by new interface containing
         # wrapped 'message'
-        data = self.helper.validate_data(self.project, {
+        data = self.helper.validate_data({
             'message': 'foo is bar',
             'sentry.interfaces.Message': {
                 'invalid': 'invalid',
