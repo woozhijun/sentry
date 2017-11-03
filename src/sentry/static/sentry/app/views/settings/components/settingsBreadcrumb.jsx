@@ -49,21 +49,21 @@ const Breadcrumbs = withTheme(
 );
 
 const Crumb = styled(Link)`
-    font-size: 18px;
-    color: ${p => p.theme.gray3};
-    margin-right: 8px;
-    cursor: pointer;
+  font-size: 18px;
+  color: ${p => p.theme.gray3};
+  margin-right: 8px;
+  cursor: pointer;
 
-    &:hover {
-      color: ${p => p.theme.gray5};
-    }
-  `;
+  &:hover {
+    color: ${p => p.theme.gray5};
+  }
+`;
 
 const Divider = styled.span`
-    margin-right: 8px;
-    color: ${p => p.theme.gray1};
-    position: relative;
-    top: -1px;
-  `;
+  margin-right: 8px;
+  color: ${p => p.theme.gray1};
+  position: relative;
+  top: -1px;
+`;
 
 export default SettingsBreadcrumb;

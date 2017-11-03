@@ -8,6 +8,8 @@ import SettingsBreadcrumb from './components/settingsBreadcrumb';
 import SettingsHeader from './components/settingsHeader';
 import SettingsSearch from './components/settingsSearch';
 
+import IconChevronLeft from '../../icons/icon-chevron-left';
+
 let StyledWarning = styled.div`
   margin-bottom: 30px;
 `;
@@ -31,9 +33,37 @@ let NewSettingsWarning = ({location = {}}) => {
     </StyledWarning>
   );
 };
+
+const BackButtonWrapper = styled(Link)`
+  position: fixed;
+  display: block;
+  left: 20px;
+  font-size: 18px;
+  color: ${p => p.theme.gray3};
+  &:hover {
+    color: ${p => p.theme.gray5};
+  }
+`;
+
+const BackIcon = styled.span`
+  color: ${p => p.theme.gray1};
+  position: relative;
+  top: -2px;
+  margin-right: 8px;
+`;
+
+let BackButton = () => {
+  return (
+    <BackButtonWrapper to="/">
+      <BackIcon><IconChevronLeft size="15" /></BackIcon>Back
+    </BackButtonWrapper>
+  );
+};
+
 const Content = styled(Box)`
   flex: 1;
 `;
+
 class SettingsLayout extends React.Component {
   static propTypes = {
     renderNavigation: PropTypes.func,
@@ -47,6 +77,7 @@ class SettingsLayout extends React.Component {
     return (
       <div>
         <SettingsHeader>
+          <BackButton />
           <Box flex="1">
             <SettingsBreadcrumb params={params} routes={childRoutes} route={childRoute} />
           </Box>
@@ -59,7 +90,8 @@ class SettingsLayout extends React.Component {
             </StickySidebar>
           </Box>
           <Content>
-            <NewSettingsWarning location={this.props.location} />
+            {/* <NewSettingsWarning location={this.props.location} /> */}
+
             {children}
           </Content>
         </Flex>
