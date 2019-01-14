@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
-import {t} from '../../locale';
+import {t} from 'app/locale';
 
 const Snooze = {
   // all values in minutes
@@ -10,47 +10,49 @@ const Snooze = {
   '24HOURS': 60 * 24,
 };
 
-const SnoozeAction = React.createClass({
-  propTypes: {
+class SnoozeAction extends React.Component {
+  static propTypes = {
     disabled: PropTypes.bool,
     onSnooze: PropTypes.func.isRequired,
     tooltip: PropTypes.string,
-  },
+  };
 
-  getInitialState() {
-    return {
+  constructor(...args) {
+    super(...args);
+    this.state = {
       isModalOpen: false,
     };
-  },
+  }
 
-  toggleModal() {
+  toggleModal = () => {
     if (this.props.disabled) {
       return;
     }
     this.setState({
       isModalOpen: !this.state.isModalOpen,
     });
-  },
+  };
 
-  closeModal() {
+  closeModal = () => {
     this.setState({isModalOpen: false});
-  },
+  };
 
-  onSnooze(duration) {
+  onSnooze = duration => {
     this.props.onSnooze(duration);
     this.closeModal();
-  },
+  };
 
   render() {
     return (
-      <a
-        title={this.props.tooltip}
-        className={this.props.className}
-        disabled={this.props.disabled}
-        onClick={this.toggleModal}
-      >
-        <span>{t('zZz')}</span>
-
+      <React.Fragment>
+        <a
+          title={this.props.tooltip}
+          className={this.props.className}
+          disabled={this.props.disabled}
+          onClick={this.toggleModal}
+        >
+          <span>{t('zZz')}</span>
+        </a>
         <Modal
           show={this.state.isModalOpen}
           title={t('Please confirm')}
@@ -86,9 +88,9 @@ const SnoozeAction = React.createClass({
             </button>
           </div>
         </Modal>
-      </a>
+      </React.Fragment>
     );
-  },
-});
+  }
+}
 
 export default SnoozeAction;

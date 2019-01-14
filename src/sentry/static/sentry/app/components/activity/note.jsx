@@ -1,24 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TimeSince from '../../components/timeSince';
-import ConfigStore from '../../stores/configStore';
-import LinkWithConfirmation from '../../components/linkWithConfirmation';
-import {t} from '../../locale';
-import marked from '../../utils/marked';
+import TimeSince from 'app/components/timeSince';
+import ConfigStore from 'app/stores/configStore';
+import LinkWithConfirmation from 'app/components/linkWithConfirmation';
+import {t} from 'app/locale';
+import marked from 'app/utils/marked';
 
-const Note = React.createClass({
-  propTypes: {
+class Note extends React.Component {
+  static propTypes = {
     author: PropTypes.object.isRequired,
     item: PropTypes.object.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-  },
+  };
 
-  canEdit() {
+  canEdit = () => {
     let user = ConfigStore.get('user');
     return user.isSuperuser || user.id === this.props.item.user.id;
-  },
+  };
 
   render() {
     let {item, author, onEdit, onDelete} = this.props;
@@ -34,6 +34,7 @@ const Note = React.createClass({
               <a onClick={onEdit}>{t('Edit')}</a>
               <LinkWithConfirmation
                 className="danger"
+                title="Remove"
                 message={t('Are you sure you wish to delete this comment?')}
                 onConfirm={onDelete}
               >
@@ -45,7 +46,7 @@ const Note = React.createClass({
         <div dangerouslySetInnerHTML={{__html: noteBody}} />
       </div>
     );
-  },
-});
+  }
+}
 
 export default Note;

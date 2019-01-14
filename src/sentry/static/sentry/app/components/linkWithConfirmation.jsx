@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Confirm from './confirm';
+import Confirm from 'app/components/confirm';
 
 /**
  * <Confirm> is a more generic version of this component
@@ -9,8 +9,8 @@ import Confirm from './confirm';
 class LinkWithConfirmation extends React.PureComponent {
   static propTypes = {
     disabled: PropTypes.bool,
-    message: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    message: PropTypes.node.isRequired,
+    title: PropTypes.node.isRequired,
     onConfirm: PropTypes.func.isRequired,
   };
 

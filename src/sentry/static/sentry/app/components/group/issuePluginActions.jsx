@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import Modal from 'react-bootstrap/lib/Modal';
-import ApiMixin from '../../mixins/apiMixin';
-import DropdownLink from '../../components/dropdownLink';
-import GroupState from '../../mixins/groupState';
-import MenuItem from '../../components/menuItem';
-import plugins from '../../plugins';
-import {t} from '../../locale';
-import {toTitleCase} from '../../utils';
+import ApiMixin from 'app/mixins/apiMixin';
+import DropdownLink from 'app/components/dropdownLink';
+import GroupState from 'app/mixins/groupState';
+import MenuItem from 'app/components/menuItem';
+import plugins from 'app/plugins';
+import {t} from 'app/locale';
+import {toTitleCase} from 'app/utils';
 
-const IssuePluginActions = React.createClass({
+const IssuePluginActions = createReactClass({
+  displayName: 'IssuePluginActions',
+
   propTypes: {
     plugin: PropTypes.object.isRequired,
   },
@@ -95,12 +98,12 @@ const IssuePluginActions = React.createClass({
     } else {
       // # TODO(dcramer): remove plugin.title check in Sentry 8.22+
       button = (
-        <div className={'btn-group btn-plugin-' + plugin.slug}>
+        <div className={'btn-plugin-' + plugin.slug}>
           <DropdownLink
             caret={false}
             className="btn btn-default btn-sm"
             title={
-              <span>
+              <span style={{display: 'flex'}}>
                 {plugin.shortName || plugin.name || plugin.title}
                 <span
                   className="icon-arrow-down"

@@ -15,8 +15,8 @@ class BaseBuildCommand(Command):
         ('work-path=', 'w', "The working directory for source files. Defaults to ."),
         ('build-lib=', 'b', "directory for script runtime modules"),
         (
-            'inplace', 'i', "ignore build-lib and put compiled javascript files into the source " +
-            "directory alongside your pure Python modules"
+            'inplace', 'i', "ignore build-lib and put compiled javascript files into the source "
+            + "directory alongside your pure Python modules"
         ),
         (
             'force', 'f', "Force rebuilding of static content. Defaults to rebuilding on version "
@@ -130,18 +130,18 @@ class BaseBuildCommand(Command):
                     node_version.append(None)
                 else:
                     log.fatal(
-                        'Cannot find `{0}` executable. Please install {0}`'
+                        u'Cannot find `{0}` executable. Please install {0}`'
                         ' and try again.'.format(app)
                     )
                     sys.exit(1)
 
         if node_version[2] is not None:
-            log.info('using node ({0}) and yarn ({2})'.format(*node_version))
+            log.info(u'using node ({0}) and yarn ({2})'.format(*node_version))
             self._run_command(
                 ['yarn', 'install', '--production', '--pure-lockfile']
             )
         else:
-            log.info('using node ({0}) and npm ({1})'.format(*node_version))
+            log.info(u'using node ({0}) and npm ({1})'.format(*node_version))
             self._run_command(['npm', 'install', '--production', '--quiet'])
 
     def _run_command(self, cmd, env=None):

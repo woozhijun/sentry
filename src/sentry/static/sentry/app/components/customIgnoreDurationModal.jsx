@@ -3,31 +3,32 @@ import React from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
 import {sprintf} from 'sprintf-js';
 
-import {t} from '../locale';
+import {t} from 'app/locale';
 
-export default React.createClass({
-  propTypes: {
+export default class CustomIgnoreDurationModal extends React.Component {
+  static propTypes = {
     onSelected: PropTypes.func,
     onCanceled: PropTypes.func,
     show: PropTypes.bool,
     label: PropTypes.string,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      label: t('Ignore this issue until it occurs after ..'),
-    };
-  },
+  static defaultProps = {
+    label: t('Ignore this issue until it occurs after ..'),
+  };
 
-  getInitialState() {
-    return {
+  constructor(...args) {
+    super(...args);
+    this.state = {
       dateWarning: false,
     };
-  },
+    this.snoozeDateInputRef = React.createRef();
+    this.snoozeTimeInputRef = React.createRef();
+  }
 
-  selectedIgnoreMinutes() {
-    const dateStr = this.refs.snoozeDateInput.value; // YYYY-MM-DD
-    const timeStr = this.refs.snoozeTimeInput.value; // HH:MM
+  selectedIgnoreMinutes = () => {
+    const dateStr = this.snoozeDateInputRef.current.value; // YYYY-MM-DD
+    const timeStr = this.snoozeTimeInputRef.current.value; // HH:MM
     if (dateStr && timeStr) {
       const selectedDate = new Date(dateStr + 'T' + timeStr); // poor man's ISO datetime
       if (!isNaN(selectedDate)) {
@@ -38,9 +39,9 @@ export default React.createClass({
       }
     }
     return 0;
-  },
+  };
 
-  snoozeClicked() {
+  snoozeClicked = () => {
     const minutes = this.selectedIgnoreMinutes();
 
     this.setState({
@@ -50,7 +51,7 @@ export default React.createClass({
     if (minutes > 0) {
       this.props.onSelected({ignoreDuration: minutes});
     }
-  },
+  };
 
   render() {
     // Give the user a sane starting point to select a date
@@ -83,7 +84,7 @@ export default React.createClass({
                 type="date"
                 id="snooze-until-date"
                 defaultValue={defaultDateVal}
-                ref="snoozeDateInput"
+                ref={this.snoozeDateInputRef}
                 required={true}
                 style={{padding: '0 10px'}}
               />
@@ -95,7 +96,7 @@ export default React.createClass({
                 type="time"
                 id="snooze-until-time"
                 defaultValue={defaultTimeVal}
-                ref="snoozeTimeInput"
+                ref={this.snoozeTimeInputRef}
                 style={{padding: '0 10px'}}
                 required={true}
               />
@@ -121,5 +122,5 @@ export default React.createClass({
         </div>
       </Modal>
     );
-  },
-});
+  }
+}

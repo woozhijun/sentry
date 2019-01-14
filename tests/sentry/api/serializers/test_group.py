@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 
+import mock
 import six
 
 from datetime import timedelta
@@ -10,8 +11,9 @@ from django.utils import timezone
 from mock import patch
 
 from sentry.api.serializers import serialize
+from sentry.api.serializers.models.group import StreamGroupSerializer
 from sentry.models import (
-    GroupResolution, GroupSnooze, GroupStatus,
+    Environment, GroupLink, GroupResolution, GroupSnooze, GroupStatus,
     GroupSubscription, UserOption, UserOptionValue
 )
 from sentry.testutils import TestCase
@@ -121,6 +123,25 @@ class GroupSerializerTest(TestCase):
         assert result['status'] == 'resolved'
         assert result['statusDetails']['actor']['id'] == six.text_type(user.id)
 
+    def test_resolved_in_commit(self):
+        repo = self.create_repo(project=self.project)
+        commit = self.create_commit(repo=repo)
+        user = self.create_user()
+        group = self.create_group(
+            status=GroupStatus.RESOLVED,
+        )
+        GroupLink.objects.create(
+            group_id=group.id,
+            project_id=group.project_id,
+            linked_id=commit.id,
+            linked_type=GroupLink.LinkedType.commit,
+            relationship=GroupLink.Relationship.resolves,
+        )
+
+        result = serialize(group, user)
+        assert result['status'] == 'resolved'
+        assert result['statusDetails']['inCommit']['id'] == commit.key
+
     @patch('sentry.models.Group.is_over_resolve_age')
     def test_auto_resolved(self, mock_is_over_resolve_age):
         mock_is_over_resolve_age.return_value = True
@@ -207,7 +228,7 @@ class GroupSerializerTest(TestCase):
 
         for options, (is_subscribed, subscription_details) in combinations:
             default_value, project_value = options
-            UserOption.objects.clear_cache()
+            UserOption.objects.clear_local_cache()
             maybe_set_value(None, default_value)
             maybe_set_value(group.project, project_value)
             result = serialize(group, user)
@@ -267,3 +288,41 @@ class GroupSerializerTest(TestCase):
 
         result = serialize(group)
         assert not result['isSubscribed']
+
+
+class StreamGroupSerializerTestCase(TestCase):
+    def test_environment(self):
+        group = self.group
+
+        environment = Environment.get_or_create(group.project, 'production')
+
+        from sentry.api.serializers.models.group import tsdb
+
+        with mock.patch(
+                'sentry.api.serializers.models.group.tsdb.get_range',
+                side_effect=tsdb.get_range) as get_range:
+            serialize(
+                [group],
+                serializer=StreamGroupSerializer(
+                    environment_func=lambda: environment,
+                    stats_period='14d',
+                ),
+            )
+            assert get_range.call_count == 1
+            for args, kwargs in get_range.call_args_list:
+                assert kwargs['environment_ids'] == [environment.id]
+
+        def get_invalid_environment():
+            raise Environment.DoesNotExist()
+
+        with mock.patch(
+                'sentry.api.serializers.models.group.tsdb.make_series',
+                side_effect=tsdb.make_series) as make_series:
+            serialize(
+                [group],
+                serializer=StreamGroupSerializer(
+                    environment_func=get_invalid_environment,
+                    stats_period='14d',
+                )
+            )
+            assert make_series.call_count == 1

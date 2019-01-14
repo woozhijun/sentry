@@ -1,18 +1,17 @@
 import $ from 'jquery';
 import React from 'react';
-import ApiMixin from '../../mixins/apiMixin';
-import LoadingError from '../../components/loadingError';
-import LoadingIndicator from '../../components/loadingIndicator';
-import OrganizationHomeContainer from '../../components/organizations/homeContainer';
-import StackedBarChart from '../../components/stackedBarChart';
-import OrganizationState from '../../mixins/organizationState';
-import Pagination from '../../components/pagination';
+import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
+import ApiMixin from 'app/mixins/apiMixin';
+import OrganizationState from 'app/mixins/organizationState';
 
-import ProjectTable from './projectTable';
-import {t} from '../../locale';
-import {intcomma} from '../../utils';
+import LazyLoad from 'app/components/lazyLoad';
 
-const OrganizationStats = React.createClass({
+const OrganizationStatsContainer = createReactClass({
+  displayName: 'OrganizationStatsContainer ',
+  propTypes: {
+    routes: PropTypes.array,
+  },
   mixins: [ApiMixin, OrganizationState],
 
   getInitialState() {
@@ -89,12 +88,12 @@ const OrganizationStats = React.createClass({
           projectMap[project.id] = project;
         });
 
-        this.state.projectsRequestsPending -= 1;
-
-        this.setState({
-          pageLinks: jqxhr.getResponseHeader('Link'),
-          projectMap,
-          projectsRequestsPending: this.state.projectsRequestsPending,
+        this.setState(prevState => {
+          return {
+            pageLinks: jqxhr.getResponseHeader('Link'),
+            projectMap,
+            projectsRequestsPending: prevState.projectsRequestsPending - 1,
+          };
         });
       },
       error: () => {
@@ -126,11 +125,14 @@ const OrganizationStats = React.createClass({
           stat: statName,
         },
         success: data => {
-          this.state.rawOrgData[statName] = data;
-          this.state.statsRequestsPending -= 1;
-          this.setState({
-            rawOrgData: this.state.rawOrgData,
-            statsRequestsPending: this.state.statsRequestsPending,
+          this.setState(prevState => {
+            let rawOrgData = prevState.rawOrgData;
+            rawOrgData[statName] = data;
+
+            return {
+              rawOrgData,
+              statsRequestsPending: prevState.statsRequestsPending - 1,
+            };
           });
         },
         error: () => {
@@ -150,11 +152,14 @@ const OrganizationStats = React.createClass({
           group: 'project',
         },
         success: data => {
-          this.state.rawProjectData[statName] = data;
-          this.state.projectsRequestsPending -= 1;
-          this.setState({
-            rawProjectData: this.state.rawProjectData,
-            projectsRequestsPending: this.state.projectsRequestsPending,
+          this.setState(prevState => {
+            let rawProjectData = prevState.rawProjectData;
+            rawProjectData[statName] = data;
+
+            return {
+              rawProjectData,
+              projectsRequestsPending: prevState.projectsRequestsPending - 1,
+            };
           });
         },
         error: () => {
@@ -241,94 +246,20 @@ const OrganizationStats = React.createClass({
     });
   },
 
-  renderTooltip(point, pointIdx, chart) {
-    let timeLabel = chart.getTimeLabel(point);
-    let [accepted, rejected, blacklisted] = point.y;
-
-    let value = `${intcomma(accepted)} accepted`;
-    if (rejected) {
-      value += `<br>${intcomma(rejected)} rate limited`;
-    }
-    if (blacklisted) {
-      value += `<br>${intcomma(blacklisted)} filtered`;
-    }
-
-    return (
-      '<div style="width:150px">' +
-      `<div class="time-label">${timeLabel}</div>` +
-      `<div class="value-label">${value}</div>` +
-      '</div>'
-    );
-  },
-
   render() {
-    return (
-      <OrganizationHomeContainer>
-        <h3>{t('Stats')}</h3>
-        <div className="row">
-          <div className="col-md-9">
-            <p>
-              {t(
-                `The chart below reflects events the system has received
-            across your entire organization. Events are broken down into
-            three categories: Accepted, Rate Limited, and Filtered. Rate
-            Limited events are entries that the system threw away due to quotas
-            being hit, and Filtered events are events that were blocked
-            due to your inbound data filter rules.`
-              )}
-            </p>
-          </div>
-          {!this.state.statsLoading && (
-            <div className="col-md-3 stats-column">
-              <h6 className="nav-header">{t('Events per minute')}</h6>
-              <p className="count">{this.state.orgTotal.avgRate}</p>
-            </div>
-          )}
-        </div>
-        <div className="organization-stats">
-          {this.state.statsLoading ? (
-            <LoadingIndicator />
-          ) : this.state.statsError ? (
-            <LoadingError onRetry={this.fetchData} />
-          ) : (
-            <div className="bar-chart">
-              <StackedBarChart
-                points={this.state.orgStats}
-                height={150}
-                label="events"
-                className="standard-barchart"
-                barClasses={['accepted', 'rate-limited', 'black-listed']}
-                tooltip={this.renderTooltip}
-              />
-            </div>
-          )}
-        </div>
+    let organization = this.getOrganization();
 
-        <div className="box">
-          <div className="box-header">
-            <h3>{t('Events by Project')}</h3>
-          </div>
-          <div className="box-content">
-            {this.state.statsLoading || this.state.projectsLoading ? (
-              <LoadingIndicator />
-            ) : this.state.projectsError ? (
-              <LoadingError onRetry={this.fetchData} />
-            ) : (
-              <ProjectTable
-                projectTotals={this.state.projectTotals}
-                orgTotal={this.state.orgTotal}
-                organization={this.getOrganization()}
-                projectMap={this.state.projectMap}
-              />
-            )}
-          </div>
-        </div>
-        {this.state.pageLinks && (
-          <Pagination pageLinks={this.state.pageLinks} {...this.props} />
-        )}
-      </OrganizationHomeContainer>
+    return (
+      <LazyLoad
+        component={() =>
+          import(/* webpackChunkName: "organizationStats" */ './organizationStatsDetails').then(
+            mod => mod.default
+          )}
+        organization={organization}
+        {...this.state}
+      />
     );
   },
 });
 
-export default OrganizationStats;
+export default OrganizationStatsContainer;

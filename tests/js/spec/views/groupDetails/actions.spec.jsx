@@ -1,43 +1,46 @@
 import React from 'react';
 import {shallow} from 'enzyme';
 
-import GroupActions from 'app/views/groupDetails/actions';
+import GroupActions from 'app/views/groupDetails/shared/actions';
 import ConfigStore from 'app/stores/configStore';
 
 describe('GroupActions', function() {
-  beforeEach(function() {
-    this.sandbox = sinon.sandbox.create();
+  let sandbox;
 
-    this.sandbox.stub(ConfigStore, 'get').returns([]);
+  beforeEach(function() {
+    sandbox = sinon.sandbox.create();
+
+    sandbox.stub(ConfigStore, 'get').returns([]);
   });
 
   afterEach(function() {
-    this.sandbox.restore();
+    sandbox.restore();
   });
 
   describe('render()', function() {
     it('renders correctly', function() {
-      let wrapper = shallow(<GroupActions />, {
-        context: {
-          group: {
+      let wrapper = shallow(
+        <GroupActions
+          group={TestStubs.Group({
             id: '1337',
             pluginActions: [],
             pluginIssues: [],
-          },
-          organization: {
-            id: '4660',
-            slug: 'org',
-          },
-          project: {
+          })}
+          project={TestStubs.ProjectDetails({
             id: '2448',
+            name: 'project name',
             slug: 'project',
+          })}
+        />,
+        {
+          context: {
+            organization: TestStubs.Organization({
+              id: '4660',
+              slug: 'org',
+            }),
           },
-          team: {
-            id: '3559',
-            slug: 'team',
-          },
-        },
-      });
+        }
+      );
       expect(wrapper).toMatchSnapshot();
     });
   });

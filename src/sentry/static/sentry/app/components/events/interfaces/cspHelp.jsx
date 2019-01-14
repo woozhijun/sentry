@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {t} from '../../../locale';
+import {t} from 'app/locale';
 
 /*eslint getsentry/jsx-needs-il8n:0*/
 // TODO: Not sure what we're going to do here re: translations. - Ben
@@ -11,15 +11,13 @@ const help = {
 The <code>base-uri</code> directive defines the URIs that a user agent
 may use as the document base URL. If this value is absent, then any URI
 is allowed. If this directive is absent, the user agent will use the
-value in the <code>base</code> element.`
+value in the <code>&lt;base&gt;</code> element.`
   ),
   'child-src': t(
     `
-The <code>child-src</code> directive defines the valid sources for web
-workers and nested browsing contexts loaded using elements such as
-<frame> and <iframe>. This directive is preferred over the
-<code>frame-src</code> directive, which is deprecated. For workers,
-non-compliant requests are treated as fatal network errors by the user agent.`
+The <code>child-src</code> directive defines the valid sources for
+web workers and nested browsing contexts loaded using elements such as
+<code>&lt;frame&gt;</code> and <code>&lt;iframe&gt;</code>.`
   ),
   'connect-src': t(
     `
@@ -47,6 +45,10 @@ may embed a page using the <code>&lt;frame&gt;</code> and
     `
 The <code>img-src</code> directive specifies valid sources of images and
 favicons.`
+  ),
+  'prefetch-src': t(
+    `The <code>prefetch-src</code> directive restricts the URLs
+    from which resources may be prefetched or prerendered.`
   ),
   'manifest-src': t(
     `
@@ -83,6 +85,14 @@ for JavaScript. When either the <code>script-src</code> or the
 <code>eval()</code> are disabled unless you specify 'unsafe-inline'
 and 'unsafe-eval', respectively.`
   ),
+  'script-src-elem': t(
+    `The <code>script-src-elem</code> directive applies to all script requests
+    and element contents. It does not apply to scripts defined in attributes.`
+  ),
+  'script-src-attr': t(
+    `The <code>script-src-attr</code> directive applies to event handlers and, if present,
+    it will override the <code>script-src</code> directive for relevant checks.`
+  ),
   'style-src': t(
     `
 The <code>style-src</code> directive specifies valid sources for
@@ -93,6 +103,25 @@ requested or loaded. When either the <code>style-src</code> or the
 <code>default-src</code> directive is included, inline use of the
 <code>&lt;style&gt;</code> element and HTML style attributes are disabled
 unless you specify 'unsafe-inline'.`
+  ),
+  'style-src-elem': t(
+    `The <code>style-src-elem</code> directive applies to all styles except
+    those defined in inline attributes.`
+  ),
+  'style-src-attr': t(
+    `The <code>style-src-attr</code> directive applies to inline style attributes and, if present,
+    it will override the <code>style-src</code> directive for relevant checks.`
+  ),
+  'frame-src': t(
+    `The <code>frame-src</code> directive specifies valid sources for nested
+browsing contexts loading using elements such as
+<code>&lt;frame&gt;</code> and <code>&lt;iframe&gt;</code>.`
+  ),
+  'worker-src': t(
+    `
+The <code>worker-src</code> directive specifies valid sources for
+<code>Worker<code>, <code>SharedWorker</code>, or
+<code>ServiceWorker</code> scripts.`
   ),
 };
 
@@ -127,10 +156,10 @@ function getLink(key) {
   );
 }
 
-const CSPHelp = React.createClass({
-  propTypes: {
+class CSPHelp extends React.Component {
+  static propTypes = {
     data: PropTypes.object.isRequired,
-  },
+  };
 
   render() {
     let {data} = this.props;
@@ -144,7 +173,7 @@ const CSPHelp = React.createClass({
         <p style={{textAlign: 'right'}}>— MDN ({getLink(key)})</p>
       </div>
     );
-  },
-});
+  }
+}
 
 export default CSPHelp;

@@ -2,41 +2,42 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {Link} from 'react-router';
 
-import GroupStore from '../stores/groupStore';
-import IssueList from './issueList';
-import OrganizationHomeContainer from './organizations/homeContainer';
-import {t} from '../locale';
+import GroupStore from 'app/stores/groupStore';
+import IssueList from 'app/components/issueList';
+import PageHeading from 'app/components/pageHeading';
+import OrganizationHomeContainer from 'app/components/organizations/homeContainer';
+import {t} from 'app/locale';
 
-const OrganizationIssueList = React.createClass({
-  propTypes: {
+class OrganizationIssueList extends React.Component {
+  static propTypes = {
     title: PropTypes.string,
     endpoint: PropTypes.string.isRequired,
+    emptyText: PropTypes.string,
     pageSize: PropTypes.number,
-  },
+  };
 
-  getInitialState() {
-    return this.getQueryStringState(this.props);
-  },
+  constructor(props) {
+    super(props);
+    this.state = this.getQueryStringState(props);
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.search !== this.props.location.search) {
       this.setState(this.getQueryStringState(nextProps), this.fetchData);
     }
-  },
+  }
 
   componentWillUnmount() {
     GroupStore.reset();
-  },
+  }
 
-  getQueryStringState(props) {
-    let location = props.location;
-    let status = location.query.hasOwnProperty('status')
-      ? location.query.status
-      : 'unresolved';
+  getQueryStringState = props => {
+    let query = props.location.query;
+    let status = 'status' in query ? query.status : 'unresolved';
     return {
       status,
     };
-  },
+  };
 
   render() {
     let path = this.props.location.pathname;
@@ -61,9 +62,10 @@ const OrganizationIssueList = React.createClass({
             </Link>
           </div>
         </div>
-        <h3>{this.props.title}</h3>
+        <PageHeading withMargins>{this.props.title}</PageHeading>
         <IssueList
           endpoint={this.props.endpoint}
+          emptyText={this.props.emptyText}
           query={{
             status: this.state.status,
             statsPeriod: '24h',
@@ -74,7 +76,7 @@ const OrganizationIssueList = React.createClass({
         />
       </OrganizationHomeContainer>
     );
-  },
-});
+  }
+}
 
 export default OrganizationIssueList;

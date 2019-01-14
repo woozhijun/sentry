@@ -2,33 +2,34 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {browserHistory} from 'react-router';
 
-import utils from '../utils';
-import {t} from '../locale';
+import utils from 'app/utils';
+import {t} from 'app/locale';
 
-export default React.createClass({
-  propTypes: {
+export default class Pagination extends React.Component {
+  static propTypes = {
     pageLinks: PropTypes.string,
     to: PropTypes.string,
     onCursor: PropTypes.func,
-  },
+    className: PropTypes.string,
+  };
 
-  contextTypes: {
+  static contextTypes = {
     location: PropTypes.object,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      onCursor: (cursor, path, query) => {
-        browserHistory.pushState(null, path, {
-          ...query,
-          cursor,
-        });
-      },
-    };
-  },
+  static defaultProps = {
+    onCursor: (cursor, path, query) => {
+      query.cursor = cursor;
+      browserHistory.push({
+        pathname: path,
+        query,
+      });
+    },
+    className: 'stream-pagination',
+  };
 
   render() {
-    let {onCursor, pageLinks} = this.props;
+    let {className, onCursor, pageLinks} = this.props;
     if (!pageLinks) {
       return null;
     }
@@ -50,7 +51,7 @@ export default React.createClass({
     }
 
     return (
-      <div className="stream-pagination clearfix">
+      <div className={'clearfix' + (className ? ` ${className}` : '')}>
         <div className="btn-group pull-right">
           <a
             onClick={() => {
@@ -73,5 +74,5 @@ export default React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}

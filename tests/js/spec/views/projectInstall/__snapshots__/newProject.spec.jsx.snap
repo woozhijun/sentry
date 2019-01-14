@@ -1,16 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NewProjectPlatform render() should render 1`] = `
-<div
-  className="getting-started"
->
+<Container>
   <div
     className="sub-header flex flex-container flex-vertically-centered"
   >
     <div
       className="p-t-1 p-b-1"
     >
-      <ProjectSelector
+      <withRouter(ProjectHeaderProjectSelector)
         organization={
           Object {
             "id": "1337",
@@ -22,23 +20,20 @@ exports[`NewProjectPlatform render() should render 1`] = `
             ],
           }
         }
-        projectId={null}
       />
     </div>
   </div>
   <div
     className="container"
   >
-    <div
-      className="content"
-    >
-      <DocumentTitle
+    <Content>
+      <SideEffect(DocumentTitle)
         title="Sentry"
       />
       <CreateProject
         getDocsUrl={[Function]}
       />
-    </div>
+    </Content>
   </div>
-</div>
+</Container>
 `;

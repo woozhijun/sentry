@@ -1,10 +1,11 @@
 import React from 'react';
-import {t} from '../../locale';
+import {t} from 'app/locale';
 
-const NotFound = React.createClass({
+class NotFound extends React.Component {
   render() {
+    // TODO(chrissy): use scale for margin values
     return (
-      <div className="alert alert-block alert-error">
+      <div className="alert alert-block alert-error" style={{margin: '30px 0 10px'}}>
         <div style={{fontSize: 24, marginBottom: 10}}>
           <span className="icon-exclamation" style={{fontSize: 20, marginRight: 10}} />
           <span>{t('Page Not Found')}</span>
@@ -31,7 +32,7 @@ const NotFound = React.createClass({
         </p>
       </div>
     );
-  },
-});
+  }
+}
 
 export default NotFound;

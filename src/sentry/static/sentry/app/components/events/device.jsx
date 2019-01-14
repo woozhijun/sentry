@@ -1,20 +1,16 @@
 import React from 'react';
 
-import GroupEventDataSection from './eventDataSection';
-import SentryTypes from '../../proptypes';
-import {t} from '../../locale';
-import ContextData from '../contextData';
+import GroupEventDataSection from 'app/components/events/eventDataSection';
+import SentryTypes from 'app/sentryTypes';
+import {t} from 'app/locale';
+import ContextData from 'app/components/contextData';
 
 // TODO(hazat): Is this interface used somewhere? If not delete it?
-const DeviceInterface = React.createClass({
-  propTypes: {
+class DeviceInterface extends React.Component {
+  static propTypes = {
     group: SentryTypes.Group.isRequired,
     event: SentryTypes.Event.isRequired,
-  },
-
-  getInitialState() {
-    return {};
-  },
+  };
 
   render() {
     let {group, event} = this.props;
@@ -70,7 +66,7 @@ const DeviceInterface = React.createClass({
         </table>
       </GroupEventDataSection>
     );
-  },
-});
+  }
+}
 
 export default DeviceInterface;

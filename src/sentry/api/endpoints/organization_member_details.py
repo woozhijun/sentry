@@ -9,28 +9,26 @@ from sentry import roles
 from sentry.api.bases.organization import (
     OrganizationEndpoint, OrganizationPermission)
 from sentry.api.exceptions import ResourceDoesNotExist
-from sentry.api.serializers import serialize, RoleSerializer
-
+from sentry.api.serializers import (
+    DetailedUserSerializer, serialize, RoleSerializer, OrganizationMemberWithTeamsSerializer)
+from sentry.api.serializers.rest_framework import ListField
+from sentry.auth.superuser import is_active_superuser
 from sentry.models import (
-    AuditLogEntryEvent, AuthIdentity, AuthProvider, OrganizationMember)
-from sentry.signals import sso_enabled
+    AuditLogEntryEvent, AuthIdentity, AuthProvider, OrganizationMember, OrganizationMemberTeam, Team, TeamStatus)
 
 ERR_NO_AUTH = 'You cannot remove this member with an unauthenticated API request.'
-
 ERR_INSUFFICIENT_ROLE = 'You cannot remove a member who has more access than you.'
-
 ERR_INSUFFICIENT_SCOPE = 'You are missing the member:admin scope.'
-
 ERR_ONLY_OWNER = 'You cannot remove the only remaining owner of the organization.'
-
 ERR_UNINVITABLE = 'You cannot send an invitation to a user who is already a full member.'
+ERR_EXPIRED = 'You cannot resend an expired invitation without regenerating the token.'
 
 
 def get_allowed_roles(request, organization, member=None):
     can_admin = request.access.has_scope('member:admin')
 
     allowed_roles = []
-    if can_admin and not request.is_superuser():
+    if can_admin and not is_active_superuser(request):
         acting_member = member or OrganizationMember.objects.get(
             user=request.user,
             organization=organization,
@@ -43,13 +41,16 @@ def get_allowed_roles(request, organization, member=None):
                 if r.priority <= roles.get(acting_member.role).priority
             ]
             can_admin = bool(allowed_roles)
-    elif request.is_superuser():
+    elif is_active_superuser(request):
         allowed_roles = roles.get_all()
     return (can_admin, allowed_roles, )
 
 
 class OrganizationMemberSerializer(serializers.Serializer):
     reinvite = serializers.BooleanField()
+    regenerate = serializers.BooleanField()
+    role = serializers.ChoiceField(choices=roles.get_choices(), required=True)
+    teams = ListField(required=False, allow_null=False)
 
 
 class RelaxedMemberPermission(OrganizationPermission):
@@ -97,6 +98,22 @@ class OrganizationMemberDetailsEndpoint(OrganizationEndpoint):
 
         return True
 
+    def _serialize_member(self, member, request, allowed_roles=None):
+        context = serialize(
+            member,
+            serializer=OrganizationMemberWithTeamsSerializer()
+        )
+
+        if request.access.has_scope('member:admin'):
+            context['invite_link'] = member.get_invite_link()
+            context['user'] = serialize(member.user, request.user, DetailedUserSerializer())
+
+        context['isOnlyOwner'] = self._is_only_owner(member)
+        context['roles'] = serialize(
+            roles.get_all(), serializer=RoleSerializer(), allowed_roles=allowed_roles)
+
+        return context
+
     def get(self, request, organization, member_id):
         """Currently only returns allowed invite roles for member invite"""
 
@@ -107,14 +124,7 @@ class OrganizationMemberDetailsEndpoint(OrganizationEndpoint):
 
         _, allowed_roles = get_allowed_roles(request, organization, member)
 
-        allowed_roles = [{'role': serialize(r, serializer=RoleSerializer()),
-                          'allowed': r in allowed_roles} for r in roles.get_all()]
-
-        context = serialize(
-            member,
-        )
-
-        context['allowed_roles'] = allowed_roles
+        context = self._serialize_member(member, request, allowed_roles)
 
         return Response(context)
 
@@ -126,6 +136,7 @@ class OrganizationMemberDetailsEndpoint(OrganizationEndpoint):
 
         serializer = OrganizationMemberSerializer(
             data=request.DATA, partial=True)
+
         if not serializer.is_valid():
             return Response(status=400)
 
@@ -135,21 +146,84 @@ class OrganizationMemberDetailsEndpoint(OrganizationEndpoint):
         except AuthProvider.DoesNotExist:
             auth_provider = None
 
+        allowed_roles = None
         result = serializer.object
+
         # XXX(dcramer): if/when this expands beyond reinvite we need to check
         # access level
         if result.get('reinvite'):
             if om.is_pending:
+                if result.get('regenerate'):
+                    if request.access.has_scope('member:admin'):
+                        om.regenerate_token()
+                        om.save()
+                    else:
+                        return Response({'detail': ERR_INSUFFICIENT_SCOPE}, status=400)
+                if om.token_expired:
+                    return Response({'detail': ERR_EXPIRED}, status=400)
                 om.send_invite_email()
             elif auth_provider and not getattr(om.flags, 'sso:linked'):
                 om.send_sso_link_email(request.user, auth_provider)
             else:
                 # TODO(dcramer): proper error message
                 return Response({'detail': ERR_UNINVITABLE}, status=400)
-        if auth_provider:
-            sso_enabled.send(organization=organization, sender=request.user)
 
-        return Response(status=204)
+        if 'teams' in result:
+            # dupe code from member_index
+            # ensure listed teams are real teams
+            teams = list(Team.objects.filter(
+                organization=organization,
+                status=TeamStatus.VISIBLE,
+                slug__in=result['teams'],
+            ))
+
+            if len(set(result['teams'])) != len(teams):
+                return Response({'teams': 'Invalid team'}, status=400)
+
+            with transaction.atomic():
+                # teams may be empty
+                OrganizationMemberTeam.objects.filter(
+                    organizationmember=om).delete()
+                OrganizationMemberTeam.objects.bulk_create(
+                    [
+                        OrganizationMemberTeam(
+                            team=team, organizationmember=om)
+                        for team in teams
+                    ]
+                )
+
+        if result.get('role'):
+            _, allowed_roles = get_allowed_roles(request, organization)
+            allowed_role_ids = {r.id for r in allowed_roles}
+
+            # A user cannot promote others above themselves
+            if result['role'] not in allowed_role_ids:
+                return Response(
+                    {'role': 'You do not have permission to assign the given role.'}, status=403)
+
+            # A user cannot demote a superior
+            if om.role not in allowed_role_ids:
+                return Response(
+                    {'role': 'You do not have permission to assign a role to the given user.'}, status=403)
+
+            if om.user == request.user and (result['role'] != om.role):
+                return Response(
+                    {'detail': 'You cannot make changes to your own role.'}, status=400)
+
+            om.update(role=result['role'])
+
+        self.create_audit_entry(
+            request=request,
+            organization=organization,
+            target_object=om.id,
+            target_user=om.user,
+            event=AuditLogEntryEvent.MEMBER_EDIT,
+            data=om.get_audit_log_data(),
+        )
+
+        context = self._serialize_member(om, request, allowed_roles)
+
+        return Response(context)
 
     def delete(self, request, organization, member_id):
         try:
@@ -157,7 +231,7 @@ class OrganizationMemberDetailsEndpoint(OrganizationEndpoint):
         except OrganizationMember.DoesNotExist:
             raise ResourceDoesNotExist
 
-        if request.user.is_authenticated() and not request.is_superuser():
+        if request.user.is_authenticated() and not is_active_superuser(request):
             try:
                 acting_member = OrganizationMember.objects.get(
                     organization=organization,

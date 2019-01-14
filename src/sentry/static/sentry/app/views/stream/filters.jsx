@@ -1,24 +1,21 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import SavedSearchSelector from './savedSearchSelector';
-import SearchBar from './searchBar';
-import SortOptions from './sortOptions';
-import {t} from '../../locale';
+import SavedSearchSelector from 'app/views/stream/savedSearchSelector';
+import SearchBar from 'app/views/stream/searchBar';
+import SortOptions from 'app/views/stream/sortOptions';
+import TagStore from 'app/stores/tagStore';
 
-const StreamFilters = React.createClass({
-  propTypes: {
+class StreamFilters extends React.Component {
+  static propTypes = {
     orgId: PropTypes.string.isRequired,
-    projectId: PropTypes.string.isRequired,
+    projectId: PropTypes.string,
     access: PropTypes.object.isRequired,
-    tags: PropTypes.object.isRequired,
 
     searchId: PropTypes.string,
     savedSearchList: PropTypes.array.isRequired,
 
-    defaultQuery: PropTypes.string,
     sort: PropTypes.string,
-    filter: PropTypes.string,
     query: PropTypes.string,
     isSearchDisabled: PropTypes.bool,
     queryCount: PropTypes.number,
@@ -28,23 +25,20 @@ const StreamFilters = React.createClass({
     onSearch: PropTypes.func,
     onSidebarToggle: PropTypes.func,
     onSavedSearchCreate: PropTypes.func.isRequired,
-  },
+  };
 
-  contextTypes: {
+  static contextTypes = {
     location: PropTypes.object,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      defaultQuery: '',
-      sort: '',
-      filter: '',
-      query: null,
-      onSortChange: function() {},
-      onSearch: function() {},
-      onSidebarToggle: function() {},
-    };
-  },
+  static defaultProps = {
+    projectId: null,
+    sort: '',
+    query: null,
+    onSortChange: function() {},
+    onSearch: function() {},
+    onSidebarToggle: function() {},
+  };
 
   render() {
     let {
@@ -56,8 +50,6 @@ const StreamFilters = React.createClass({
       queryMaxCount,
       query,
       savedSearchList,
-      tags,
-      defaultQuery,
       isSearchDisabled,
       sort,
 
@@ -92,13 +84,11 @@ const StreamFilters = React.createClass({
               <SearchBar
                 orgId={orgId}
                 projectId={projectId}
-                ref="searchBar"
-                tags={tags}
-                defaultQuery={defaultQuery || ''}
-                placeholder={t('Search for events, users, tags, and everything else.')}
                 query={query || ''}
                 onSearch={onSearch}
                 disabled={isSearchDisabled}
+                excludeEnvironment={true}
+                supportedTags={TagStore.getAllTags()}
               />
               <a
                 className="btn btn-default toggle-stream-sidebar"
@@ -111,7 +101,7 @@ const StreamFilters = React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}
 
 export default StreamFilters;

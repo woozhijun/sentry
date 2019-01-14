@@ -9,7 +9,8 @@ describe('ResolutionBox', function() {
       let wrapper = shallow(
         <ResolutionBox
           statusDetails={{inNextRelease: true}}
-          params={{orgId: 'org', projectId: 'project'}}
+          orgId={'org'}
+          projectId={'project'}
         />
       );
       expect(wrapper).toMatchSnapshot();
@@ -19,9 +20,10 @@ describe('ResolutionBox', function() {
         <ResolutionBox
           statusDetails={{
             inNextRelease: true,
-            actor: {name: 'David Cramer', email: 'david@sentry.io'},
+            actor: {id: '111', name: 'David Cramer', email: 'david@sentry.io'},
           }}
-          params={{orgId: 'org', projectId: 'project'}}
+          orgId={'org'}
+          projectId={'project'}
         />
       );
       expect(wrapper).toMatchSnapshot();
@@ -32,7 +34,8 @@ describe('ResolutionBox', function() {
           statusDetails={{
             inRelease: '1.0',
           }}
-          params={{orgId: 'org', projectId: 'project'}}
+          orgId={'org'}
+          projectId={'project'}
         />
       );
       expect(wrapper).toMatchSnapshot();
@@ -42,16 +45,29 @@ describe('ResolutionBox', function() {
         <ResolutionBox
           statusDetails={{
             inRelease: '1.0',
-            actor: {name: 'David Cramer', email: 'david@sentry.io'},
+            actor: {id: '111', name: 'David Cramer', email: 'david@sentry.io'},
           }}
-          params={{orgId: 'org', projectId: 'project'}}
+          orgId={'org'}
+          projectId={'project'}
         />
       );
       expect(wrapper).toMatchSnapshot();
     });
     it('handles default', function() {
       let wrapper = shallow(
-        <ResolutionBox statusDetails={{}} params={{orgId: 'org', projectId: 'project'}} />
+        <ResolutionBox statusDetails={{}} orgId={'org'} projectId={'project'} />
+      );
+      expect(wrapper).toMatchSnapshot();
+    });
+    it('handles inCommit', function() {
+      let wrapper = shallow(
+        <ResolutionBox
+          statusDetails={{
+            inCommit: TestStubs.Commit(),
+          }}
+          orgId={'org'}
+          projectId={'project'}
+        />
       );
       expect(wrapper).toMatchSnapshot();
     });

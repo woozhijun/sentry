@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import re
+import logging
 from django.db import IntegrityError, transaction
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
@@ -23,8 +24,8 @@ class OrganizationReleaseFilesEndpoint(OrganizationReleasesBaseEndpoint):
 
     def get(self, request, organization, version):
         """
-        List a Release's Files
-        ``````````````````````
+        List an Organization Release's Files
+        ````````````````````````````````````
 
         Retrieve a list of files for a given release.
 
@@ -46,7 +47,7 @@ class OrganizationReleaseFilesEndpoint(OrganizationReleasesBaseEndpoint):
 
         file_list = ReleaseFile.objects.filter(
             release=release,
-        ).select_related('file').order_by('name')
+        ).select_related('file', 'dist').order_by('name')
 
         return self.paginate(
             request=request,
@@ -58,8 +59,8 @@ class OrganizationReleaseFilesEndpoint(OrganizationReleasesBaseEndpoint):
 
     def post(self, request, organization, version):
         """
-        Upload a New File
-        `````````````````
+        Upload a New Organization Release File
+        ``````````````````````````````````````
 
         Upload a new file for the given release.
 
@@ -91,6 +92,9 @@ class OrganizationReleaseFilesEndpoint(OrganizationReleasesBaseEndpoint):
         except Release.DoesNotExist:
             raise ResourceDoesNotExist
 
+        logger = logging.getLogger('sentry.files')
+        logger.info('organizationreleasefile.start')
+
         if not self.has_release_permission(request, organization, release):
             raise PermissionDenied
 
@@ -100,7 +104,7 @@ class OrganizationReleaseFilesEndpoint(OrganizationReleasesBaseEndpoint):
         fileobj = request.FILES['file']
 
         full_name = request.DATA.get('name', fileobj.name)
-        if not full_name:
+        if not full_name or full_name == 'file':
             return Response({'detail': 'File name must be specified'}, status=400)
 
         name = full_name.rsplit('/', 1)[-1]
@@ -140,7 +144,7 @@ class OrganizationReleaseFilesEndpoint(OrganizationReleasesBaseEndpoint):
             type='release.file',
             headers=headers,
         )
-        file.putfile(fileobj)
+        file.putfile(fileobj, logger=logger)
 
         try:
             with transaction.atomic():

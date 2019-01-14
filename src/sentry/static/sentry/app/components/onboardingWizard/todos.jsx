@@ -1,12 +1,15 @@
 import React from 'react';
-import {t} from '../../locale';
+import createReactClass from 'create-react-class';
+import {t} from 'app/locale';
 
-import ApiMixin from '../../mixins/apiMixin';
-import OrganizationState from '../../mixins/organizationState';
-import TodoItem from './toDoItem';
+import ApiMixin from 'app/mixins/apiMixin';
+import OrganizationState from 'app/mixins/organizationState';
+import TodoItem from 'app/components/onboardingWizard/toDoItem';
 
-const TodoList = React.createClass({
+const TodoList = createReactClass({
+  displayName: 'TodoList',
   mixins: [ApiMixin, OrganizationState],
+
   statics: {
     TASKS: [
       {
@@ -14,24 +17,24 @@ const TodoList = React.createClass({
         title: t('Create a project'),
         description: t('Create your first Sentry project'),
         detailedDescription: t(
-          'Follow our quick and easy steps to set up a project and start sending errors'
+          'Follow our quick and easy steps to set up a project and start sending errors.'
         ),
         skippable: false,
         prereq: [],
         featureLocation: 'organization',
         location: 'projects/new/',
-        display: true
+        display: true,
       },
       {
         task: 2,
         title: t('Send your first event'),
         description: t("Install Sentry's client"),
-        detailedDescription: t('Choose your platform and send an event'),
+        detailedDescription: t('Choose your platform and send an event.'),
         skippable: false,
         prereq: [1],
         featureLocation: 'project',
         location: 'settings/install/',
-        display: true
+        display: true,
       },
       {
         task: 3,
@@ -39,13 +42,13 @@ const TodoList = React.createClass({
         description: t('Bring your team aboard'),
         detailedDescription: t(
           `Let Sentry help your team triage and assign issues. Improve your workflow
-          by unlocking suggested owners, mentions, and assignment`
+          by unlocking suggested owners, mentions, and assignment.`
         ),
         skippable: true,
         prereq: [],
         featureLocation: 'organization',
         location: 'members/',
-        display: true
+        display: true,
       },
       {
         task: 4,
@@ -58,7 +61,7 @@ const TodoList = React.createClass({
         prereq: [1, 2],
         featureLocation: 'organization',
         location: 'projects/new/',
-        display: true
+        display: true,
       },
       {
         task: 5,
@@ -71,8 +74,9 @@ const TodoList = React.createClass({
         skippable: true,
         prereq: [1, 2],
         featureLocation: 'absolute',
-        location: 'https://docs.sentry.io/hosted/learn/context/#capturing-the-user',
-        display: true
+        location:
+          'https://docs.sentry.io/enriching-error-data/context/#capturing-the-user',
+        display: true,
       },
       {
         task: 6,
@@ -80,37 +84,37 @@ const TodoList = React.createClass({
         description: t('See what releases are generating errors'),
         detailedDescription: t(
           `Set up commits for additional context when determining the cause of an issue
-          e.g. suggested owners and resolve issues via commit messages`
+          e.g. suggested owners and resolve issues via commit messages.`
         ),
         skippable: true,
         prereq: [1, 2],
         featureLocation: 'project',
         location: 'settings/release-tracking/',
-        display: true
+        display: true,
       },
       {
         task: 7,
-        title: t('Upload sourcemaps'),
-        description: t('Deminify javascript stacktraces'),
+        title: t('Upload source maps'),
+        description: t('Deminify JavaScript stack traces'),
         detailedDescription: t(
           `View source code context obtained from stack traces in their
-          original untransformed form, which is particularly useful for debugging minified code`
+          original untransformed form, which is particularly useful for debugging minified code.`
         ),
         skippable: true,
         prereq: [1, 2], // Is one of the platforms javascript?
         featureLocation: 'absolute',
-        location: 'https://docs.sentry.io/hosted/clients/javascript/sourcemaps/',
-        display: true
+        location: 'https://docs.sentry.io/platforms/javascript/sourcemaps/',
+        display: true,
       },
       {
         task: 8,
         title: 'User crash reports',
-        description: t('Collect user feedback when your application crashes'),
+        description: t('Collect user feedback when your application crashes.'),
         skippable: true,
         prereq: [1, 2, 5],
         featureLocation: 'project',
         location: 'settings/user-reports/',
-        display: false
+        display: false,
       },
       {
         task: 9,
@@ -119,8 +123,8 @@ const TodoList = React.createClass({
         skippable: true,
         prereq: [1, 2],
         featureLocation: 'project',
-        location: 'settings/issue-tracking/',
-        display: false
+        location: 'settings/plugins/',
+        display: false,
       },
       {
         task: 10,
@@ -130,7 +134,7 @@ const TodoList = React.createClass({
         prereq: [1, 2],
         featureLocation: 'project',
         location: 'settings/alerts/',
-        display: false
+        display: false,
       },
     ],
   },
@@ -175,10 +179,6 @@ const TodoList = React.createClass({
     this.getOnboardingTasks();
   },
 
-  click(e) {
-    e.stopPropagation();
-  },
-
   render() {
     let nextTasks = this.state.tasks.filter(task => task.display);
 
@@ -188,7 +188,7 @@ const TodoList = React.createClass({
 
     return (
       <div>
-        <div onClick={this.click} className="onboarding-wrapper">
+        <div className="onboarding-wrapper">
           <ul className="list-unstyled">{todoListTasks}</ul>
         </div>
       </div>

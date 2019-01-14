@@ -3,53 +3,55 @@ import React from 'react';
 import {Link} from 'react-router';
 import marked from 'marked';
 
-import {CommitLink} from '../../views/releases/releaseCommits';
-import Duration from '../../components/duration';
-import Avatar from '../../components/avatar';
-import IssueLink from '../../components/issueLink';
-import MemberListStore from '../../stores/memberListStore';
-import TimeSince from '../../components/timeSince';
-import Version from '../../components/version';
+import PullRequestLink from 'app/components/pullRequestLink';
 
-import {t, tn, tct} from '../../locale';
+import CommitLink from 'app/components/commitLink';
+import Duration from 'app/components/duration';
+import Avatar from 'app/components/avatar';
+import IssueLink from 'app/components/issueLink';
+import VersionHoverCard from 'app/components/versionHoverCard';
+import MemberListStore from 'app/stores/memberListStore';
+import TeamStore from 'app/stores/teamStore';
+import TimeSince from 'app/components/timeSince';
+import Version from 'app/components/version';
 
-const ActivityItem = React.createClass({
-  propTypes: {
+import {t, tn, tct} from 'app/locale';
+
+class ActivityItem extends React.Component {
+  static propTypes = {
     clipHeight: PropTypes.number,
     defaultClipped: PropTypes.bool,
     item: PropTypes.object.isRequired,
     orgId: PropTypes.string.isRequired,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      defaultClipped: false,
-      clipHeight: 68,
-    };
-  },
+  static defaultProps = {
+    defaultClipped: false,
+    clipHeight: 68,
+  };
 
-  getInitialState() {
-    return {
+  constructor(...args) {
+    super(...args);
+    this.state = {
       clipped: this.props.defaultClipped,
     };
-  },
+    this.activityBubbleRef = React.createRef();
+  }
 
   componentDidMount() {
-    if (this.refs.activityBubble) {
-      let bubbleHeight = this.refs.activityBubble.offsetHeight;
+    if (this.activityBubbleRef.current) {
+      let bubbleHeight = this.activityBubbleRef.current.offsetHeight;
 
       if (bubbleHeight > this.props.clipHeight) {
-        /*eslint react/no-did-mount-set-state:0*/
         // okay if this causes re-render; cannot determine until
         // rendered first anyways
-        this.setState({
-          clipped: true,
-        });
+        // eslint-disable-next-line react/no-did-mount-set-state
+        this.setState({clipped: true});
       }
     }
-  },
+  }
 
-  formatProjectActivity(author, item) {
+  formatProjectActivity = (author, item) => {
     let data = item.data;
     let orgId = this.props.orgId;
     let project = item.project;
@@ -61,16 +63,25 @@ const ActivityItem = React.createClass({
       </IssueLink>
     ) : null;
 
+    let versionLink = data.version ? (
+      <VersionHoverCard orgId={orgId} projectId={project.slug} version={data.version}>
+        <Version version={data.version} orgId={orgId} projectId={project.slug} />
+      </VersionHoverCard>
+    ) : null;
+
     switch (item.type) {
       case 'note':
         return tct('[author] commented on [issue]', {
           author,
           issue: (
-            <Link
+            <IssueLink
+              orgId={orgId}
+              projectId={project.slug}
+              issue={issue}
               to={`/${orgId}/${project.slug}/issues/${issue.id}/activity/#event_${item.id}`}
             >
               {issue.shortId}
-            </Link>
+            </IssueLink>
           ),
         });
       case 'set_resolved':
@@ -87,9 +98,7 @@ const ActivityItem = React.createClass({
         if (data.version) {
           return tct('[author] marked [issue] as resolved in [version]', {
             author,
-            version: (
-              <Version version={data.version} orgId={orgId} projectId={project.slug} />
-            ),
+            version: versionLink,
             issue: issueLink,
           });
         }
@@ -103,8 +112,20 @@ const ActivityItem = React.createClass({
           version: (
             <CommitLink
               inline={true}
-              commitId={data.commit.id}
-              repository={data.commit.repository}
+              commitId={data.commit && data.commit.id}
+              repository={data.commit && data.commit.repository}
+            />
+          ),
+          issue: issueLink,
+        });
+      case 'set_resolved_in_pull_request':
+        return tct('[author] marked [issue] as fixed in [version]', {
+          author,
+          version: (
+            <PullRequestLink
+              inline={true}
+              pullRequest={data.pullRequest}
+              repository={data.pullRequest && data.pullRequest.repository}
             />
           ),
           issue: issueLink,
@@ -127,7 +148,7 @@ const ActivityItem = React.createClass({
             {
               author,
               count: data.ignoreCount,
-              duration: <Duration seconds={data.ignoreWindow * 3600} />,
+              duration: <Duration seconds={data.ignoreWindow * 60} />,
               issue: issueLink,
             }
           );
@@ -143,7 +164,7 @@ const ActivityItem = React.createClass({
             {
               author,
               count: data.ignoreUserCount,
-              duration: <Duration seconds={data.ignoreUserWindow * 3600} />,
+              duration: <Duration seconds={data.ignoreUserWindow * 60} />,
               issue: issueLink,
             }
           );
@@ -172,9 +193,7 @@ const ActivityItem = React.createClass({
         if (data.version) {
           return tct('[author] marked [issue] as a regression in [version]', {
             author,
-            version: (
-              <Version version={data.version} orgId={orgId} projectId={project.slug} />
-            ),
+            version: versionLink,
             issue: issueLink,
           });
         }
@@ -190,8 +209,8 @@ const ActivityItem = React.createClass({
         });
       case 'unmerge_destination':
         return tn(
-          '%2$s migrated %1$d fingerprint from %3$s to %4$s',
-          '%2$s migrated %1$d fingerprints from %3$s to %4$s',
+          '%2$s migrated %1$s fingerprint from %3$s to %4$s',
+          '%2$s migrated %1$s fingerprints from %3$s to %4$s',
           data.fingerprints.length,
           author,
           data.source ? (
@@ -210,6 +229,18 @@ const ActivityItem = React.createClass({
         });
       case 'assigned':
         let assignee;
+
+        if (data.assigneeType == 'team') {
+          let team = TeamStore.getById(data.assignee);
+          assignee = team ? team.slug : '<unknown-team>';
+
+          return tct('[author] assigned [issue] to #[assignee]', {
+            author,
+            issue: issueLink,
+            assignee,
+          });
+        }
+
         if (item.user && data.assignee === item.user.id) {
           return tct('[author] assigned [issue] to themselves', {
             author,
@@ -249,22 +280,18 @@ const ActivityItem = React.createClass({
       case 'release':
         return tct('[author] released version [version]', {
           author,
-          version: (
-            <Version version={data.version} orgId={orgId} projectId={project.slug} />
-          ),
+          version: versionLink,
         });
       case 'deploy':
         return tct('[author] deployed version [version] to [environment].', {
           author,
-          version: (
-            <Version version={data.version} orgId={orgId} projectId={project.slug} />
-          ),
+          version: versionLink,
           environment: data.environment || 'Default Environment',
         });
       default:
         return ''; // should never hit (?)
     }
-  },
+  };
 
   render() {
     let item = this.props.item;
@@ -276,9 +303,9 @@ const ActivityItem = React.createClass({
     }
 
     let avatar = item.user ? (
-      <Avatar user={item.user} size={64} className="avatar" />
+      <Avatar user={item.user} size={36} className="activity-avatar" />
     ) : (
-      <div className="avatar sentry">
+      <div className="activity-avatar avatar sentry">
         <span className="icon-sentry-logo" />
       </div>
     );
@@ -302,12 +329,12 @@ const ActivityItem = React.createClass({
             )}
             <div
               className={bubbleClassName}
-              ref="activityBubble"
+              ref={this.activityBubbleRef}
               dangerouslySetInnerHTML={{__html: noteBody}}
             />
             <div className="activity-meta">
               <Link className="project" to={`/${orgId}/${item.project.slug}/`}>
-                {item.project.name}
+                {item.project.slug}
               </Link>
               <span className="bullet" />
               <TimeSince date={item.dateCreated} />
@@ -331,7 +358,7 @@ const ActivityItem = React.createClass({
             </div>
             <div className="activity-meta">
               <Link className="project" to={`/${orgId}/${item.project.slug}/`}>
-                {item.project.name}
+                {item.project.slug}
               </Link>
               <span className="bullet" />
               <TimeSince date={item.dateCreated} />
@@ -352,7 +379,7 @@ const ActivityItem = React.createClass({
             )}
             <div className="activity-meta">
               <Link className="project" to={`/${orgId}/${item.project.slug}/`}>
-                {item.project.name}
+                {item.project.slug}
               </Link>
               <span className="bullet" />
               <TimeSince date={item.dateCreated} />
@@ -361,7 +388,7 @@ const ActivityItem = React.createClass({
         </li>
       );
     }
-  },
-});
+  }
+}
 
 export default ActivityItem;

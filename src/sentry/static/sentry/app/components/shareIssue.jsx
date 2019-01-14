@@ -3,19 +3,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 
-import {selectText} from '../utils/selectText';
-import {t} from '../locale';
-import AutoSelectText from './autoSelectText';
-import Button from './buttons/button';
-import Clipboard from './clipboard';
-import Confirm from './confirm';
-import DropdownReact from './dropdownReact';
-import FlowLayout from './flowLayout';
-import IconCopy from '../icons/icon-copy';
-import IconRefresh from '../icons/icon-refresh';
-import LoadingIndicator from './loadingIndicator';
-import SpreadLayout from './spreadLayout';
-import Switch from './switch';
+import {selectText} from 'app/utils/selectText';
+import {t} from 'app/locale';
+import AutoSelectText from 'app/components/autoSelectText';
+import Button from 'app/components/button';
+import Clipboard from 'app/components/clipboard';
+import Confirm from 'app/components/confirm';
+import DropdownLink from 'app/components/dropdownLink';
+import FlowLayout from 'app/components/flowLayout';
+import LoadingIndicator from 'app/components/loadingIndicator';
+import SpreadLayout from 'app/components/spreadLayout';
+import Switch from 'app/components/switch';
+import InlineSvg from 'app/components/inlineSvg';
 
 const BORDER_COLOR = '#dad5df';
 
@@ -90,7 +89,7 @@ class ShareUrlContainer extends React.Component {
               onClick={this.handleCopyClick}
               style={{borderRadius: 0, borderRight: `1px solid ${BORDER_COLOR}`}}
             >
-              <IconCopy />
+              <InlineSvg src="icon-copy" />
             </Button>
           </Clipboard>
 
@@ -103,7 +102,7 @@ class ShareUrlContainer extends React.Component {
             onConfirm={onShare}
           >
             <Button borderless size="xsmall">
-              <IconRefresh />
+              <InlineSvg src="icon-refresh" />
             </Button>
           </Confirm>
         </FlowLayout>
@@ -195,7 +194,7 @@ class ShareIssue extends React.Component {
 
     let shareTitle = 'Share';
 
-    // Needs to wrap in an inline block for DropdownReact,
+    // Needs to wrap in an inline block for DropdownLink,
     // or else dropdown icon gets wrapped?
     const title = (
       <div style={{marginRight: 4}}>
@@ -207,7 +206,7 @@ class ShareIssue extends React.Component {
     );
 
     return (
-      <DropdownReact
+      <DropdownLink
         className={cx}
         shouldIgnoreClickOutside={() => this.hasConfirmModal}
         title={title}
@@ -241,7 +240,7 @@ class ShareIssue extends React.Component {
               />
             )}
         </li>
-      </DropdownReact>
+      </DropdownLink>
     );
   }
 }

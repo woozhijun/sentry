@@ -1,16 +1,36 @@
+/*eslint-env node*/
+/*eslint import/no-nodejs-modules:0 */
 const path = require('path');
 const webpack = require('webpack');
+const [appConfig] = require('../webpack.config');
 
-const staticPath = path.resolve(__dirname, '..', 'src', 'sentry', 'static', 'sentry');
-const componentPath = path.resolve(staticPath, 'app', 'components');
-
-const sentryConfig = require('../webpack.config');
-const appConfig = sentryConfig[0];
-const legacyCssConfig = sentryConfig[1];
+const staticPath = path.resolve(
+  __dirname,
+  '..',
+  'src',
+  'sentry',
+  'static',
+  'sentry',
+  'app'
+);
 
 module.exports = {
   module: {
     rules: [
+      {
+        test: /\.stories\.jsx?$/,
+        loaders: [
+          {
+            loader: require.resolve('@storybook/addon-storysource/loader'),
+            options: {
+              prettierConfig: {
+                parser: 'babylon',
+              },
+            },
+          },
+        ],
+        enforce: 'pre',
+      },
       {
         test: /\.po$/,
         loader: 'po-catalog-loader',
@@ -22,6 +42,17 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /app\/icons\/.*\.svg$/,
+        use: [
+          {
+            loader: 'svg-sprite-loader',
+          },
+          {
+            loader: 'svgo-loader',
+          },
+        ],
       },
       {
         test: /\.less$/,
@@ -39,6 +70,7 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|ttf|eot|svg|png|gif|ico|jpg)($|\?)/,
+        exclude: /app\/icons\/.*\.svg$/,
         loader: 'file-loader?name=' + '[name].[ext]',
       },
     ],
@@ -49,7 +81,6 @@ module.exports = {
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
       'root.jQuery': 'jquery',
-      Raven: 'raven-js',
       underscore: 'underscore',
       _: 'underscore',
     }),
@@ -62,7 +93,7 @@ module.exports = {
   resolve: {
     extensions: appConfig.resolve.extensions,
     alias: Object.assign({}, appConfig.resolve.alias, {
-      'sentry-ui': componentPath,
+      app: staticPath,
     }),
   },
 };

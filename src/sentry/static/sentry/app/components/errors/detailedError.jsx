@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
+import * as Sentry from '@sentry/browser';
 
-import {t} from '../../locale';
-import IconCircleExclamation from '../../icons/icon-circle-exclamation';
+import {t} from 'app/locale';
+import InlineSvg from 'app/components/inlineSvg';
+import Button from 'app/components/button';
 
-const DetailedError = React.createClass({
-  propTypes: {
+class DetailedError extends React.Component {
+  static propTypes = {
     className: PropTypes.string,
     /* Retry callback */
     onRetry: PropTypes.func,
@@ -16,13 +18,22 @@ const DetailedError = React.createClass({
     message: PropTypes.node,
     /* Hide support links in footer of error message */
     hideSupportLinks: PropTypes.bool,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      hideSupportLinks: false,
-    };
-  },
+  static defaultProps = {
+    hideSupportLinks: false,
+  };
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.forceUpdate();
+    }, 100);
+  }
+
+  openFeedback(e) {
+    e.preventDefault();
+    Sentry.showReportDialog();
+  }
 
   render() {
     const {className, heading, message, onRetry, hideSupportLinks} = this.props;
@@ -33,12 +44,12 @@ const DetailedError = React.createClass({
     return (
       <div className={cx}>
         <div className="detailed-error-icon">
-          <IconCircleExclamation />
+          <InlineSvg src="icon-circle-exclamation" />
         </div>
         <div className="detailed-error-content">
           <h4>{heading}</h4>
 
-          <div className="detailed-error-content-body">{message}</div>
+          <p className="detailed-error-content-body">{message}</p>
 
           {showFooter && (
             <div className="detailed-error-content-footer">
@@ -52,9 +63,14 @@ const DetailedError = React.createClass({
 
               {!hideSupportLinks && (
                 <div className="detailed-error-support-links">
-                  <a href="https://status.sentry.io/">Service status</a>
+                  {Sentry.lastEventId() && (
+                    <Button priority="link" onClick={this.openFeedback}>
+                      {t('Fill out a report')}
+                    </Button>
+                  )}
+                  <a href="https://status.sentry.io/">{t('Service status')}</a>
 
-                  <a href="https://sentry.io/support/">Contact support</a>
+                  <a href="https://sentry.io/support/">{t('Contact support')}</a>
                 </div>
               )}
             </div>
@@ -62,7 +78,7 @@ const DetailedError = React.createClass({
         </div>
       </div>
     );
-  },
-});
+  }
+}
 
 export default DetailedError;

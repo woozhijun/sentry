@@ -1,13 +1,22 @@
 import React from 'react';
 import DocumentTitle from 'react-document-title';
-import Footer from '../components/footer';
-import Sidebar from '../components/sidebar';
-import NotFound from '../components/errors/notFound';
+import * as Sentry from '@sentry/browser';
 
-const RouteNotFound = React.createClass({
-  getTitle() {
+import Footer from 'app/components/footer';
+import Sidebar from 'app/components/sidebar';
+import NotFound from 'app/components/errors/notFound';
+
+class RouteNotFound extends React.Component {
+  componentDidMount() {
+    Sentry.withScope(scope => {
+      scope.setFingerprint(['RouteNotFound']);
+      Sentry.captureException(new Error('Route not found'));
+    });
+  }
+
+  getTitle = () => {
     return 'Page Not Found';
-  },
+  };
 
   render() {
     // TODO(dcramer): show additional resource links
@@ -26,7 +35,7 @@ const RouteNotFound = React.createClass({
         </div>
       </DocumentTitle>
     );
-  },
-});
+  }
+}
 
 export default RouteNotFound;

@@ -33,6 +33,31 @@ class OrganizationMemberListTest(APITestCase):
         assert len(response.data) == 2
         assert response.data[0]['email'] == self.user_2.email
         assert response.data[1]['email'] == self.owner_user.email
+        assert response.data[0]['pending'] is False
+        assert response.data[0]['expired'] is False
+
+    def test_empty_query(self):
+        response = self.client.get(self.url + "?query=")
+
+        assert response.status_code == 200
+        assert len(response.data) == 2
+        assert response.data[0]['email'] == self.user_2.email
+        assert response.data[1]['email'] == self.owner_user.email
+
+    def test_query(self):
+        response = self.client.get(self.url + "?query=bar")
+
+        assert response.status_code == 200
+        assert len(response.data) == 1
+        assert response.data[0]['email'] == "bar@localhost"
+
+    def test_query_null_user(self):
+        OrganizationMember.objects.create(email="billy@localhost", organization=self.org)
+        response = self.client.get(self.url + "?query=bill")
+
+        assert response.status_code == 200
+        assert len(response.data) == 1
+        assert response.data[0]['email'] == "billy@localhost"
 
     def test_email_query(self):
         response = self.client.get(self.url + "?query=email:foo@localhost")
@@ -89,7 +114,7 @@ class OrganizationMemberListTest(APITestCase):
 
         assert len(mail.outbox) == 1
         assert mail.outbox[0].to == ['foo@example.com']
-        assert mail.outbox[0].subject == 'Join {} in using Sentry'.format(
+        assert mail.outbox[0].subject == u'Join {} in using Sentry'.format(
             self.org.name)
 
     def test_existing_user_for_invite(self):
@@ -269,3 +294,24 @@ class OrganizationMemberListTest(APITestCase):
             })
 
         assert response.status_code == 400
+
+
+class OrganizationMemberListPostTest(APITestCase):
+    endpoint = 'sentry-api-0-organization-member-index'
+    method = 'post'
+
+    def setUp(self):
+        self.owner_user = self.create_user('foo@localhost', username='foo')
+        self.org = self.create_organization(owner=self.owner_user)
+        self.team = self.create_team(organization=self.org)
+        self.login_as(user=self.owner_user)
+
+    def test(self):
+        resp = self.get_response(
+            self.org.slug,
+            email='1234@qq.com',
+            role='member',
+            teams=[self.team.slug],
+        )
+        assert resp.status_code == 400
+        assert resp.data['email'][0] == 'Enter a valid email address.'

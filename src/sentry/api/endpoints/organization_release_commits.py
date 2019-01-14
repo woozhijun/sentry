@@ -23,9 +23,9 @@ class OrganizationReleaseCommitsEndpoint(OrganizationReleasesBaseEndpoint):
         :auth: required
         """
         try:
-            release = Release.objects.get(
+            release = Release.objects.distinct().get(
                 organization_id=organization.id,
-                projects__in=self.get_allowed_projects(request, organization),
+                projects__id__in=self.get_project_ids(request, organization),
                 version=version,
             )
         except Release.DoesNotExist:

@@ -1,21 +1,19 @@
 import GroupingStore from 'app/stores/groupingStore';
 import {Client} from 'app/api';
 
-jest.mock('app/api');
-
-/*
-expect.extend({
-  toHaveBeenLastCalledWithMatch(received, arg) {
-    console.log(this, received, arg);
-  }
-});
- */
-
 describe('Grouping Store', function() {
   let trigger;
+
+  beforeAll(function() {
+    Client.mockAsync = true;
+  });
+
+  afterAll(function() {
+    Client.mockAsync = false;
+  });
+
   beforeEach(function() {
     trigger = jest.spyOn(GroupingStore, 'trigger');
-    // this.sandbox = sinon.sandbox.create();
     Client.clearMockResponses();
     Client.addMockResponse({
       url: '/issues/groupId/hashes/',
@@ -101,7 +99,6 @@ describe('Grouping Store', function() {
   });
 
   afterEach(function() {
-    // this.sandbox.restore();
     trigger.mockReset();
   });
 
@@ -109,8 +106,8 @@ describe('Grouping Store', function() {
     it('initially gets called with correct state values', function() {
       GroupingStore.onFetch([]);
 
-      expect(trigger).toBeCalled();
-      expect(trigger).toBeCalledWith(
+      expect(trigger).toHaveBeenCalled();
+      expect(trigger).toHaveBeenCalledWith(
         expect.objectContaining({
           error: false,
           filteredSimilarItems: [],
@@ -130,12 +127,12 @@ describe('Grouping Store', function() {
         {dataKey: 'similar', endpoint: '/issues/groupId/similar/'},
       ]);
 
-      expect(trigger).toBeCalled();
+      expect(trigger).toHaveBeenCalled();
       let calls = trigger.mock.calls;
       let arg = calls[calls.length - 1][0];
 
-      expect(arg.filteredSimilarItems.length).toBe(1);
-      expect(arg.similarItems.length).toBe(3);
+      expect(arg.filteredSimilarItems).toHaveLength(1);
+      expect(arg.similarItems).toHaveLength(3);
       expect(arg).toMatchObject({
         loading: false,
         error: false,
@@ -187,7 +184,7 @@ describe('Grouping Store', function() {
         {dataKey: 'similar', endpoint: '/issues/groupId/similar/'},
       ]);
 
-      expect(trigger).toBeCalled();
+      expect(trigger).toHaveBeenCalled();
       let calls = trigger.mock.calls;
       return promise.then(() => {
         let arg = calls[calls.length - 1][0];
@@ -206,7 +203,7 @@ describe('Grouping Store', function() {
         {dataKey: 'similar', endpoint: '/issues/groupId/similar/'},
       ]);
 
-      expect(trigger).toBeCalled();
+      expect(trigger).toHaveBeenCalled();
       let calls = trigger.mock.calls;
       let arg = calls[calls.length - 1][0];
 
@@ -220,11 +217,11 @@ describe('Grouping Store', function() {
         {dataKey: 'merged', endpoint: '/issues/groupId/hashes/'},
       ]);
 
-      expect(trigger).toBeCalled();
+      expect(trigger).toHaveBeenCalled();
       let calls = trigger.mock.calls;
       return promise.then(() => {
         let arg = calls[calls.length - 1][0];
-        expect(arg.mergedItems.length).toBe(5);
+        expect(arg.mergedItems).toHaveLength(5);
         expect(arg).toMatchObject({
           loading: false,
           error: false,
@@ -254,7 +251,7 @@ describe('Grouping Store', function() {
         {dataKey: 'merged', endpoint: '/issues/groupId/hashes/'},
       ]);
 
-      expect(trigger).toBeCalled();
+      expect(trigger).toHaveBeenCalled();
       let calls = trigger.mock.calls;
       return promise.then(() => {
         let arg = calls[calls.length - 1][0];
@@ -331,7 +328,20 @@ describe('Grouping Store', function() {
       afterEach(function() {});
 
       it('disables rows to be merged', async function() {
+        trigger.mockReset();
         GroupingStore.onToggleMerge('1');
+        mergeList.add('1');
+        mergeState.set('1', {checked: true});
+
+        expect(trigger).toHaveBeenLastCalledWith({
+          mergeDisabled: false,
+          mergeList,
+          mergeState,
+        });
+
+        trigger.mockReset();
+
+        // Everything is sync so trigger will have been called multiple times
         let promise = GroupingStore.onMerge({
           params: {
             orgId: 'orgId',
@@ -340,8 +350,7 @@ describe('Grouping Store', function() {
           },
         });
 
-        mergeList.add('1');
-        mergeState.set('1', {checked: true, busy: false});
+        mergeState.set('1', {checked: true, busy: true});
 
         expect(trigger).toHaveBeenCalledWith({
           mergeDisabled: true,
@@ -365,6 +374,9 @@ describe('Grouping Store', function() {
           }
         );
 
+        // Should be removed from mergeList after merged
+        mergeList.delete('1');
+        mergeState.set('1', {checked: false, busy: true});
         expect(trigger).toHaveBeenLastCalledWith({
           mergeDisabled: false,
           mergeList,
@@ -375,8 +387,18 @@ describe('Grouping Store', function() {
       it('keeps rows in "busy" state and unchecks after successfully adding to merge queue', async function() {
         GroupingStore.onToggleMerge('1');
         mergeList.add('1');
-        mergeState.set('1', {checked: true, busy: false});
+        mergeState.set('1', {checked: true});
 
+        // Expect checked
+        expect(trigger).toHaveBeenCalledWith({
+          mergeDisabled: false,
+          mergeList,
+          mergeState,
+        });
+
+        trigger.mockReset();
+
+        // Start unmerge
         let promise = GroupingStore.onMerge({
           params: {
             orgId: 'orgId',
@@ -385,6 +407,9 @@ describe('Grouping Store', function() {
           },
         });
 
+        mergeState.set('1', {checked: true, busy: true});
+
+        // Expect checked to remain the same, but is now busy
         expect(trigger).toHaveBeenCalledWith({
           mergeDisabled: true,
           mergeList,
@@ -393,6 +418,9 @@ describe('Grouping Store', function() {
 
         await promise;
 
+        mergeState.set('1', {checked: false, busy: true});
+
+        // After promise, reset checked to false, but keep busy
         expect(trigger).toHaveBeenLastCalledWith({
           mergeDisabled: false,
           mergeList: new Set(),
@@ -411,7 +439,7 @@ describe('Grouping Store', function() {
 
         GroupingStore.onToggleMerge('1');
         mergeList.add('1');
-        mergeState.set('1', {checked: true, busy: false});
+        mergeState.set('1', {checked: true});
 
         let promise = GroupingStore.onMerge({
           params: {
@@ -421,6 +449,7 @@ describe('Grouping Store', function() {
           },
         });
 
+        mergeState.set('1', {checked: true, busy: true});
         expect(trigger).toHaveBeenCalledWith({
           mergeDisabled: true,
           mergeList,
@@ -429,6 +458,8 @@ describe('Grouping Store', function() {
 
         await promise;
 
+        // Error state
+        mergeState.set('1', {checked: true, busy: false});
         expect(trigger).toHaveBeenLastCalledWith({
           mergeDisabled: false,
           mergeList,
@@ -543,6 +574,10 @@ describe('Grouping Store', function() {
     });
 
     describe('onUnmerge', function() {
+      beforeAll(function() {
+        GroupingStore.init();
+      });
+
       beforeEach(function() {
         Client.clearMockResponses();
         Client.addMockResponse({
@@ -552,12 +587,14 @@ describe('Grouping Store', function() {
       });
       afterEach(function() {});
 
-      it('disables rows to be merged', function() {
+      it('can not toggle unmerge for a locked item', function() {
+        // Event 1 is locked
         GroupingStore.onToggleUnmerge(['1', 'event-1']);
-        unmergeList.set('1', 'event-1');
-        unmergeState.set('1', {checked: true, busy: false});
+        unmergeState.set('1', {busy: true});
 
-        trigger.mockClear();
+        // trigger does NOT get called because an item returned via API is in a "locked" state
+        expect(trigger).not.toHaveBeenCalled();
+
         GroupingStore.onUnmerge({
           groupId: 'groupId',
         });
@@ -571,15 +608,57 @@ describe('Grouping Store', function() {
         });
       });
 
-      it('keeps rows in "busy" state and unchecks after successfully adding to unmerge queue', async function() {
-        GroupingStore.onToggleUnmerge(['1', 'event-1']);
-        unmergeList.set('1', 'event-1');
-        unmergeState.set('1', {checked: true, busy: false});
+      it('disables rows to be merged', async function() {
+        GroupingStore.onToggleUnmerge(['2', 'event-2']);
+        unmergeList.set('2', 'event-2');
+        unmergeState.set('2', {checked: true, busy: false});
+
+        // trigger does NOT get called because an item returned via API is in a "locked" state
+        expect(trigger).toHaveBeenCalledWith({
+          enableFingerprintCompare: false,
+          unmergeLastCollapsed: false,
+          unmergeDisabled: false,
+          unmergeList,
+          unmergeState,
+        });
 
         let promise = GroupingStore.onUnmerge({
           groupId: 'groupId',
         });
 
+        unmergeState.set('2', {checked: false, busy: true});
+        expect(trigger).toHaveBeenCalledWith({
+          enableFingerprintCompare: false,
+          unmergeLastCollapsed: false,
+          unmergeDisabled: true,
+          unmergeList,
+          unmergeState,
+        });
+
+        await promise;
+
+        // Success
+        unmergeState.set('2', {checked: false, busy: true});
+        unmergeList.delete('2');
+        expect(trigger).toHaveBeenLastCalledWith({
+          enableFingerprintCompare: false,
+          unmergeLastCollapsed: false,
+          unmergeDisabled: false,
+          unmergeList,
+          unmergeState,
+        });
+      });
+
+      it('keeps rows in "busy" state and unchecks after successfully adding to unmerge queue', async function() {
+        GroupingStore.onToggleUnmerge(['2', 'event-2']);
+        unmergeList.set('2', 'event-2');
+        unmergeState.set('2', {checked: true, busy: false});
+
+        let promise = GroupingStore.onUnmerge({
+          groupId: 'groupId',
+        });
+
+        unmergeState.set('2', {checked: false, busy: true});
         expect(trigger).toHaveBeenCalledWith({
           enableFingerprintCompare: false,
           unmergeLastCollapsed: false,
@@ -609,13 +688,13 @@ describe('Grouping Store', function() {
         });
 
         GroupingStore.onToggleUnmerge(['2', 'event-2']);
-        unmergeList.set('1', 'event-1');
-        unmergeState.set('1', {checked: true, busy: false});
+        unmergeList.set('2', 'event-2');
 
         let promise = GroupingStore.onUnmerge({
           groupId: 'groupId',
         });
 
+        unmergeState.set('2', {checked: false, busy: true});
         expect(trigger).toHaveBeenCalledWith({
           enableFingerprintCompare: false,
           unmergeLastCollapsed: false,
@@ -626,6 +705,7 @@ describe('Grouping Store', function() {
 
         await promise;
 
+        unmergeState.set('2', {checked: true, busy: false});
         expect(trigger).toHaveBeenLastCalledWith({
           enableFingerprintCompare: false,
           unmergeLastCollapsed: false,

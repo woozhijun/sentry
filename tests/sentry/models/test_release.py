@@ -1,14 +1,18 @@
 from __future__ import absolute_import
 
-import datetime
+import pytest
 import six
 
+from mock import patch
+
+from sentry.api.exceptions import InvalidRepository
 from sentry.models import (
-    Commit, CommitAuthor, Group, GroupCommitResolution, GroupRelease, GroupResolution, GroupLink, GroupStatus,
-    Release, ReleaseCommit, ReleaseEnvironment, ReleaseProject, Repository
+    Commit, CommitAuthor, Environment, Group, GroupRelease, GroupResolution, GroupLink, GroupStatus,
+    ExternalIssue, Integration, OrganizationIntegration, Release, ReleaseCommit, ReleaseEnvironment,
+    ReleaseHeadCommit, ReleaseProject, ReleaseProjectEnvironment, Repository
 )
 
-from sentry.testutils import TestCase
+from sentry.testutils import TestCase, SetRefsTestCase
 
 
 class MergeReleasesTest(TestCase):
@@ -19,13 +23,17 @@ class MergeReleasesTest(TestCase):
 
         # merge to
         project = self.create_project(organization=org, name='foo')
+        environment = Environment.get_or_create(project=project, name='env1')
         release = Release.objects.create(version='abcdabc', organization=org)
         release.add_project(project)
         release_commit = ReleaseCommit.objects.create(
             organization_id=org.id, release=release, commit=commit, order=1
         )
         release_environment = ReleaseEnvironment.objects.create(
-            organization_id=org.id, project_id=project.id, release_id=release.id, environment_id=2
+            organization_id=org.id, project_id=project.id, release_id=release.id, environment_id=environment.id
+        )
+        release_project_environment = ReleaseProjectEnvironment.objects.create(
+            release_id=release.id, project_id=project.id, environment_id=environment.id
         )
         group_release = GroupRelease.objects.create(
             project_id=project.id, release_id=release.id, group_id=1
@@ -35,6 +43,7 @@ class MergeReleasesTest(TestCase):
 
         # merge from #1
         project2 = self.create_project(organization=org, name='bar')
+        environment2 = Environment.get_or_create(project=project2, name='env2')
         release2 = Release.objects.create(version='bbbbbbb', organization=org)
         release2.add_project(project2)
         release_commit2 = ReleaseCommit.objects.create(
@@ -44,7 +53,10 @@ class MergeReleasesTest(TestCase):
             organization_id=org.id,
             project_id=project2.id,
             release_id=release2.id,
-            environment_id=3,
+            environment_id=environment2.id,
+        )
+        release_project_environment2 = ReleaseProjectEnvironment.objects.create(
+            release_id=release2.id, project_id=project2.id, environment_id=environment2.id
         )
         group_release2 = GroupRelease.objects.create(
             project_id=project2.id, release_id=release2.id, group_id=2
@@ -54,6 +66,7 @@ class MergeReleasesTest(TestCase):
 
         # merge from #2
         project3 = self.create_project(organization=org, name='baz')
+        environment3 = Environment.get_or_create(project=project3, name='env3')
         release3 = Release.objects.create(version='cccccc', organization=org)
         release3.add_project(project3)
         release_commit3 = ReleaseCommit.objects.create(
@@ -63,7 +76,10 @@ class MergeReleasesTest(TestCase):
             organization_id=org.id,
             project_id=project3.id,
             release_id=release3.id,
-            environment_id=4,
+            environment_id=environment3.id,
+        )
+        release_project_environment3 = ReleaseProjectEnvironment.objects.create(
+            release_id=release3.id, project_id=project3.id, environment_id=environment3.id
         )
         group_release3 = GroupRelease.objects.create(
             project_id=project3.id, release_id=release3.id, group_id=3
@@ -89,6 +105,14 @@ class MergeReleasesTest(TestCase):
         assert ReleaseProject.objects.filter(release=release, project=project).exists()
         assert ReleaseProject.objects.filter(release=release, project=project2).exists()
         assert ReleaseProject.objects.filter(release=release, project=project3).exists()
+
+        # ReleaseProjectEnvironment.release
+        assert ReleaseProjectEnvironment.objects.get(
+            id=release_project_environment.id).release_id == release.id
+        assert ReleaseProjectEnvironment.objects.get(
+            id=release_project_environment2.id).release_id == release.id
+        assert ReleaseProjectEnvironment.objects.get(
+            id=release_project_environment3.id).release_id == release.id
 
         # GroupRelease.release_id
         assert GroupRelease.objects.get(id=group_release.id).release_id == release.id
@@ -142,7 +166,6 @@ class SetCommitsTestCase(TestCase):
             key='lskfslknsdkcsnlkdflksfdkls',
         )
 
-        assert GroupCommitResolution.objects.filter(group_id=group.id, commit_id=commit.id).exists()
         assert GroupLink.objects.filter(
             group_id=group.id,
             linked_type=GroupLink.LinkedType.commit,
@@ -181,6 +204,12 @@ class SetCommitsTestCase(TestCase):
         assert release.commit_count == 3
         assert release.authors == []
         assert release.last_commit_id == commit.id
+
+        assert ReleaseHeadCommit.objects.filter(
+            release_id=release.id,
+            commit_id=commit.id,
+            repository_id=repo.id,
+        ).exists()
 
     def test_backfilling_commits(self):
         org = self.create_organization()
@@ -262,14 +291,6 @@ class SetCommitsTestCase(TestCase):
             commit__key='c' * 40,
             commit__repository_id=repo.id,
             release=release,
-        ).exists()
-
-        assert GroupCommitResolution.objects.filter(
-            group_id=group.id,
-            commit_id=Commit.objects.get(
-                key='c' * 40,
-                repository_id=repo.id,
-            ).id,
         ).exists()
 
         assert GroupLink.objects.filter(
@@ -359,7 +380,7 @@ class SetCommitsTestCase(TestCase):
         assert release.last_commit_id == latest_commit.id
 
     def test_resolution_support_full_featured(self):
-        org = self.create_organization()
+        org = self.create_organization(owner=self.user)
         project = self.create_project(organization=org, name='foo')
         group = self.create_group(project=project)
 
@@ -395,7 +416,6 @@ class SetCommitsTestCase(TestCase):
             'repository': repo.name,
         }])
 
-        assert GroupCommitResolution.objects.filter(group_id=group.id, commit_id=commit.id).exists()
         assert GroupLink.objects.filter(
             group_id=group.id,
             linked_type=GroupLink.LinkedType.commit,
@@ -433,7 +453,85 @@ class SetCommitsTestCase(TestCase):
             'repository': repo.name,
         }])
 
-        assert GroupCommitResolution.objects.filter(group_id=group.id, commit_id=commit.id).exists()
+        assert GroupLink.objects.filter(
+            group_id=group.id,
+            linked_type=GroupLink.LinkedType.commit,
+            linked_id=commit.id).exists()
+
+        resolution = GroupResolution.objects.get(
+            group=group,
+        )
+        assert resolution.status == GroupResolution.Status.resolved
+        assert resolution.release == release
+        assert resolution.type == GroupResolution.Type.in_release
+        assert resolution.actor_id is None
+
+        assert Group.objects.get(id=group.id).status == GroupStatus.RESOLVED
+
+    @patch('sentry.integrations.example.integration.ExampleIntegration.sync_status_outbound')
+    def test_resolution_support_with_integration(self, mock_sync_status_outbound):
+        org = self.create_organization()
+        integration = Integration.objects.create(
+            provider='example',
+            name='Example',
+        )
+        integration.add_organization(org, self.user)
+
+        OrganizationIntegration.objects.filter(
+            integration_id=integration.id,
+            organization_id=org.id,
+        ).update(
+            config={
+                'sync_comments': True,
+                'sync_status_outbound': True,
+                'sync_status_inbound': True,
+                'sync_assignee_outbound': True,
+                'sync_assignee_inbound': True,
+            }
+        )
+        project = self.create_project(organization=org, name='foo')
+        group = self.create_group(project=project)
+
+        external_issue = ExternalIssue.objects.get_or_create(
+            organization_id=org.id,
+            integration_id=integration.id,
+            key='APP-%s' % group.id,
+        )[0]
+
+        GroupLink.objects.get_or_create(
+            group_id=group.id,
+            project_id=group.project_id,
+            linked_type=GroupLink.LinkedType.issue,
+            linked_id=external_issue.id,
+            relationship=GroupLink.Relationship.references,
+        )[0]
+
+        repo = Repository.objects.create(
+            organization_id=org.id,
+            name='test/repo',
+        )
+        commit = Commit.objects.create(
+            organization_id=org.id,
+            repository_id=repo.id,
+            message='fixes %s' % (group.qualified_short_id),
+            key='alksdflskdfjsldkfajsflkslk',
+        )
+
+        release = self.create_release(project=project, version='abcdabc')
+
+        with self.tasks():
+            with self.feature({
+                'organizations:integrations-issue-sync': True,
+            }):
+                release.set_commits([{
+                    'id': commit.key,
+                    'repository': repo.name,
+                }])
+
+        mock_sync_status_outbound.assert_called_once_with(
+            external_issue, True, group.project_id
+        )
+
         assert GroupLink.objects.filter(
             group_id=group.id,
             linked_type=GroupLink.LinkedType.commit,
@@ -450,41 +548,113 @@ class SetCommitsTestCase(TestCase):
         assert Group.objects.get(id=group.id).status == GroupStatus.RESOLVED
 
 
-class GetClosestReleasesTestCase(TestCase):
-    def test_simple(self):
+class SetRefsTest(SetRefsTestCase):
 
-        date = datetime.datetime.utcnow()
+    def setUp(self):
+        super(SetRefsTest, self).setUp()
+        self.release = Release.objects.create(version='abcdabc', organization=self.org)
+        self.release.add_project(self.project)
 
-        org = self.create_organization()
-        project = self.create_project(organization=org, name='foo')
+    @patch('sentry.tasks.commits.fetch_commits')
+    def test_simple(self, mock_fetch_commit):
+        refs = [
+            {
+                'repository': 'test/repo',
+                'previousCommit': 'previous-commit-id',
+                'commit': 'current-commit-id',
+            },
+            {
+                'repository': 'test/repo',
+                'previousCommit': 'previous-commit-id-2',
+                'commit': 'current-commit-id-2',
+            }
+        ]
 
-        # this shouldn't be included
-        release1 = Release.objects.create(
-            organization=org,
-            version='a' * 40,
-            date_released=date - datetime.timedelta(days=2),
-        )
+        self.release.set_refs(refs, self.user, True)
 
-        release1.add_project(project)
+        commits = Commit.objects.all().order_by('id')
+        self.assert_commit(commits[0], refs[0]['commit'])
+        self.assert_commit(commits[1], refs[1]['commit'])
 
-        release2 = Release.objects.create(
-            organization=org,
-            version='b' * 40,
-            date_released=date - datetime.timedelta(days=1),
-        )
+        head_commits = ReleaseHeadCommit.objects.all()
+        self.assert_head_commit(head_commits[0], refs[1]['commit'])
 
-        release2.add_project(project)
+        self.assert_fetch_commits(mock_fetch_commit, None, self.release.id, refs)
 
-        release3 = Release.objects.create(
-            organization=org,
-            version='c' * 40,
-            date_released=date,
-        )
+    @patch('sentry.tasks.commits.fetch_commits')
+    def test_invalid_repos(self, mock_fetch_commit):
+        refs = [
+            {
+                'repository': 'unknown-repository-name',
+                'previousCommit': 'previous-commit-id',
+                'commit': 'current-commit-id',
+            },
+            {
+                'repository': 'unknown-repository-name',
+                'previousCommit': 'previous-commit-id-2',
+                'commit': 'current-commit-id-2',
+            }
+        ]
 
-        release3.add_project(project)
+        with pytest.raises(InvalidRepository):
+            self.release.set_refs(refs, self.user)
 
-        releases = list(Release.get_closest_releases(project, release2.version))
+        assert len(Commit.objects.all()) == 0
+        assert len(ReleaseHeadCommit.objects.all()) == 0
 
-        assert len(releases) == 2
-        assert releases[0] == release2
-        assert releases[1] == release3
+    @patch('sentry.tasks.commits.fetch_commits')
+    def test_handle_commit_ranges(self, mock_fetch_commit):
+        refs = [
+            {
+                'repository': 'test/repo',
+                'previousCommit': None,
+                'commit': 'previous-commit-id..current-commit-id',
+            },
+            {
+                'repository': 'test/repo',
+                'previousCommit': 'previous-commit-will-be-ignored',
+                'commit': 'previous-commit-id-2..current-commit-id-2',
+            },
+            {
+                'repository': 'test/repo',
+                'commit': 'previous-commit-id-3..current-commit-id-3',
+            },
+        ]
+
+        self.release.set_refs(refs, self.user, True)
+
+        commits = Commit.objects.all().order_by('id')
+        self.assert_commit(commits[0], 'current-commit-id')
+        self.assert_commit(commits[1], 'current-commit-id-2')
+        self.assert_commit(commits[2], 'current-commit-id-3')
+
+        head_commits = ReleaseHeadCommit.objects.all()
+        self.assert_head_commit(head_commits[0], 'current-commit-id-3')
+
+        self.assert_fetch_commits(mock_fetch_commit, None, self.release.id, refs)
+
+    @patch('sentry.tasks.commits.fetch_commits')
+    def test_fetch_false(self, mock_fetch_commit):
+        refs = [
+            {
+                'repository': 'test/repo',
+                'previousCommit': 'previous-commit-id',
+                'commit': 'current-commit-id',
+            },
+            {
+                'repository': 'test/repo',
+                'previousCommit': 'previous-commit-id-2',
+                'commit': 'current-commit-id-2',
+            }
+        ]
+
+        self.release.set_refs(refs, self.user, False)
+
+        commits = Commit.objects.all().order_by('id')
+        self.assert_commit(commits[0], refs[0]['commit'])
+        self.assert_commit(commits[1], refs[1]['commit'])
+
+        head_commits = ReleaseHeadCommit.objects.all()
+        self.assert_head_commit(head_commits[0], refs[1]['commit'])
+
+        assert len(mock_fetch_commit.method_calls) == 0

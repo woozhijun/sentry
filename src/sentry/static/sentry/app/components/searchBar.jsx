@@ -1,75 +1,79 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {cx} from 'react-emotion';
 
-const SearchBar = React.createClass({
-  propTypes: {
+class SearchBar extends React.PureComponent {
+  static propTypes = {
     query: PropTypes.string,
     defaultQuery: PropTypes.string,
     onSearch: PropTypes.func,
-    onQueryChange: PropTypes.func,
     placeholder: PropTypes.string,
-  },
+  };
 
-  mixins: [PureRenderMixin],
+  static defaultProps = {
+    defaultQuery: '',
+    query: '',
+    onSearch: function() {},
+  };
 
-  getDefaultProps() {
-    return {
-      defaultQuery: '',
-      query: '',
-      onSearch: function() {},
-      onQueryChange: function() {},
-    };
-  },
-
-  getInitialState() {
-    return {
+  constructor(...args) {
+    super(...args);
+    this.state = {
       query: this.props.query || this.props.defaultQuery,
     };
-  },
+    this.searchInputRef = React.createRef();
+  }
 
-  blur() {
-    ReactDOM.findDOMNode(this.refs.searchInput).blur();
-  },
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.query !== this.props.query) {
+      this.setState({
+        query: nextProps.query,
+      });
+    }
+  }
 
-  onSubmit(evt) {
+  blur = () => {
+    this.searchInputRef.current.blur();
+  };
+
+  onSubmit = evt => {
     evt.preventDefault();
     this.blur();
     this.props.onSearch(this.state.query);
-  },
+  };
 
-  clearSearch() {
+  clearSearch = () => {
     this.setState({query: this.props.defaultQuery}, () =>
       this.props.onSearch(this.state.query)
     );
-  },
+  };
 
-  onQueryFocus() {
+  onQueryFocus = () => {
     this.setState({
       dropdownVisible: true,
     });
-  },
+  };
 
-  onQueryBlur() {
+  onQueryBlur = () => {
     this.setState({dropdownVisible: false});
-  },
+  };
 
-  onQueryChange(evt) {
+  onQueryChange = evt => {
     this.setState({query: evt.target.value});
-  },
+  };
 
   render() {
+    let {className} = this.props;
     return (
-      <div className="search">
-        <form className="form-horizontal" ref="searchForm" onSubmit={this.onSubmit}>
+      <div className={cx('search', className)}>
+        <form className="form-horizontal" onSubmit={this.onSubmit}>
           <div>
             <input
               type="text"
               className="search-input form-control"
               placeholder={this.props.placeholder}
               name="query"
-              ref="searchInput"
+              ref={this.searchInputRef}
               autoComplete="off"
               value={this.state.query}
               onBlur={this.onQueryBlur}
@@ -87,7 +91,7 @@ const SearchBar = React.createClass({
         </form>
       </div>
     );
-  },
-});
+  }
+}
 
 export default SearchBar;

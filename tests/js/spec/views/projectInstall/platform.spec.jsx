@@ -5,14 +5,16 @@ import {Client} from 'app/api';
 import ProjectInstallPlatform from 'app/views/projectInstall/platform';
 
 describe('ProjectInstallPlatform', function() {
-  beforeEach(function() {
-    this.sandbox = sinon.sandbox.create();
+  let sandbox;
 
-    this.stubbedApiRequest = this.sandbox.stub(Client.prototype, 'request');
+  beforeEach(function() {
+    sandbox = sinon.sandbox.create();
+
+    this.stubbedApiRequest = sandbox.stub(Client.prototype, 'request');
   });
 
   afterEach(function() {
-    this.sandbox.restore();
+    sandbox.restore();
   });
 
   describe('render()', function() {
@@ -27,6 +29,16 @@ describe('ProjectInstallPlatform', function() {
               {
                 id: 'csharp',
                 type: 'language',
+              },
+            ],
+          },
+          {
+            id: 'javascript',
+            name: 'JavaScript',
+            integrations: [
+              {
+                id: 'javascript-react',
+                type: 'framework',
               },
             ],
           },

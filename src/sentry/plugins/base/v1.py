@@ -17,6 +17,7 @@ from django.http import HttpResponseRedirect
 from threading import local
 
 from sentry.auth import access
+from sentry.plugins import HIDDEN_PLUGINS
 from sentry.plugins.config import PluginConfigMixin
 from sentry.plugins.status import PluginStatusMixin
 from sentry.plugins.base.response import Response
@@ -488,6 +489,14 @@ class IPlugin(local, PluggableViewMixin, PluginConfigMixin, PluginStatusMixin):
         """
         return hasattr(self, 'test_configuration')
 
+    def is_hidden(self):
+        """
+        Should this plugin be hidden in the UI
+
+        We use this to hide plugins as they are replaced with integrations.
+        """
+        return self.slug in HIDDEN_PLUGINS
+
     def configure(self, request, project=None):
         """Configures the plugin."""
         return default_plugin_config(self, project, request)
@@ -506,6 +515,9 @@ class IPlugin(local, PluggableViewMixin, PluginConfigMixin, PluginStatusMixin):
             )
         self.configure(project, request.DATA)
         return Response({'message': 'Successfully updated configuration.'})
+
+    def handle_signal(self, name, payload, **kwargs):
+        pass
 
 
 @six.add_metaclass(PluginMount)

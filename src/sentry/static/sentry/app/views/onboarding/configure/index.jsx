@@ -1,14 +1,22 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
 import {browserHistory} from 'react-router';
-import Raven from 'raven-js';
+import * as Sentry from '@sentry/browser';
 
-import Waiting from './waiting';
-import ApiMixin from '../../../mixins/apiMixin';
-import ProjectContext from '../../projects/projectContext';
-import ProjectDocsContext from '../../projectInstall/docsContext';
-import ProjectInstallPlatform from '../../projectInstall/platform';
+import {analytics, amplitude} from 'app/utils/analytics';
+import ApiMixin from 'app/mixins/apiMixin';
+import CreateSampleEvent from 'app/components/createSampleEvent';
+import ProjectContext from 'app/views/projects/projectContext';
+import ProjectDocsContext from 'app/views/projectInstall/docsContext';
+import ProjectInstallPlatform from 'app/views/projectInstall/platform';
+import SentryTypes from 'app/sentryTypes';
+import Waiting from 'app/views/onboarding/configure/waiting';
 
-const Configure = React.createClass({
+const Configure = createReactClass({
+  displayName: 'Configure',
+  contextTypes: {
+    organization: SentryTypes.Organization,
+  },
   mixins: [ApiMixin],
 
   getInitialState() {
@@ -24,11 +32,28 @@ const Configure = React.createClass({
     if (!platform || platform === 'other') {
       this.redirectToNeutralDocs();
     }
-
     this.fetchEventData();
     this.timer = setInterval(() => {
       this.fetchEventData();
     }, 2000);
+  },
+
+  componentDidMount() {
+    let {organization} = this.context;
+    let {params} = this.props;
+    let data = {
+      project: params.projectId,
+      platform: params.platform,
+    };
+
+    amplitude(
+      'Viewed Onboarding Installation Instructions',
+      parseInt(organization.id, 10),
+      data
+    );
+
+    data.org_id = parseInt(organization.id, 10);
+    analytics('onboarding.configure_viewed', data);
   },
 
   componentWillUpdate(nextProps, nextState) {
@@ -74,14 +99,23 @@ const Configure = React.createClass({
       },
 
       error: err => {
-        Raven.captureMessage('Polling for events in onboarding configure failed', {
-          extra: err,
+        Sentry.withScope(scope => {
+          scope.setExtra('err', err);
+          Sentry.captureMessage('Polling for events in onboarding configure failed');
         });
       },
     });
   },
 
   submit() {
+    let {projectId} = this.props.params;
+    let {organization} = this.context;
+    analytics('onboarding.complete', {project: projectId});
+    amplitude(
+      'Completed Onboarding Installation Instructions',
+      parseInt(organization.id, 10),
+      {projectId}
+    );
     this.redirectUrl();
   },
 
@@ -94,11 +128,17 @@ const Configure = React.createClass({
 
   render() {
     let {orgId, projectId} = this.props.params;
+    let {hasSentRealEvent} = this.state;
 
     return (
       <div>
         <div className="onboarding-Configure">
-          <h2 style={{marginBottom: 30}}>Configure your application</h2>
+          <h2 style={{marginBottom: 30}}>
+            Configure your application
+            {!hasSentRealEvent && (
+              <CreateSampleEvent params={this.props.params} source="header" />
+            )}
+          </h2>
           <ProjectContext projectId={projectId} orgId={orgId} style={{marginBottom: 30}}>
             <ProjectDocsContext>
               <ProjectInstallPlatform
@@ -112,7 +152,7 @@ const Configure = React.createClass({
               />
             </ProjectDocsContext>
           </ProjectContext>
-          <Waiting skip={this.submit} hasEvent={this.state.hasSentRealEvent} />
+          <Waiting skip={this.submit} hasEvent={hasSentRealEvent} />
         </div>
       </div>
     );

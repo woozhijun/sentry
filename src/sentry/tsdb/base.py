@@ -7,6 +7,7 @@ sentry.tsdb.base
 """
 from __future__ import absolute_import
 
+import collections
 import six
 
 from collections import OrderedDict
@@ -96,12 +97,46 @@ class TSDBModel(Enum):
     # the number of events filtered because their group was discarded
     project_total_received_discarded = 610
 
+    servicehook_fired = 700
+
 
 class BaseTSDB(Service):
-    __all__ = (
-        'models', 'incr', 'incr_multi', 'get_range', 'get_rollups', 'get_sums', 'rollup',
-        'validate',
-    )
+    __read_methods__ = frozenset([
+        'get_range',
+        'get_sums',
+        'get_distinct_counts_series',
+        'get_distinct_counts_totals',
+        'get_distinct_counts_union',
+        'get_most_frequent',
+        'get_most_frequent_series',
+        'get_frequency_series',
+        'get_frequency_totals',
+    ])
+
+    __write_methods__ = frozenset([
+        'incr',
+        'incr_multi',
+        'merge',
+        'delete',
+        'record',
+        'record_multi',
+        'merge_distinct_counts',
+        'delete_distinct_counts',
+        'record_frequency_multi',
+        'merge_frequencies',
+        'delete_frequencies',
+        'flush',
+    ])
+
+    __all__ = frozenset([
+        'get_earliest_timestamp',
+        'get_optimal_rollup_series',
+        'get_rollups',
+        'make_series',
+        'models',
+        'models_with_environment_support',
+        'rollup',
+    ]) | __write_methods__ | __read_methods__
 
     models = TSDBModel
 
@@ -113,7 +148,7 @@ class BaseTSDB(Service):
         models.users_affected_by_project,
     ])
 
-    def __init__(self, rollups=None, legacy_rollups=None):
+    def __init__(self, rollups=None, legacy_rollups=None, **options):
         if rollups is None:
             rollups = settings.SENTRY_TSDB_ROLLUPS
 
@@ -226,6 +261,11 @@ class BaseTSDB(Service):
             rollups[rollup] = map(to_datetime, series)
         return rollups
 
+    def make_series(self, default, start, end=None, rollup=None):
+        f = default if isinstance(default, collections.Callable) else lambda timestamp: default
+        return [(timestamp, f(timestamp))
+                for timestamp in self.get_optimal_rollup_series(start, end, rollup)[1]]
+
     def calculate_expiry(self, rollup, samples, timestamp):
         """
         Calculate the expiration time for a rollup.
@@ -283,7 +323,7 @@ class BaseTSDB(Service):
         """
         raise NotImplementedError
 
-    def get_range(self, model, keys, start, end, rollup=None, environment_id=None):
+    def get_range(self, model, keys, start, end, rollup=None, environment_ids=None):
         """
         To get a range of data for group ID=[1, 2, 3]:
 
@@ -297,7 +337,10 @@ class BaseTSDB(Service):
         raise NotImplementedError
 
     def get_sums(self, model, keys, start, end, rollup=None, environment_id=None):
-        range_set = self.get_range(model, keys, start, end, rollup, environment_id)
+        range_set = self.get_range(
+            model, keys, start, end, rollup,
+            environment_ids=[environment_id] if environment_id is not None else None
+        )
         sum_set = dict(
             (key, sum(p for _, p in points)) for (key, points) in six.iteritems(range_set)
         )
@@ -448,5 +491,11 @@ class BaseTSDB(Service):
                            timestamp=None, environment_ids=None):
         """
         Delete all frequency tables.
+        """
+        raise NotImplementedError
+
+    def flush(self):
+        """
+        Delete all data.
         """
         raise NotImplementedError

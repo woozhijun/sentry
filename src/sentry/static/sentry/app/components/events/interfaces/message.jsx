@@ -1,46 +1,50 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import EventDataSection from '../eventDataSection';
-import SentryTypes from '../../../proptypes';
-import utils from '../../../utils';
-import {t} from '../../../locale';
+import KeyValueList from 'app/components/events/interfaces/keyValueList';
+import Annotated from 'app/components/events/meta/annotated';
+import EventDataSection from 'app/components/events/eventDataSection';
+import SentryTypes from 'app/sentryTypes';
+import {t} from 'app/locale';
+import {objectIsEmpty} from 'app/utils';
 
-const MessageInterface = React.createClass({
-  propTypes: {
+class MessageInterface extends React.Component {
+  static propTypes = {
     group: SentryTypes.Group.isRequired,
     event: SentryTypes.Event.isRequired,
-    type: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
-  },
+  };
+
+  renderParams() {
+    let {params} = this.props.data;
+    if (objectIsEmpty(params)) {
+      return null;
+    }
+
+    // NB: Always render params, regardless of whether they appear in the
+    // formatted string due to structured logging frameworks, like Serilog. They
+    // only format some parameters into the formatted string, but we want to
+    // display all of them.
+
+    if (Array.isArray(params)) {
+      params = params.map((value, i) => [`#${i}`, value]);
+    }
+
+    return <KeyValueList data={params} isSorted={false} isContextData />;
+  }
 
   render() {
-    let data = this.props.data;
+    let {data, group, event} = this.props;
+
     return (
-      <EventDataSection
-        group={this.props.group}
-        event={this.props.event}
-        type="message"
-        title={t('Message')}
-      >
-        <pre
-          className="plain"
-          dangerouslySetInnerHTML={{
-            __html: utils.nl2br(
-              utils.urlize(utils.escape(data.formatted || data.message))
-            ),
-          }}
-        />
-        {data.params &&
-          !data.formatted && (
-            <div>
-              <h5>{t('Params')}</h5>
-              <pre className="plain">{JSON.stringify(data.params, null, 2)}</pre>
-            </div>
-          )}
+      <EventDataSection group={group} event={event} type="message" title={t('Message')}>
+        <pre className="plain">
+          <Annotated object={data} prop="formatted" />
+        </pre>
+        {this.renderParams()}
       </EventDataSection>
     );
-  },
-});
+  }
+}
 
 export default MessageInterface;

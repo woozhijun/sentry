@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {objectToArray} from '../../../utils';
-import KeyValueList from './keyValueList';
+import {objectToArray} from 'app/utils';
+import KeyValueList from 'app/components/events/interfaces/keyValueList';
 
-const CSPContent = React.createClass({
-  propTypes: {
+class CSPContent extends React.Component {
+  static propTypes = {
     data: PropTypes.object.isRequired,
-  },
+  };
 
   render() {
     let {data} = this.props;
@@ -19,7 +19,7 @@ const CSPContent = React.createClass({
         <KeyValueList data={objectToArray(data)} isContextData={true} />
       </div>
     );
-  },
-});
+  }
+}
 
 export default CSPContent;

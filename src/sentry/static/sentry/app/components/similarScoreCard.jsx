@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
+import styled from 'react-emotion';
 
-import {t} from '../locale';
-import SpreadLayout from './spreadLayout';
-
-import '../../less/components/similarScoreCard.less';
+import {t} from 'app/locale';
+import space from 'app/styles/space';
 
 const scoreComponents = {
   'exception:message:character-shingles': t('Exception Message'),
@@ -14,45 +12,48 @@ const scoreComponents = {
   'message:message:character-shingles': t('Log Message'),
 };
 
-// classnames that map to colors to css
-const scoreClassNames = ['low', 'low', 'low-med', 'med', 'med-high', 'high'];
-
-const SimilarScoreCard = React.createClass({
-  propTypes: {
+class SimilarScoreCard extends React.Component {
+  static propTypes = {
     scoreList: PropTypes.arrayOf(PropTypes.array),
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      scoreList: [],
-    };
-  },
+  static defaultProps = {
+    scoreList: [],
+  };
 
   render() {
-    let {className, scoreList} = this.props;
-    let cx = classNames('similar-score-card', className);
+    let {scoreList} = this.props;
 
     if (!scoreList.length) {
       return null;
     }
 
     return (
-      <div className={cx}>
+      <div>
         {scoreList.map(([key, score]) => (
-          <SpreadLayout className="similar-score-card-row" key={key}>
+          <Wrapper key={key}>
             <div>{scoreComponents[key]}</div>
 
-            <div
-              className={classNames(
-                'similar-score-quantity',
-                score === null ? 'empty' : scoreClassNames[Math.round(score * 5)]
-              )}
-            />
-          </SpreadLayout>
+            <Score score={score === null ? score : Math.round(score * 5)} />
+          </Wrapper>
         ))}
       </div>
     );
-  },
-});
+  }
+}
+
+const Wrapper = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  margin: ${space(0.25)} 0;
+`;
+
+const Score = styled('div')`
+  height: 16px;
+  width: 48px;
+  border-radius: 2px;
+  background-color: ${p =>
+    p.score === null ? p.theme.similarity.empty : p.theme.similarity.colors[p.score]};
+`;
 
 export default SimilarScoreCard;

@@ -1,21 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import GroupEventDataSection from '../eventDataSection';
-import SentryTypes from '../../../proptypes';
-import Frame from './frame';
-import {t} from '../../../locale';
+import GroupEventDataSection from 'app/components/events/eventDataSection';
+import SentryTypes from 'app/sentryTypes';
+import Frame from 'app/components/events/interfaces/frame';
+import {t} from 'app/locale';
 
-const TemplateInterface = React.createClass({
-  propTypes: {
+class TemplateInterface extends React.Component {
+  static propTypes = {
     group: SentryTypes.Group.isRequired,
     event: SentryTypes.Event.isRequired,
     type: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
-  },
-
-  getInitialState() {
-    return {};
-  },
+  };
 
   render() {
     return (
@@ -32,7 +28,7 @@ const TemplateInterface = React.createClass({
         </div>
       </GroupEventDataSection>
     );
-  },
-});
+  }
+}
 
 export default TemplateInterface;

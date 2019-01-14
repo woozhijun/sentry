@@ -2,13 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 
-import PlatformPicker from './platformpicker';
-import PlatformiconTile from './platformiconTile';
-import SelectInput from '../../../components/selectInput';
-import {t} from '../../../locale';
+import {analytics} from 'app/utils/analytics';
+import PlatformPicker from 'app/views/onboarding/project/platformpicker';
+import PlatformiconTile from 'app/views/onboarding/project/platformiconTile';
+import SelectField from 'app/components/forms/selectField';
+import PageHeading from 'app/components/pageHeading';
+import {t} from 'app/locale';
 
-const OnboardingProject = React.createClass({
-  propTypes: {
+class OnboardingProject extends React.Component {
+  static propTypes = {
     next: PropTypes.func,
     setPlatform: PropTypes.func,
     platform: PropTypes.string,
@@ -17,65 +19,65 @@ const OnboardingProject = React.createClass({
     team: PropTypes.string,
     setTeam: PropTypes.func,
     teams: PropTypes.array,
-  },
+  };
 
-  getDefaultProps() {
-    return {
-      team: '',
-      setTeam: () => {},
-      teams: [],
-    };
-  },
+  static defaultProps = {
+    team: '',
+    setTeam: () => {},
+    teams: [],
+  };
 
-  getInitialState() {
-    return {projectRequired: false};
-  },
+  constructor(...args) {
+    super(...args);
+    this.state = {projectRequired: false};
+  }
 
   componentWillReceiveProps(newProps) {
     this.setWarning(newProps.name);
-  },
+  }
 
-  setWarning(value) {
+  setWarning = value => {
     this.setState({projectRequired: !value});
-  },
+  };
 
-  submit() {
+  submit = () => {
     this.setWarning(this.props.name);
-    if (this.props.name) this.props.next();
-  },
+    if (this.props.name) {
+      analytics('platformpicker.create_project');
+      this.props.next();
+    }
+  };
 
-  renderTeamPicker() {
+  renderTeamPicker = () => {
     let {team, teams, setTeam} = this.props;
-    if (teams.length < 2) return null;
     return (
       <div className="new-project-team">
-        <h4>{t('Team') + ':'}</h4>
-        <div className="project-team-wrapper">
-          <SelectInput
+        <PageHeading withMargins>{t('Team') + ':'}</PageHeading>
+        <div>
+          <SelectField
+            name="select-team"
+            clearable={false}
             value={team}
-            style={{width: 180, padding: '10px'}}
-            required={true}
-            onChange={e => setTeam(e[0].value)}
-          >
-            {teams.map(({slug, name, id}, i) => (
-              <option key={id} value={slug}>
-                {name}
-              </option>
-            ))}
-          </SelectInput>
+            style={{width: 180, marginBottom: 0}}
+            onChange={val => setTeam(val)}
+            options={teams.map(({slug}) => ({
+              label: `#${slug}`,
+              value: slug,
+            }))}
+          />
         </div>
       </div>
     );
-  },
+  };
 
   render() {
     return (
       <div className="onboarding-info">
-        <h4>{t('Choose a language or framework') + ':'}</h4>
+        <PageHeading withMargins>{t('Choose a language or framework') + ':'}</PageHeading>
         <PlatformPicker {...this.props} showOther={true} />
         <div className="create-project-form">
           <div className="new-project-name client-platform">
-            <h4>{t('Give your project a name') + ':'}</h4>
+            <PageHeading withMargins>{t('Give your project a name') + ':'}</PageHeading>
             <div
               className={classnames('project-name-wrapper', {
                 required: this.state.projectRequired,
@@ -85,8 +87,8 @@ const OnboardingProject = React.createClass({
               <input
                 type="text"
                 name="name"
-                label="Project Name"
-                placeholder="Project name"
+                label={t('Project Name')}
+                placeholder={t('Project name')}
                 autoComplete="off"
                 value={this.props.name}
                 onChange={e => this.props.setName(e.target.value)}
@@ -101,13 +103,13 @@ const OnboardingProject = React.createClass({
           </div>
           <p>
             {t(
-              'Projects allow you to scope events to a specific application in your organization. For example, you might have separate projects your API server and frontend client.'
+              'Projects allow you to scope events to a specific application in your organization. For example, you might have separate projects for your API server and frontend client.'
             )}
           </p>
         </div>
       </div>
     );
-  },
-});
+  }
+}
 
 export default OnboardingProject;

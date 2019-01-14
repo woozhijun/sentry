@@ -1,19 +1,21 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {shallow, mount} from 'enzyme';
 
 import {Client} from 'app/api';
 import PlatformPicker from 'app/views/onboarding/project/platformpicker';
-import {categoryLists} from 'app/views/onboarding/utils';
 import sinon from 'sinon';
 
 describe('PlatformPicker', function() {
+  let sandbox;
+
   beforeEach(function() {
-    this.sandbox = sinon.sandbox.create();
-    this.stubbedApiRequest = this.sandbox.stub(Client.prototype, 'request');
+    sandbox = sinon.sandbox.create();
+    this.stubbedApiRequest = sandbox.stub(Client.prototype, 'request');
   });
 
   afterEach(function() {
-    this.sandbox.restore();
+    sandbox.restore();
   });
 
   describe('render()', function() {
@@ -29,13 +31,13 @@ describe('PlatformPicker', function() {
       };
 
       let wrapper = shallow(<PlatformPicker {...props} />);
-      wrapper.setState({tab: 'Mobile'});
+      wrapper.setState({tab: 'mobile'});
       let filteredPlatforms = wrapper
         .find('PlatformCard')
         .map(node => node.prop('platform'));
 
       expect(filteredPlatforms).not.toContain('java');
-      expect(filteredPlatforms).toContain(categoryLists.Mobile[0]);
+      expect(filteredPlatforms).toContain('swift');
 
       expect(wrapper).toMatchSnapshot();
     });
@@ -47,7 +49,7 @@ describe('PlatformPicker', function() {
 
       let wrapper = shallow(<PlatformPicker {...props} />);
 
-      wrapper.setState({tab: 'All', filter: 'py'});
+      wrapper.setState({tab: 'all', filter: 'py'});
 
       let filteredPlatforms = wrapper
         .find('PlatformCard')
@@ -81,7 +83,7 @@ describe('PlatformPicker', function() {
           router: TestStubs.router(),
         },
         childContextTypes: {
-          router: React.PropTypes.object,
+          router: PropTypes.object,
         },
       });
 
@@ -89,13 +91,13 @@ describe('PlatformPicker', function() {
         .find('ListLink')
         .last()
         .find('a');
-      expect(wrapper.state().tab).toBe('Popular');
-      expect(wrapper.state().tab).not.toBe('All');
+      expect(wrapper.state().tab).toBe('popular');
+      expect(wrapper.state().tab).not.toBe('all');
 
       testListLink.simulate('click');
 
-      expect(wrapper.state().tab).not.toBe('Popular');
-      expect(wrapper.state().tab).toBe('All');
+      expect(wrapper.state().tab).not.toBe('popular');
+      expect(wrapper.state().tab).toBe('all');
 
       expect(wrapper).toMatchSnapshot();
     });

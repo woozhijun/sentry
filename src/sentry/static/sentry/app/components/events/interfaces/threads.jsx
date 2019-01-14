@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import GroupEventDataSection from '../eventDataSection';
-import SentryTypes from '../../../proptypes';
-import {isStacktraceNewestFirst} from './stacktrace';
-import {defined} from '../../../utils';
-import DropdownLink from '../../dropdownLink';
-import MenuItem from '../../menuItem';
-import {trimPackage} from './frame';
-import CrashHeader from './crashHeader';
-import CrashContent from './crashContent';
-import Pills from '../../pills';
-import Pill from '../../pill';
+import GroupEventDataSection from 'app/components/events/eventDataSection';
+import SentryTypes from 'app/sentryTypes';
+import {isStacktraceNewestFirst} from 'app/components/events/interfaces/stacktrace';
+import {defined} from 'app/utils';
+import DropdownLink from 'app/components/dropdownLink';
+import MenuItem from 'app/components/menuItem';
+import {trimPackage} from 'app/components/events/interfaces/frame';
+import CrashHeader from 'app/components/events/interfaces/crashHeader';
+import CrashContent from 'app/components/events/interfaces/crashContent';
+import Pills from 'app/components/pills';
+import Pill from 'app/components/pill';
 
 function trimFilename(fn) {
   let pieces = fn.split(/\//g);
@@ -122,8 +122,8 @@ function findBestThread(threads) {
   return threads[0];
 }
 
-const Thread = React.createClass({
-  propTypes: {
+class Thread extends React.Component {
+  static propTypes = {
     group: SentryTypes.Group.isRequired,
     event: SentryTypes.Event.isRequired,
     data: PropTypes.object.isRequired,
@@ -132,9 +132,9 @@ const Thread = React.createClass({
     newestFirst: PropTypes.bool,
     exception: PropTypes.object,
     stacktrace: PropTypes.object,
-  },
+  };
 
-  renderMissingStacktrace() {
+  renderMissingStacktrace = () => {
     return (
       <div className="traceback missing-traceback">
         <ul>
@@ -148,12 +148,12 @@ const Thread = React.createClass({
         </ul>
       </div>
     );
-  },
+  };
 
-  hasMissingStacktrace() {
+  hasMissingStacktrace = () => {
     const {exception, stacktrace} = this.props;
     return !(exception || stacktrace);
-  },
+  };
 
   render() {
     const {
@@ -191,47 +191,48 @@ const Thread = React.createClass({
         )}
       </div>
     );
-  },
-});
+  }
+}
 
-const ThreadsInterface = React.createClass({
-  propTypes: {
+class ThreadsInterface extends React.Component {
+  static propTypes = {
     group: SentryTypes.Group.isRequired,
     event: SentryTypes.Event.isRequired,
     type: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
-    platform: PropTypes.string,
-  },
+  };
 
-  getInitialState() {
-    let thread = findBestThread(this.props.data.values);
-    return {
+  constructor(props) {
+    super(props);
+    let thread = findBestThread(props.data.values);
+
+    this.state = {
       activeThread: thread,
-      stackView: getIntendedStackView(thread, this.props.event),
+      stackView: getIntendedStackView(thread, props.event),
       stackType: 'original',
       newestFirst: isStacktraceNewestFirst(),
     };
-  },
+  }
 
-  toggleStack(value) {
+  toggleStack = value => {
     this.setState({
       stackView: value,
     });
-  },
+  };
 
-  getStacktrace() {
+  getStacktrace = () => {
     return findThreadStacktrace(
       this.state.activeThread,
       this.props.event,
       this.state.stackType !== 'original'
     );
-  },
+  };
 
-  getException() {
+  getException = () => {
     return findThreadException(this.state.activeThread, this.props.event);
-  },
+  };
 
-  onSelectNewThread(thread) {
+  onSelectNewThread = thread => {
     let newStackView = this.state.stackView;
     if (this.state.stackView !== 'raw') {
       newStackView = getIntendedStackView(thread, this.props.event);
@@ -241,7 +242,7 @@ const ThreadsInterface = React.createClass({
       stackView: newStackView,
       stackType: 'original',
     });
-  },
+  };
 
   render() {
     let group = this.props.group;
@@ -309,7 +310,7 @@ const ThreadsInterface = React.createClass({
         />
       </GroupEventDataSection>
     );
-  },
-});
+  }
+}
 
 export default ThreadsInterface;

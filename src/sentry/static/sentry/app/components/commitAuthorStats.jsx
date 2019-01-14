@@ -1,42 +1,43 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Flex} from 'grid-emotion';
+import createReactClass from 'create-react-class';
 
-import LoadingIndicator from '../components/loadingIndicator';
-import LoadingError from '../components/loadingError';
-import Avatar from '../components/avatar';
+import LoadingIndicator from 'app/components/loadingIndicator';
+import LoadingError from 'app/components/loadingError';
+import Avatar from 'app/components/avatar';
+import Tooltip from 'app/components/tooltip';
 
-import TooltipMixin from '../mixins/tooltip';
-import ApiMixin from '../mixins/apiMixin';
+import ApiMixin from 'app/mixins/apiMixin';
 
-import {t} from '../locale';
+import {t} from 'app/locale';
+import {Panel, PanelItem, PanelBody} from 'app/components/panels';
 
-const CommitBar = React.createClass({
-  propTypes: {
+class CommitBar extends React.Component {
+  static propTypes = {
     totalCommits: PropTypes.number.isRequired,
     authorCommits: PropTypes.number.isRequired,
-  },
+  };
 
   render() {
     let barStyle = {};
     barStyle.width = this.props.authorCommits / this.props.totalCommits * 100 + '%';
 
     return <div className="commit-bar" style={barStyle} />;
-  },
-});
+  }
+}
 
-const CommitAuthorStats = React.createClass({
+const CommitAuthorStats = createReactClass({
+  displayName: 'CommitAuthorStats',
+
   propTypes: {
     orgId: PropTypes.string.isRequired,
-    projectId: PropTypes.string.isRequired,
+    // Provided in project release views, not in org release views
+    projectId: PropTypes.string,
     version: PropTypes.string.isRequired,
   },
 
-  mixins: [
-    ApiMixin,
-    TooltipMixin({
-      selector: '.tip',
-    }),
-  ],
+  mixins: [ApiMixin],
 
   getInitialState() {
     return {
@@ -46,11 +47,7 @@ const CommitAuthorStats = React.createClass({
   },
 
   componentDidMount() {
-    let {orgId, projectId, version} = this.props;
-    let path = `/projects/${orgId}/${projectId}/releases/${encodeURIComponent(
-      version
-    )}/commits/`;
-    this.api.request(path, {
+    this.api.request(this.getPath(), {
       method: 'GET',
       success: (data, _, jqXHR) => {
         this.setState({
@@ -69,11 +66,13 @@ const CommitAuthorStats = React.createClass({
     });
   },
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.loading && !this.state.loading) {
-      this.removeTooltips();
-      this.attachTooltips();
-    }
+  getPath() {
+    const {orgId, projectId, version} = this.props;
+    const encodedVersion = encodeURIComponent(version);
+
+    return this.props.projectId
+      ? `/projects/${orgId}/${projectId}/releases/${encodedVersion}/commits/`
+      : `/organizations/${orgId}/releases/${encodedVersion}/commits/`;
   },
 
   renderEmpty() {
@@ -109,35 +108,32 @@ const CommitAuthorStats = React.createClass({
 
     return (
       <div style={{marginTop: 5}}>
-        <h6 className="nav-header m-b-1">Commits by Author</h6>
+        <h6 className="nav-header m-b-1">{t('Commits by Author')}</h6>
         {!commitAuthorValues.length && this.renderEmpty()}
-        <ul className="list-group">
-          {commitAuthorValues.map((commitAuthor, i) => {
-            let {author, commitCount} = commitAuthor;
-            return (
-              <li
-                key={i}
-                className="list-group-item list-group-item-sm list-group-avatar"
-              >
-                <div className="row row-flex row-center-vertically">
-                  <div className="col-sm-8">
-                    <span
-                      className="avatar-grid-item m-b-0 tip"
-                      title={author.name + ' ' + author.email}
-                    >
-                      <Avatar user={author} size={32} />
-                    </span>
+        <Panel>
+          <PanelBody>
+            {commitAuthorValues.map((commitAuthor, i) => {
+              let {author, commitCount} = commitAuthor;
+              return (
+                <PanelItem key={i} p={1} align="center">
+                  <Flex>
+                    <Tooltip title={`${author.name} ${author.email}`}>
+                      <Avatar user={author} size={20} />
+                    </Tooltip>
+                  </Flex>
+                  <Flex flex="1" px={1}>
                     <CommitBar
+                      style={{marginLeft: 5}}
                       totalCommits={commitList.length}
                       authorCommits={commitCount}
                     />
-                  </div>
-                  <div className="col-sm-4 align-right">{commitCount}</div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                  </Flex>
+                  <div>{commitCount}</div>
+                </PanelItem>
+              );
+            })}
+          </PanelBody>
+        </Panel>
       </div>
     );
   },
